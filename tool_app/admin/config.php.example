@@ -1,0 +1,27 @@
+<?php
+
+// ===============================================================
+// SECURITY CONFIGURATION EXAMPLE（配布用ツール側）
+// ===============================================================
+// このファイルは設定ファイルの雛形です。
+// ファイル名を 'config.php' にリネームし、以下の値をあなたの環境に合わせて設定してください。
+// ===============================================================
+
+// --- APIシークレットトークン ---
+// クライアント(ツール)と認証サーバー(verify.php)間の通信を保護するための秘密のトークン
+// ★ LP/admin/config.php と同じ値を設定すること
+define('SECRET_TOKEN', 'YOUR_SUPER_SECRET_TOKEN');
+
+// --- ライセンス認証サーバーのURL (クライアント用) ---
+// ツールがライセンス認証のためにアクセスする認証サーバー(verify.php)のURL
+// 例: https://your-domain.com/tools/YOUR_APP_NAME/LP/api/verify.php
+define('AUTH_SERVER_URL', 'https://your-domain.com/path/to/LP/api/verify.php');
+
+// --- ツール更新設定 ---
+// ツールのバージョン (アップデートチェック時に使用)
+define('TOOL_VERSION', '1.0.0');
+
+// 更新を確認するGitHubリポジトリ (owner/repo)
+define('GITHUB_REPO', 'your-github-user/your-repo-name');
+
+?>

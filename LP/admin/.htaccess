@@ -1,0 +1,30 @@
+# ============================================================
+# LP/admin セキュリティ設定
+# ============================================================
+# 役割: adminディレクトリ内の機密ファイルへの直接アクセスを防止する。
+# ============================================================
+
+# 1. フォルダ内のファイル一覧を表示させない
+Options -Indexes
+
+# 2. データベースファイル (.sqlite) への直接アクセスを禁止
+<Files "*.sqlite">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</Files>
+
+# 3. 重要なシステムファイルへの直接アクセスを禁止
+<FilesMatch "^(config\.php|config\.php\.example)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>

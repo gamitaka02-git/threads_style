@@ -1,0 +1,41 @@
+<?php
+
+// ===============================================================
+// SECURITY CONFIGURATION EXAMPLE（販売・管理サーバー側）
+// ===============================================================
+// このファイルは設定ファイルの雛形です。
+// ファイル名を 'config.php' にリネームし、以下の値をあなたの環境に合わせて設定してください。
+// ===============================================================
+
+// --- データベース接続情報 (認証サーバー用) ---
+// ライセンス情報を管理するMySQLデータベースの接続情報
+define('DB_HOST', 'localhost');
+define('DB_NAME', 'your_database_name'); 
+define('DB_USER', 'your_database_user'); 
+define('DB_PASS', 'your_database_password'); 
+
+// --- APIシークレットトークン ---
+// クライアント(ツール)と認証サーバー(verify.php)間の通信を保護するための秘密のトークン
+// 可能な限り長く、複雑で、推測困難な文字列を設定してください。
+// ★ tool_app/admin/config.php にも同じ値を設定する必要があります。
+define('SECRET_TOKEN', 'YOUR_SUPER_SECRET_TOKEN'); 
+
+// --- ライセンス認証サーバーのURL ---
+// ツールがライセンス認証のためにアクセスする自身の認証サーバー(verify.php)のURL
+// 例: https://your-domain.com/tools/YOUR_APP_NAME/LP/api/verify.php
+define('AUTH_SERVER_URL', 'https://your-domain.com/path/to/LP/api/verify.php');
+
+// --- メール送信設定 ---
+// Webhook経由でのライセンスキー送信メールに使用
+define('FROM_EMAIL', 'tools@your-domain.com');
+define('SUPPORT_EMAIL', 'tools@your-domain.com');
+
+/**
+ * Stripe API設定 (販売自動化用)
+ */
+// Stripeダッシュボードから取得する「シークレットキー」
+define('STRIPE_SECRET_KEY', 'sk_live_XXXXXXXXXXXX'); // sk_ から始まる文字列
+
+// Webhookエンドポイント登録時に発行される「署名シークレット」
+define('STRIPE_WEBHOOK_SECRET', 'whsec_XXXXXXXXXXXX'); // whsec_ から始まる文字列
+?>
