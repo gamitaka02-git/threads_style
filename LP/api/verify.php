@@ -72,9 +72,13 @@ try {
         exit;
     }
 
-    // 統計のために最終認証日時だけは更新しておく（ドメインは無視）
-    $update_stmt = $pdo->prepare("UPDATE licenses SET last_verified_at = NOW() WHERE id = ?");
-    $update_stmt->execute([$license['id']]);
+    // 統計のために最終認証日時だけは更新しておく（カラムが無い場合はスキップ）
+    try {
+        $update_stmt = $pdo->prepare("UPDATE licenses SET last_verified_at = NOW() WHERE id = ?");
+        $update_stmt->execute([$license['id']]);
+    } catch (PDOException $e) {
+        // last_verified_atカラムが存在しない場合は無視
+    }
 
     echo json_encode(['status' => 'success', 'message' => 'License is valid (Unlimited Domains).']);
 

@@ -1,0 +1,1061 @@
+/**
+ * ============================================================
+ * ThreadsStyle - Main Application JavaScript
+ * ============================================================
+ */
+
+// ===== Global State =====
+const API_BASE = 'api/';
+
+// ===== DOM Ready =====
+document.addEventListener('DOMContentLoaded', () => {
+    initSidebar();
+    initTabs();
+    initPostComposer();
+    loadPostList();
+    loadStyleGuide();
+    loadKeywords();
+    initCharts();
+});
+
+// ===== Sidebar Navigation =====
+function initSidebar() {
+    const navLinks = document.querySelectorAll('.sidebar-nav a[data-section]');
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const section = link.dataset.section;
+            switchSection(section);
+        });
+    });
+
+    // Mobile toggle
+    const toggle = document.getElementById('sidebarToggle');
+    const sidebar = document.getElementById('sidebar');
+    if (toggle && sidebar) {
+        toggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+        });
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768 && sidebar.classList.contains('open')) {
+                if (!sidebar.contains(e.target) && e.target !== toggle) {
+                    sidebar.classList.remove('open');
+                }
+            }
+        });
+    }
+}
+
+function switchSection(sectionName) {
+    // Hide all sections
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    // Show target section
+    const target = document.getElementById('section-' + sectionName);
+    if (target) target.classList.add('active');
+
+    // Update nav active state
+    document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
+    const activeLink = document.querySelector(`.sidebar-nav a[data-section="${sectionName}"]`);
+    if (activeLink) activeLink.classList.add('active');
+
+    // Close mobile sidebar
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar) sidebar.classList.remove('open');
+}
+
+// ===== Tabs =====
+function initTabs() {
+    document.querySelectorAll('.tab-btn[data-tab]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tabId = btn.dataset.tab;
+            const tabContainer = btn.closest('.section') || btn.parentElement.parentElement;
+
+            // Deactivate all tabs in this container
+            btn.parentElement.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            tabContainer.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+
+            // Activate clicked tab
+            btn.classList.add('active');
+            const panel = document.getElementById(tabId);
+            if (panel) panel.classList.add('active');
+        });
+    });
+}
+
+// ===== Post Composer =====
+function initPostComposer() {
+    const textarea = document.getElementById('postContent');
+    const charCount = document.getElementById('charCount');
+
+    if (textarea && charCount) {
+        textarea.addEventListener('input', () => {
+            const len = textarea.value.length;
+            charCount.textContent = len;
+            const countEl = textarea.closest('.post-composer').querySelector('.post-char-count');
+            if (countEl) {
+                countEl.classList.toggle('over-limit', len > 500);
+            }
+        });
+    }
+}
+
+// ===== Toast Notifications =====
+function showToast(message, type = 'info') {
+    const container = document.getElementById('toastContainer');
+    if (!container) return;
+
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.innerHTML = `
+        <span>${message}</span>
+        <button class="toast-close" onclick="this.parentElement.remove()">✕</button>
+    `;
+    container.appendChild(toast);
+
+    // Auto-remove after 5s
+    setTimeout(() => {
+        toast.style.animation = 'toastOut 0.3s ease forwards';
+        setTimeout(() => toast.remove(), 300);
+    }, 5000);
+}
+
+// ===== Loading Overlay =====
+function showLoading(text = '処理中') {
+    const overlay = document.getElementById('loadingOverlay');
+    const textEl = document.getElementById('loadingText');
+    if (overlay) overlay.classList.add('active');
+    if (textEl) textEl.innerHTML = text + '<span class="loading-dots"></span>';
+}
+
+function hideLoading() {
+    const overlay = document.getElementById('loadingOverlay');
+    if (overlay) overlay.classList.remove('active');
+}
+
+// ===== Modal Management =====
+function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) modal.classList.add('active');
+}
+
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) modal.classList.remove('active');
+}
+
+// Close modal on overlay click
+document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('modal-overlay')) {
+        e.target.classList.remove('active');
+    }
+});
+
+// ===== API Helper =====
+async function apiCall(endpoint, data = {}, method = 'POST') {
+    try {
+        const options = {
+            method: method,
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        };
+
+        if (method === 'POST') {
+            options.body = new URLSearchParams(data).toString();
+        } else if (method === 'GET') {
+            const params = new URLSearchParams(data).toString();
+            if (params) endpoint += '?' + params;
+        }
+
+        const response = await fetch(API_BASE + endpoint, options);
+        const result = await response.json();
+        return result;
+    } catch (err) {
+        console.error('API Error:', err);
+        return { success: false, message: 'サーバーとの通信に失敗しました。' };
+    }
+}
+
+// ===== Posts: CRUD =====
+async function savePostDraft() {
+    const content = document.getElementById('postContent').value.trim();
+    if (!content) {
+        showToast('投稿内容を入力してください', 'warning');
+        return;
+    }
+
+    const result = await apiCall('posts.php', {
+        action: 'create',
+        content: content,
+        status: 'draft',
+        ai_label: document.getElementById('aiLabelToggle').checked ? 1 : 0
+    });
+
+    if (result.success) {
+        showToast('下書きを保存しました', 'success');
+        document.getElementById('postContent').value = '';
+        document.getElementById('charCount').textContent = '0';
+        loadPostList();
+    } else {
+        showToast(result.message || 'エラーが発生しました', 'error');
+    }
+}
+
+async function schedulePost() {
+    const content = document.getElementById('postContent').value.trim();
+    const scheduledAt = document.getElementById('scheduleAt').value;
+
+    if (!content) {
+        showToast('投稿内容を入力してください', 'warning');
+        return;
+    }
+    if (!scheduledAt) {
+        showToast('予約日時を設定してください', 'warning');
+        return;
+    }
+
+    const result = await apiCall('posts.php', {
+        action: 'create',
+        content: content,
+        status: 'scheduled',
+        scheduled_at: scheduledAt,
+        ai_label: document.getElementById('aiLabelToggle').checked ? 1 : 0
+    });
+
+    if (result.success) {
+        showToast('予約投稿を設定しました', 'success');
+        document.getElementById('postContent').value = '';
+        document.getElementById('charCount').textContent = '0';
+        document.getElementById('scheduleAt').value = '';
+        loadPostList();
+    } else {
+        showToast(result.message || 'エラーが発生しました', 'error');
+    }
+}
+
+async function publishPostNow() {
+    const content = document.getElementById('postContent').value.trim();
+    if (!content) {
+        showToast('投稿内容を入力してください', 'warning');
+        return;
+    }
+
+    if (!confirm('この投稿を今すぐThreadsに公開しますか？')) return;
+
+    showLoading('投稿中');
+    const result = await apiCall('posts.php', {
+        action: 'publish_now',
+        content: content,
+        ai_label: document.getElementById('aiLabelToggle').checked ? 1 : 0
+    });
+    hideLoading();
+
+    if (result.success) {
+        showToast('投稿しました！', 'success');
+        document.getElementById('postContent').value = '';
+        document.getElementById('charCount').textContent = '0';
+        loadPostList();
+    } else {
+        showToast(result.message || '投稿に失敗しました', 'error');
+    }
+}
+
+async function loadPostList(filter = 'all') {
+    const container = document.getElementById('postListContainer');
+    if (!container) return;
+
+    const result = await apiCall('posts.php', { action: 'list', filter: filter }, 'POST');
+
+    if (result.success && result.posts && result.posts.length > 0) {
+        let html = '<table class="data-table"><thead><tr>';
+        html += '<th>内容</th><th>ステータス</th><th>予約日時</th><th>作成日</th><th>操作</th>';
+        html += '</tr></thead><tbody>';
+
+        result.posts.forEach(post => {
+            const badgeMap = {
+                draft: '<span class="badge badge-draft">下書き</span>',
+                scheduled: '<span class="badge badge-info">予約中</span>',
+                posted: '<span class="badge badge-success">投稿済</span>',
+                failed: '<span class="badge badge-error">失敗</span>'
+            };
+            const badge = badgeMap[post.status] || badgeMap.draft;
+            const aiTag = post.ai_label == 1 ? ' <span class="badge badge-warning">AI</span>' : '';
+            const preview = escapeHtml(post.content).substring(0, 60) + (post.content.length > 60 ? '...' : '');
+
+            html += `<tr>
+                <td class="post-preview">${preview}</td>
+                <td>${badge}${aiTag}</td>
+                <td style="white-space:nowrap; color:var(--color-text-secondary); font-size:var(--font-size-xs);">${post.scheduled_at || '-'}</td>
+                <td style="white-space:nowrap; color:var(--color-text-secondary); font-size:var(--font-size-xs);">${post.created_at}</td>
+                <td style="white-space:nowrap;">
+                    <button class="btn btn-ghost btn-sm" onclick="editPost(${post.id})">編集</button>
+                    <button class="btn btn-ghost btn-sm" onclick="deletePost(${post.id})" style="color:var(--color-error);">削除</button>
+                </td>
+            </tr>`;
+        });
+
+        html += '</tbody></table>';
+        container.innerHTML = html;
+    } else {
+        container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">✏️</div><p>投稿がありません</p></div>';
+    }
+
+    // Update filter button active states
+    document.querySelectorAll('[data-filter]').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.filter === filter);
+        btn.onclick = () => loadPostList(btn.dataset.filter);
+    });
+}
+
+async function editPost(postId) {
+    const result = await apiCall('posts.php', { action: 'get', id: postId });
+    if (result.success && result.post) {
+        const post = result.post;
+        document.getElementById('editPostId').value = post.id;
+        document.getElementById('editPostContent').value = post.content;
+        document.getElementById('editPostStatus').value = post.status === 'posted' ? 'draft' : post.status;
+        document.getElementById('editPostSchedule').value = post.scheduled_at || '';
+        document.getElementById('editPostAiLabel').checked = post.ai_label == 1;
+        openModal('editPostModal');
+    } else {
+        showToast('投稿データの取得に失敗しました', 'error');
+    }
+}
+
+async function updatePost() {
+    const id = document.getElementById('editPostId').value;
+    const result = await apiCall('posts.php', {
+        action: 'update',
+        id: id,
+        content: document.getElementById('editPostContent').value,
+        status: document.getElementById('editPostStatus').value,
+        scheduled_at: document.getElementById('editPostSchedule').value,
+        ai_label: document.getElementById('editPostAiLabel').checked ? 1 : 0
+    });
+
+    if (result.success) {
+        showToast('投稿を更新しました', 'success');
+        closeModal('editPostModal');
+        loadPostList();
+    } else {
+        showToast(result.message || '更新に失敗しました', 'error');
+    }
+}
+
+async function deletePost(postId) {
+    if (!confirm('この投稿を削除しますか？')) return;
+
+    const result = await apiCall('posts.php', { action: 'delete', id: postId });
+    if (result.success) {
+        showToast('投稿を削除しました', 'success');
+        loadPostList();
+    } else {
+        showToast(result.message || '削除に失敗しました', 'error');
+    }
+}
+
+// ===== Thread Creation =====
+function addThreadItem() {
+    const container = document.getElementById('threadPosts');
+    const count = container.querySelectorAll('.thread-item').length + 1;
+    const item = document.createElement('div');
+    item.className = 'thread-item';
+    item.innerHTML = `
+        <textarea class="form-textarea thread-textarea" placeholder="スレッド ${count}つ目の投稿..." rows="3"></textarea>
+        <button class="btn btn-ghost btn-sm" onclick="this.parentElement.remove()" style="position:absolute; top:4px; right:0; color:var(--color-error);">✕</button>
+    `;
+    container.appendChild(item);
+}
+
+async function saveThreadDraft() {
+    const textareas = document.querySelectorAll('.thread-textarea');
+    const posts = [];
+    textareas.forEach(ta => {
+        const val = ta.value.trim();
+        if (val) posts.push(val);
+    });
+
+    if (posts.length < 2) {
+        showToast('スレッドには2つ以上の投稿が必要です', 'warning');
+        return;
+    }
+
+    const result = await apiCall('posts.php', {
+        action: 'create_thread',
+        posts: JSON.stringify(posts),
+        status: 'draft'
+    });
+
+    if (result.success) {
+        showToast('スレッドの下書きを保存しました', 'success');
+    } else {
+        showToast(result.message || 'エラーが発生しました', 'error');
+    }
+}
+
+async function scheduleThread() {
+    const textareas = document.querySelectorAll('.thread-textarea');
+    const scheduledAt = document.getElementById('threadScheduleAt').value;
+    const posts = [];
+    textareas.forEach(ta => {
+        const val = ta.value.trim();
+        if (val) posts.push(val);
+    });
+
+    if (posts.length < 2) {
+        showToast('スレッドには2つ以上の投稿が必要です', 'warning');
+        return;
+    }
+    if (!scheduledAt) {
+        showToast('予約日時を設定してください', 'warning');
+        return;
+    }
+
+    const result = await apiCall('posts.php', {
+        action: 'create_thread',
+        posts: JSON.stringify(posts),
+        status: 'scheduled',
+        scheduled_at: scheduledAt
+    });
+
+    if (result.success) {
+        showToast('スレッドの予約を設定しました', 'success');
+        loadPostList();
+    } else {
+        showToast(result.message || 'エラーが発生しました', 'error');
+    }
+}
+
+// ===== Repurpose =====
+async function repurposeContent() {
+    const url = document.getElementById('repurposeUrl').value.trim();
+    if (!url) {
+        showToast('URLを入力してください', 'warning');
+        return;
+    }
+
+    const btn = document.getElementById('repurposeBtn');
+    btn.disabled = true;
+    btn.textContent = '変換中...';
+
+    const result = await apiCall('gemini_api.php', {
+        action: 'repurpose',
+        url: url
+    });
+
+    btn.disabled = false;
+    btn.textContent = '🔄 Threads形式に変換';
+
+    if (result.success && result.suggestions) {
+        const container = document.getElementById('repurposeSuggestions');
+        container.innerHTML = '';
+        result.suggestions.forEach((s, i) => {
+            container.innerHTML += `
+                <div class="ai-suggestion-card">
+                    <div class="ai-suggestion-type">案 ${i + 1}</div>
+                    <div class="ai-suggestion-content">${escapeHtml(s)}</div>
+                    <button class="btn btn-secondary btn-sm" onclick="useAsSuggestion(this)">📋 投稿に使う</button>
+                </div>
+            `;
+        });
+        document.getElementById('repurposeResult').classList.remove('hidden');
+    } else {
+        showToast(result.message || '変換に失敗しました', 'error');
+    }
+}
+
+function useAsSuggestion(btn) {
+    const content = btn.parentElement.querySelector('.ai-suggestion-content').textContent;
+    document.getElementById('postContent').value = content;
+    document.getElementById('charCount').textContent = content.length;
+    switchSection('posts');
+    // Switch to create tab
+    document.querySelector('[data-tab="tab-post-create"]').click();
+    showToast('投稿フォームにコピーしました', 'success');
+}
+
+// ===== AI Analysis =====
+async function startAnalysis() {
+    document.getElementById('startAnalysisBtn').classList.add('hidden');
+    document.getElementById('analysisAnimation').classList.remove('hidden');
+
+    // Step 1: Fetch posts
+    updateAnalysisStep('step-fetch', 'active');
+    await delay(800);
+
+    const result = await apiCall('gemini_api.php', { action: 'analyze' });
+
+    if (!result.success) {
+        document.getElementById('analysisAnimation').classList.add('hidden');
+        document.getElementById('startAnalysisBtn').classList.remove('hidden');
+        showToast(result.message || '分析に失敗しました', 'error');
+        return;
+    }
+
+    // Animate steps
+    updateAnalysisStep('step-fetch', 'done');
+    updateAnalysisStep('step-analyze', 'active');
+    await delay(1200);
+    updateAnalysisStep('step-analyze', 'done');
+    updateAnalysisStep('step-generate', 'active');
+    await delay(1000);
+    updateAnalysisStep('step-generate', 'done');
+    updateAnalysisStep('step-save', 'active');
+    await delay(600);
+    updateAnalysisStep('step-save', 'done');
+
+    // Show result
+    await delay(500);
+    document.getElementById('analysisAnimation').classList.add('hidden');
+    document.getElementById('analysisResult').classList.remove('hidden');
+    document.getElementById('analysisResultContent').textContent = result.style_guide || '分析結果を取得できませんでした。';
+
+    showToast('自己解析が完了しました！', 'success');
+    loadStyleGuide();
+}
+
+function updateAnalysisStep(stepId, state) {
+    const step = document.getElementById(stepId);
+    if (!step) return;
+    step.className = 'analysis-step ' + state;
+    const icon = step.querySelector('span');
+    if (state === 'active') icon.textContent = '⏳';
+    if (state === 'done') icon.textContent = '✅';
+}
+
+// ===== Style Guide =====
+async function loadStyleGuide() {
+    const result = await apiCall('style_guide.php', { action: 'get' }, 'POST');
+    if (result.success && result.content) {
+        document.getElementById('styleGuideEditor').value = result.content;
+        updateStyleGuidePreview();
+    }
+}
+
+function updateStyleGuidePreview() {
+    const editor = document.getElementById('styleGuideEditor');
+    const preview = document.getElementById('styleGuidePreview');
+    if (editor && preview) {
+        // Simple markdown-like rendering
+        let text = escapeHtml(editor.value);
+        text = text.replace(/^# (.+)$/gm, '<h2>$1</h2>');
+        text = text.replace(/^## (.+)$/gm, '<h3>$1</h3>');
+        text = text.replace(/^### (.+)$/gm, '<h4>$1</h4>');
+        text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+        text = text.replace(/^- (.+)$/gm, '• $1');
+        text = text.replace(/\n/g, '<br>');
+        preview.innerHTML = text || '<p class="text-muted">プレビューがここに表示されます</p>';
+    }
+}
+
+// Add live preview
+document.addEventListener('DOMContentLoaded', () => {
+    const editor = document.getElementById('styleGuideEditor');
+    if (editor) {
+        editor.addEventListener('input', updateStyleGuidePreview);
+    }
+});
+
+async function saveStyleGuide() {
+    const content = document.getElementById('styleGuideEditor').value;
+    const result = await apiCall('style_guide.php', {
+        action: 'save',
+        content: content
+    });
+
+    if (result.success) {
+        showToast('スタイルガイドを保存しました', 'success');
+    } else {
+        showToast(result.message || '保存に失敗しました', 'error');
+    }
+}
+
+// ===== AI Post Generation =====
+async function generatePosts() {
+    const topic = document.getElementById('generateTopic').value.trim();
+    if (!topic) {
+        showToast('トピックを入力してください', 'warning');
+        return;
+    }
+
+    const btn = document.getElementById('generateBtn');
+    btn.disabled = true;
+    btn.textContent = '生成中...';
+
+    const result = await apiCall('gemini_api.php', {
+        action: 'generate',
+        topic: topic,
+        instructions: document.getElementById('generateInstructions').value
+    });
+
+    btn.disabled = false;
+    btn.textContent = '✨ 3案を生成';
+
+    if (result.success && result.suggestions) {
+        const types = ['教育', '独り言', '交流'];
+        const container = document.getElementById('generateSuggestions');
+        container.innerHTML = '';
+
+        result.suggestions.forEach((s, i) => {
+            container.innerHTML += `
+                <div class="ai-suggestion-card">
+                    <div class="ai-suggestion-type">${types[i] || '案 ' + (i + 1)}</div>
+                    <div class="ai-suggestion-content">${escapeHtml(s)}</div>
+                    <div class="flex gap-sm mt-md">
+                        <button class="btn btn-secondary btn-sm" onclick="useAsSuggestion(this)">📋 投稿に使う</button>
+                        <button class="btn btn-ghost btn-sm" onclick="copyToClipboard('${escapeHtml(s).replace(/'/g, "\\'")}')">コピー</button>
+                    </div>
+                </div>
+            `;
+        });
+        document.getElementById('generateResults').classList.remove('hidden');
+    } else {
+        showToast(result.message || '生成に失敗しました', 'error');
+    }
+}
+
+// ===== Analytics / Insights =====
+async function fetchInsights() {
+    showLoading('インサイトデータを取得中');
+    const result = await apiCall('insights.php', { action: 'fetch' });
+    hideLoading();
+
+    if (result.success) {
+        showToast('インサイトデータを更新しました', 'success');
+        loadEngagementTable();
+        initCharts();
+    } else {
+        showToast(result.message || 'データ取得に失敗しました', 'error');
+    }
+}
+
+async function loadEngagementTable() {
+    const container = document.getElementById('engagementTable');
+    if (!container) return;
+
+    const result = await apiCall('insights.php', { action: 'list' });
+    if (result.success && result.insights && result.insights.length > 0) {
+        let html = '<table class="data-table"><thead><tr>';
+        html += '<th>投稿</th><th>👍 いいね</th><th>💬 返信</th><th>🔄 リポスト</th><th>👁 閲覧</th><th>取得日</th>';
+        html += '</tr></thead><tbody>';
+
+        result.insights.forEach(ins => {
+            const preview = escapeHtml(ins.content || '').substring(0, 40) + '...';
+            html += `<tr>
+                <td class="post-preview">${preview}</td>
+                <td>${ins.likes}</td>
+                <td>${ins.replies}</td>
+                <td>${ins.reposts}</td>
+                <td>${ins.views}</td>
+                <td style="font-size:var(--font-size-xs); color:var(--color-text-secondary);">${ins.fetched_at}</td>
+            </tr>`;
+        });
+        html += '</tbody></table>';
+        container.innerHTML = html;
+    }
+}
+
+async function detectTopPosts() {
+    showLoading('優秀投稿を検出中');
+    const result = await apiCall('insights.php', { action: 'detect_top' });
+    hideLoading();
+
+    if (result.success) {
+        showToast(`${result.count || 0}件の優秀投稿を検出しました`, 'success');
+        loadTopPosts();
+    } else {
+        showToast(result.message || 'エラーが発生しました', 'error');
+    }
+}
+
+async function loadTopPosts() {
+    const container = document.getElementById('topPostsList');
+    if (!container) return;
+
+    const result = await apiCall('insights.php', { action: 'top_list' });
+    if (result.success && result.top_posts && result.top_posts.length > 0) {
+        let html = '';
+        result.top_posts.forEach(tp => {
+            html += `
+                <div class="card" style="margin-bottom:var(--space-md);">
+                    <div class="flex justify-between items-center">
+                        <span class="badge badge-warning">🏆 スコア: ${tp.engagement_score}</span>
+                        <button class="btn btn-secondary btn-sm" onclick="recyclePost(${tp.post_id})">♻️ リサイクル</button>
+                    </div>
+                    <p class="text-sm mt-md" style="line-height:1.7;">${escapeHtml(tp.content)}</p>
+                    <p class="text-xs text-muted mt-md">${tp.reason}</p>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+    }
+}
+
+async function recyclePost(postId) {
+    const result = await apiCall('posts.php', { action: 'recycle', id: postId });
+    if (result.success) {
+        showToast('投稿をリサイクルしました（下書きとして複製）', 'success');
+        loadPostList();
+    } else {
+        showToast(result.message || 'エラーが発生しました', 'error');
+    }
+}
+
+// ===== Keywords =====
+async function addKeyword() {
+    const input = document.getElementById('newKeyword');
+    const keyword = input.value.trim();
+    if (!keyword) {
+        showToast('キーワードを入力してください', 'warning');
+        return;
+    }
+
+    const result = await apiCall('insights.php', {
+        action: 'add_keyword',
+        keyword: keyword
+    });
+
+    if (result.success) {
+        showToast('キーワードを追加しました', 'success');
+        input.value = '';
+        loadKeywords();
+    } else {
+        showToast(result.message || 'エラーが発生しました', 'error');
+    }
+}
+
+async function loadKeywords() {
+    const container = document.getElementById('keywordList');
+    if (!container) return;
+
+    const result = await apiCall('insights.php', { action: 'list_keywords' });
+    if (result.success && result.keywords && result.keywords.length > 0) {
+        let html = '';
+        result.keywords.forEach(kw => {
+            html += `
+                <div class="flex items-center gap-md mb-sm" style="padding:var(--space-sm) var(--space-md); background:var(--color-surface-alt); border-radius:var(--radius-md);">
+                    <span class="badge badge-info">${escapeHtml(kw.keyword)}</span>
+                    <span class="text-xs text-muted" style="margin-left:auto;">${kw.is_active == 1 ? '監視中' : '停止中'}</span>
+                    <button class="btn btn-ghost btn-sm" onclick="removeKeyword(${kw.id})" style="color:var(--color-error);">✕</button>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+    }
+}
+
+async function removeKeyword(id) {
+    const result = await apiCall('insights.php', {
+        action: 'remove_keyword',
+        id: id
+    });
+    if (result.success) {
+        showToast('キーワードを削除しました', 'success');
+        loadKeywords();
+    }
+}
+
+// ===== Settings =====
+async function saveThreadsSettings() {
+    const result = await apiCall('settings.php', {
+        action: 'save',
+        threads_access_token: document.getElementById('settingsThreadsToken').value,
+        threads_user_id: document.getElementById('settingsThreadsUserId').value,
+        threads_token_expires_at: document.getElementById('settingsTokenExpires').value
+    });
+
+    if (result.success) {
+        showToast('Threads API 設定を保存しました', 'success');
+    } else {
+        showToast(result.message || '保存に失敗しました', 'error');
+    }
+}
+
+async function saveGeminiSettings() {
+    const result = await apiCall('settings.php', {
+        action: 'save',
+        gemini_api_key: document.getElementById('settingsGeminiKey').value,
+        gemini_model: document.getElementById('settingsGeminiModel').value
+    });
+
+    if (result.success) {
+        showToast('Gemini API 設定を保存しました', 'success');
+    } else {
+        showToast(result.message || '保存に失敗しました', 'error');
+    }
+}
+
+async function saveLicenseKey() {
+    const result = await apiCall('settings.php', {
+        action: 'save',
+        license_key: document.getElementById('settingsLicenseKey').value
+    });
+
+    if (result.success) {
+        showToast('ライセンスキーを保存しました', 'success');
+    } else {
+        showToast(result.message || '保存に失敗しました', 'error');
+    }
+}
+
+async function verifyLicense() {
+    showLoading('ライセンスを認証中');
+    const result = await apiCall('settings.php', { action: 'verify_license' });
+    hideLoading();
+
+    const statusEl = document.getElementById('licenseStatus');
+    if (result.success && result.valid) {
+        statusEl.innerHTML = '<div class="auth-alert success">✅ ライセンスは有効です</div>';
+    } else {
+        let debugInfo = '';
+        if (result.debug) {
+            debugInfo = `
+                <div style="margin-top:var(--space-sm); padding:var(--space-md); background:var(--color-bg); border-radius:var(--radius-sm); font-family:monospace; font-size:var(--font-size-xs); line-height:1.8; word-break:break-all;">
+                    <div><strong>エラー:</strong> ${escapeHtml(result.message || '不明')}</div>
+                    <div><strong>HTTP Code:</strong> ${result.http_code || 'N/A'}</div>
+                    <div><strong>認証URL:</strong> ${escapeHtml(result.debug.url || 'N/A')}</div>
+                    <div><strong>送信トークン:</strong> ${escapeHtml(result.debug.sent_token || 'N/A')}</div>
+                    <div><strong>ライセンスキー:</strong> ${escapeHtml(result.debug.license_key || 'N/A')}</div>
+                    <div><strong>レスポンス:</strong> ${escapeHtml(result.debug.response || '(空)')}</div>
+                </div>`;
+        } else if (result.message) {
+            debugInfo = `<div style="margin-top:var(--space-sm); font-size:var(--font-size-xs); color:var(--color-text-muted);">${escapeHtml(result.message)}</div>`;
+        }
+        statusEl.innerHTML = '<div class="auth-alert error">❌ ライセンス認証に失敗しました' + debugInfo + '</div>';
+    }
+}
+
+async function saveAutoPostSettings() {
+    const result = await apiCall('settings.php', {
+        action: 'save',
+        auto_post_enabled: document.getElementById('settingsAutoPost').checked ? '1' : '0',
+        post_interval_variance: document.getElementById('settingsVariance').value,
+        ai_label_default: document.getElementById('settingsAiLabelDefault').checked ? '1' : '0'
+    });
+
+    if (result.success) {
+        showToast('自動投稿設定を保存しました', 'success');
+    } else {
+        showToast(result.message || '保存に失敗しました', 'error');
+    }
+}
+
+async function refreshToken() {
+    showLoading('トークンを更新中');
+    const result = await apiCall('settings.php', { action: 'refresh_token' });
+    hideLoading();
+
+    if (result.success) {
+        showToast('トークンを更新しました', 'success');
+        location.reload();
+    } else {
+        showToast(result.message || 'トークン更新に失敗しました', 'error');
+    }
+}
+
+// ===== System Update =====
+async function checkForUpdate() {
+    const btn = document.getElementById('checkUpdateBtn');
+    btn.disabled = true;
+    btn.textContent = '確認中...';
+
+    const result = await apiCall('../update.php', { action: 'check' });
+    btn.disabled = false;
+    btn.textContent = '🔍 更新を確認';
+
+    const statusEl = document.getElementById('updateStatus');
+    if (result.success) {
+        if (result.has_update) {
+            statusEl.innerHTML = `
+                <div class="auth-alert" style="background:var(--color-info-bg); color:var(--color-info); border:1px solid rgba(41,121,255,0.2);">
+                    <strong>新しいバージョンが利用可能です: v${result.latest_version}</strong><br>
+                    <span class="text-xs">${escapeHtml(result.release_notes || '').substring(0, 200)}</span>
+                </div>
+            `;
+            document.getElementById('executeUpdateBtn').classList.remove('hidden');
+        } else {
+            statusEl.innerHTML = '<div class="auth-alert success">✅ 最新バージョンです（v' + result.current_version + '）</div>';
+        }
+    } else {
+        statusEl.innerHTML = '<div class="auth-alert error">' + escapeHtml(result.message || 'エラー') + '</div>';
+    }
+}
+
+async function executeUpdate() {
+    if (!confirm('アップデートを実行しますか？\n（config.php と database.sqlite は保護されます）')) return;
+
+    showLoading('アップデート中');
+    const result = await apiCall('../update.php', { action: 'execute' });
+    hideLoading();
+
+    if (result.success) {
+        showToast('アップデートが完了しました！', 'success');
+        setTimeout(() => location.reload(), 2000);
+    } else {
+        showToast(result.message || 'アップデートに失敗しました', 'error');
+    }
+}
+
+// ===== Charts =====
+let followerChart, hourlyChart, engagementTrendChart;
+
+function initCharts() {
+    initFollowerChart();
+    initHourlyEngagementChart();
+    initEngagementTrendChart();
+}
+
+async function initFollowerChart() {
+    const ctx = document.getElementById('followerChart');
+    if (!ctx) return;
+
+    const result = await apiCall('insights.php', { action: 'follower_history' });
+    const data = (result.success && result.data) ? result.data : [];
+
+    if (followerChart) followerChart.destroy();
+    followerChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: data.map(d => d.date),
+            datasets: [{
+                label: 'フォロワー数',
+                data: data.map(d => d.count),
+                borderColor: '#E1306C',
+                backgroundColor: 'rgba(225, 48, 108, 0.1)',
+                fill: true,
+                tension: 0.4,
+                pointRadius: 3,
+                pointBackgroundColor: '#E1306C'
+            }]
+        },
+        options: chartOptions('フォロワー数')
+    });
+}
+
+async function initHourlyEngagementChart() {
+    const ctx = document.getElementById('hourlyEngagementChart');
+    if (!ctx) return;
+
+    const result = await apiCall('insights.php', { action: 'hourly_engagement' });
+    const data = (result.success && result.data) ? result.data : [];
+
+    if (hourlyChart) hourlyChart.destroy();
+    hourlyChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: data.map(d => d.hour + '時'),
+            datasets: [{
+                label: 'エンゲージメント',
+                data: data.map(d => d.engagement),
+                backgroundColor: 'rgba(131, 58, 180, 0.6)',
+                borderColor: '#833AB4',
+                borderWidth: 1,
+                borderRadius: 4
+            }]
+        },
+        options: chartOptions('エンゲージメント')
+    });
+}
+
+async function initEngagementTrendChart() {
+    const ctx = document.getElementById('engagementTrendChart');
+    if (!ctx) return;
+
+    const result = await apiCall('insights.php', { action: 'engagement_trend' });
+    const data = (result.success && result.data) ? result.data : [];
+
+    if (engagementTrendChart) engagementTrendChart.destroy();
+    engagementTrendChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: data.map(d => d.date),
+            datasets: [
+                {
+                    label: 'いいね',
+                    data: data.map(d => d.likes),
+                    borderColor: '#E1306C',
+                    backgroundColor: 'rgba(225, 48, 108, 0.1)',
+                    tension: 0.4,
+                    fill: false
+                },
+                {
+                    label: '返信',
+                    data: data.map(d => d.replies),
+                    borderColor: '#833AB4',
+                    backgroundColor: 'rgba(131, 58, 180, 0.1)',
+                    tension: 0.4,
+                    fill: false
+                },
+                {
+                    label: 'リポスト',
+                    data: data.map(d => d.reposts),
+                    borderColor: '#F77737',
+                    backgroundColor: 'rgba(247, 119, 55, 0.1)',
+                    tension: 0.4,
+                    fill: false
+                }
+            ]
+        },
+        options: chartOptions('エンゲージメント推移')
+    });
+}
+
+function refreshFollowerChart() {
+    initFollowerChart();
+    showToast('フォロワーチャートを更新しました', 'info');
+}
+
+function chartOptions(title) {
+    return {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                labels: { color: '#999', font: { family: 'Inter', size: 11 } }
+            }
+        },
+        scales: {
+            x: {
+                grid: { color: 'rgba(255,255,255,0.05)' },
+                ticks: { color: '#666', font: { family: 'Inter', size: 10 } }
+            },
+            y: {
+                grid: { color: 'rgba(255,255,255,0.05)' },
+                ticks: { color: '#666', font: { family: 'Inter', size: 10 } },
+                beginAtZero: true
+            }
+        }
+    };
+}
+
+// ===== Utility Functions =====
+function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.appendChild(document.createTextNode(str));
+    return div.innerHTML;
+}
+
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        showToast('クリップボードにコピーしました', 'success');
+    }).catch(() => {
+        showToast('コピーに失敗しました', 'error');
+    });
+}
+
+function copyCronCommand() {
+    const input = document.getElementById('cronCommand');
+    if (input) {
+        navigator.clipboard.writeText(input.value).then(() => {
+            showToast('Cronコマンドをコピーしました', 'success');
+        }).catch(() => {
+            // フォールバック
+            input.select();
+            document.execCommand('copy');
+            showToast('Cronコマンドをコピーしました', 'success');
+        });
+    }
+}
+
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}

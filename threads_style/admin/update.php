@@ -10,7 +10,7 @@
  *
  * 【カスタマイズ箇所】
  * - GITHUB_REPO のデフォルト値（config.phpで定義推奨）
- * - User-Agent の名前を YOUR_APP_NAME-Updater に変更
+ * - User-Agent の名前を ThreadsStyle-Updater に変更
  * - ZIP内のツール本体フォルダ名（$extracted_root のパス）
  * - $exclude_paths に保護したいファイルを追加
  * ============================================================
@@ -111,7 +111,7 @@ if ($action === 'check') {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_USERAGENT, 'YOUR_APP_NAME-Updater'); // GitHub APIはUser-Agent必須
+    curl_setopt($ch, CURLOPT_USERAGENT, 'ThreadsStyle-Updater'); // GitHub APIはUser-Agent必須
     curl_setopt($ch, CURLOPT_TIMEOUT, 10);
     // Xserver等での通信エラー回避用
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -158,7 +158,7 @@ if ($action === 'execute') {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_USERAGENT, 'YOUR_APP_NAME-Updater');
+    curl_setopt($ch, CURLOPT_USERAGENT, 'ThreadsStyle-Updater');
     curl_setopt($ch, CURLOPT_TIMEOUT, 15);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
@@ -197,7 +197,7 @@ if ($action === 'execute') {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $zip_url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_USERAGENT, 'YOUR_APP_NAME-Updater');
+    curl_setopt($ch, CURLOPT_USERAGENT, 'ThreadsStyle-Updater');
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // GitHubのzipballはリダイレクトされるため必須
     curl_setopt($ch, CURLOPT_TIMEOUT, 60);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -235,7 +235,7 @@ if ($action === 'execute') {
         if (is_dir($extract_dir . '/' . $f)) {
             // ★ ここをあなたのリポジトリ内の配布用ツールフォルダ名に変更する
             // 例: リポジトリの中に 'tool_app' というフォルダがある場合
-            $extracted_root = $extract_dir . '/' . $f . '/YOUR_APP_FOLDER';
+            $extracted_root = $extract_dir . '/' . $f . '/threads_style';
             break;
         }
     }

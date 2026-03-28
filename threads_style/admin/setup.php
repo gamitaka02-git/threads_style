@@ -1,15 +1,11 @@
 <?php
 /**
  * ============================================================
- * 初期設定（セットアップ）画面
+ * 初期設定（セットアップ）画面 - ThreadsStyle
  * ============================================================
  * 役割: ツール初回アクセス時に管理者パスワードの設定と
- *       SQLiteデータベースの初期化を行う。
+ *       SQLiteデータベースの初期化（全テーブル作成）を行う。
  *       セットアップ完了後はログイン画面へリダイレクト。
- *
- * 【カスタマイズ箇所】
- * - YOUR_APP_NAME: ツール名に書き換える
- * - テーブル定義: ツール固有のテーブルを追加する場合は修正
  * ============================================================
  */
 session_start();
@@ -31,7 +27,7 @@ if (file_exists($dbPath)) {
             }
         }
     } catch (Exception $e) {
-        // DBファイルはあっても中身が壊れている場合などは、このままセットアップ処理に進む
+        // DBファイルはあっても中身が壊れている場合はセットアップ処理に進む
     }
 }
 
@@ -52,59 +48,196 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'パスワードが一致しません。';
     } elseif (strlen($password) < 4) {
         $error = 'パスワードは4文字以上で設定してください。';
+    } elseif (empty(trim($_POST['license_key'] ?? ''))) {
+        $error = 'ライセンスキーを入力してください。';
     } else {
         try {
-            // 念の為、既存のDBファイルがあれば削除してまっさらにする
             if (file_exists($dbPath)) {
                 unlink($dbPath);
             }
 
             $pdo = new PDO('sqlite:' . $dbPath);
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $pdo->exec("PRAGMA foreign_keys = ON");
+            $pdo->exec("PRAGMA journal_mode = WAL");
 
             // ----------------------------------------------------------
-            // ★ ツール固有のテーブル定義はここに追加する
+            // config テーブル（設定管理・必須）
             // ----------------------------------------------------------
-            // 例: URLs管理テーブル
-            // $pdo->exec("
-            //     CREATE TABLE IF NOT EXISTS urls (
-            //         id INTEGER PRIMARY KEY AUTOINCREMENT,
-            //         keyword TEXT UNIQUE,
-            //         original_url TEXT,
-            //         click_count INTEGER DEFAULT 0,
-            //         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            //         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-            //     )
-            // ");
-
-            // 例: クリック解析ログテーブル
-            // $pdo->exec("
-            //     CREATE TABLE IF NOT EXISTS click_logs (
-            //         id INTEGER PRIMARY KEY AUTOINCREMENT,
-            //         url_id INTEGER NOT NULL,
-            //         clicked_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            //         referer TEXT DEFAULT '',
-            //         FOREIGN KEY (url_id) REFERENCES urls(id) ON DELETE CASCADE
-            //     )
-            // ");
-
-            // config テーブル作成（管理設定の保存用。必須）
             $pdo->exec("
                 CREATE TABLE IF NOT EXISTS config (
                     key TEXT PRIMARY KEY,
                     value TEXT
                 )
             ");
-            
+
+            // ----------------------------------------------------------
+            // posts テーブル（投稿データ管理）
+            // ----------------------------------------------------------
+            $pdo->exec("
+                CREATE TABLE IF NOT EXISTS posts (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    thread_group_id INTEGER DEFAULT NULL,
+                    thread_order INTEGER DEFAULT 0,
+                    content TEXT NOT NULL,
+                    media_url TEXT DEFAULT '',
+                    status TEXT DEFAULT 'draft',
+                    scheduled_at DATETIME DEFAULT NULL,
+                    posted_at DATETIME DEFAULT NULL,
+                    threads_media_id TEXT DEFAULT '',
+                    threads_post_id TEXT DEFAULT '',
+                    is_ai_generated INTEGER DEFAULT 0,
+                    ai_label INTEGER DEFAULT 0,
+                    source_type TEXT DEFAULT 'manual',
+                    source_url TEXT DEFAULT '',
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                )
+            ");
+
+            // ----------------------------------------------------------
+            // post_insights テーブル（投稿エンゲージメント）
+            // ----------------------------------------------------------
+            $pdo->exec("
+                CREATE TABLE IF NOT EXISTS post_insights (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    post_id INTEGER NOT NULL,
+                    threads_post_id TEXT DEFAULT '',
+                    likes INTEGER DEFAULT 0,
+                    replies INTEGER DEFAULT 0,
+                    reposts INTEGER DEFAULT 0,
+                    quotes INTEGER DEFAULT 0,
+                    views INTEGER DEFAULT 0,
+                    reach INTEGER DEFAULT 0,
+                    fetched_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE
+                )
+            ");
+
+            // ----------------------------------------------------------
+            // top_posts テーブル（優秀投稿DB）
+            // ----------------------------------------------------------
+            $pdo->exec("
+                CREATE TABLE IF NOT EXISTS top_posts (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    post_id INTEGER NOT NULL,
+                    reason TEXT DEFAULT '',
+                    engagement_score REAL DEFAULT 0,
+                    saved_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE
+                )
+            ");
+
+            // ----------------------------------------------------------
+            // keyword_monitors テーブル（キーワード監視設定）
+            // ----------------------------------------------------------
+            $pdo->exec("
+                CREATE TABLE IF NOT EXISTS keyword_monitors (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    keyword TEXT NOT NULL,
+                    is_active INTEGER DEFAULT 1,
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                )
+            ");
+
+            // ----------------------------------------------------------
+            // keyword_alerts テーブル（キーワードアラート結果）
+            // ----------------------------------------------------------
+            $pdo->exec("
+                CREATE TABLE IF NOT EXISTS keyword_alerts (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    monitor_id INTEGER NOT NULL,
+                    threads_post_id TEXT DEFAULT '',
+                    author_username TEXT DEFAULT '',
+                    content_preview TEXT DEFAULT '',
+                    found_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    is_read INTEGER DEFAULT 0,
+                    FOREIGN KEY (monitor_id) REFERENCES keyword_monitors(id) ON DELETE CASCADE
+                )
+            ");
+
+            // ----------------------------------------------------------
+            // style_guides テーブル（AIスタイルガイド）
+            // ----------------------------------------------------------
+            $pdo->exec("
+                CREATE TABLE IF NOT EXISTS style_guides (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    content_markdown TEXT DEFAULT '',
+                    analysis_data TEXT DEFAULT '',
+                    is_active INTEGER DEFAULT 1,
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                )
+            ");
+
+            // ----------------------------------------------------------
+            // token_logs テーブル（トークン更新履歴）
+            // ----------------------------------------------------------
+            $pdo->exec("
+                CREATE TABLE IF NOT EXISTS token_logs (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    action TEXT NOT NULL,
+                    status TEXT NOT NULL,
+                    message TEXT DEFAULT '',
+                    logged_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                )
+            ");
+
+            // ----------------------------------------------------------
+            // follower_history テーブル（フォロワー数推移）
+            // ----------------------------------------------------------
+            $pdo->exec("
+                CREATE TABLE IF NOT EXISTS follower_history (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    follower_count INTEGER NOT NULL,
+                    recorded_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                )
+            ");
+
+            // ----------------------------------------------------------
+            // posting_schedule テーブル（自動投稿スケジュール）
+            // ----------------------------------------------------------
+            $pdo->exec("
+                CREATE TABLE IF NOT EXISTS posting_schedule (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    time_slot TEXT NOT NULL,
+                    variance_minutes INTEGER DEFAULT 30,
+                    is_active INTEGER DEFAULT 1,
+                    days_of_week TEXT DEFAULT '1,2,3,4,5,6,7',
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                )
+            ");
+
             // パスワードをハッシュ化して保存
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
             $stmt = $pdo->prepare("INSERT INTO config (key, value) VALUES ('admin_password', :pass)");
             $stmt->execute([':pass' => $hashed_password]);
 
             // セットアップ完了フラグを保存
-            $stmt = $pdo->prepare("INSERT INTO config (key, value) VALUES ('setup_complete', '1')");
-            $stmt->execute();
-            
+            $pdo->exec("INSERT INTO config (key, value) VALUES ('setup_complete', '1')");
+
+            // デフォルト設定の投入（フォームから入力された値を反映）
+            $license_key = trim($_POST['license_key'] ?? '');
+            $threads_token = trim($_POST['threads_access_token'] ?? '');
+            $threads_user_id = trim($_POST['threads_user_id'] ?? '');
+
+            $defaults = [
+                ['threads_access_token', $threads_token],
+                ['threads_user_id', $threads_user_id],
+                ['threads_token_expires_at', $threads_token ? date('Y-m-d', strtotime('+60 days')) : ''],
+                ['gemini_api_key', ''],
+                ['gemini_model', 'gemini-3.1-flash-lite-preview'],
+                ['license_key', $license_key],
+                ['auto_post_enabled', '0'],
+                ['ai_label_default', '0'],
+                ['post_interval_variance', '30'],
+                ['top_post_threshold', '50'],
+            ];
+            $stmt = $pdo->prepare("INSERT OR IGNORE INTO config (key, value) VALUES (:key, :value)");
+            foreach ($defaults as $d) {
+                $stmt->execute([':key' => $d[0], ':value' => $d[1]]);
+            }
+
             // ログイン画面へリダイレクト
             $_SESSION['setup_success'] = '初期設定が完了しました。作成したパスワードでログインしてください。';
             header('Location: login.php');
@@ -121,39 +254,67 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>初期設定 - YOUR_APP_NAME</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>初期設定 - ThreadsStyle</title>
+    <link rel="stylesheet" href="assets/css/app.css">
 </head>
-<body class="bg-gray-100 h-screen flex items-center justify-center p-4">
+<body class="auth-page">
 
-    <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-sm border-t-4 border-blue-600">
-        <h1 class="text-2xl font-bold mb-6 text-center text-gray-800">YOUR_APP_NAME｜初期設定</h1>
-        <p class="text-sm text-gray-600 mb-4">
+    <div class="auth-card">
+        <div class="auth-logo">
+            <h1>ThreadsStyle</h1>
+            <p>初期設定</p>
+        </div>
+
+        <p style="color: var(--color-text-secondary); font-size: var(--font-size-sm); margin-bottom: var(--space-lg); line-height: 1.7;">
             ようこそ！<br>
             使用を開始する前に、管理画面にログインするための管理者パスワードを設定してください。
         </p>
 
         <?php if ($error): ?>
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 text-sm" role="alert">
+            <div class="auth-alert error" style="margin-bottom: var(--space-md);">
                 <?= htmlspecialchars($error) ?>
             </div>
         <?php endif; ?>
 
-        <form method="POST" action="setup.php" class="space-y-4">
+        <form method="POST" action="setup.php" class="auth-form">
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">管理者パスワード (4文字以上)</label>
+                <label class="form-label">管理者パスワード (4文字以上) <span style="color:var(--color-error);">*必須</span></label>
                 <input type="password" name="password" required autofocus
-                    class="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    class="auth-input"
                     placeholder="パスワード">
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">管理者パスワード (確認用)</label>
+                <label class="form-label">管理者パスワード (確認用) <span style="color:var(--color-error);">*必須</span></label>
                 <input type="password" name="password_confirm" required
-                    class="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    class="auth-input"
                     placeholder="もう一度入力">
             </div>
-            <button type="submit"
-                class="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 transition shadow">設定を完了する</button>
+
+            <div style="border-top:1px solid var(--color-border); padding-top:var(--space-lg); margin-top:var(--space-md);">
+                <p style="color:var(--color-text-secondary); font-size:var(--font-size-xs); margin-bottom:var(--space-md); line-height:1.7;">
+                    ライセンスキーは必須です。その他の項目はあとから設定画面で変更できます。
+                </p>
+                <div>
+                    <label class="form-label">ライセンスキー <span style="color:var(--color-error);">*必須</span></label>
+                    <input type="text" name="license_key" required
+                        class="auth-input"
+                        placeholder="XXXX-XXXX-XXXX-XXXX">
+                </div>
+                <div style="margin-top:var(--space-md);">
+                    <label class="form-label">Threads アクセストークン（任意）</label>
+                    <input type="text" name="threads_access_token"
+                        class="auth-input"
+                        placeholder="アクセストークン">
+                </div>
+                <div style="margin-top:var(--space-md);">
+                    <label class="form-label">Threads ユーザーID（任意）</label>
+                    <input type="text" name="threads_user_id"
+                        class="auth-input"
+                        placeholder="ユーザーID">
+                </div>
+            </div>
+
+            <button type="submit" class="auth-submit">設定を完了する</button>
         </form>
     </div>
 
