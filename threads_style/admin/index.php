@@ -357,9 +357,12 @@ $version = defined('TOOL_VERSION') ? TOOL_VERSION : 'v1.0.0';
                 <!-- Tab: 新規作成 -->
                 <div class="tab-panel active" id="tab-post-create">
                     <div class="post-composer">
+                        <!-- 複数画像プレビューエリア -->
+                        <div id="postMediaGallery" class="post-media-gallery" style="display:none;"></div>
+                        <!-- 一枚目の画像の場合は従来のプレビュー -->
                         <div id="postMediaPreview" class="post-media-preview">
                             <img src="" alt="Preview">
-                            <button class="remove-media-btn" onclick="removePostMedia('create')">✕</button>
+                            <button class="remove-media-btn" onclick="removePostMedia('create', 0)">✕</button>
                         </div>
                         <input type="hidden" id="postMediaUrl" value="">
                         <div class="post-composer-body">
@@ -378,8 +381,9 @@ $version = defined('TOOL_VERSION') ? TOOL_VERSION : 'v1.0.0';
                                     </label>
                                     <span class="text-sm">AIラベル</span>
                                 </div>
-                                <button class="btn-upload" id="createUploadBtn" onclick="triggerImageUpload('create')" title="画像を追加">
+                                <button class="btn-upload" id="createUploadBtn" onclick="triggerImageUpload('create')" title="画像を追加（最大10枚）">
                                     🖼️ <span style="font-size:var(--font-size-xs); margin-left:10px;">画像を追加</span>
+                                    <span id="createImageCount" class="image-count-badge" style="display:none;"></span>
                                 </button>
                                 <div class="form-group" style="margin:0;">
                                     <input type="datetime-local" id="scheduleAt" class="form-input"
@@ -390,7 +394,7 @@ $version = defined('TOOL_VERSION') ? TOOL_VERSION : 'v1.0.0';
                                 <button class="btn btn-secondary btn-sm" onclick="savePostDraft()">下書き保存</button>
                                 <button class="btn btn-primary btn-sm" onclick="schedulePost()">予約投稿</button>
                                 <button class="btn btn-primary btn-sm" onclick="publishPostNow()"
-                                    style="background:var(--color-success);">今すぐ投稿</button>
+                                    style="background:var(--color-success);高さ:10px;"><span>今すぐ投稿</span></button>
                             </div>
                         </div>
                     </div>
@@ -1004,9 +1008,12 @@ $version = defined('TOOL_VERSION') ? TOOL_VERSION : 'v1.0.0';
             </div>
             <div class="modal-body">
                 <input type="hidden" id="editPostId">
+                <!-- 複数画像プレビューエリア -->
+                <div id="editMediaGallery" class="post-media-gallery" style="display:none;"></div>
+                <!-- 一枚目の画像の場合は従来のプレビュー -->
                 <div id="editMediaPreview" class="post-media-preview">
                     <img src="" alt="Preview">
-                    <button class="remove-media-btn" onclick="removePostMedia('edit')">✕</button>
+                    <button class="remove-media-btn" onclick="removePostMedia('edit', 0)">✕</button>
                 </div>
                 <input type="hidden" id="editMediaUrl" value="">
                 <div class="form-group">
@@ -1034,8 +1041,9 @@ $version = defined('TOOL_VERSION') ? TOOL_VERSION : 'v1.0.0';
                         </label>
                         <span class="text-sm">AIラベル</span>
                     </div>
-                    <button class="btn-upload" id="editUploadBtn" onclick="triggerImageUpload('edit')" title="画像を追加">
+                    <button class="btn-upload" id="editUploadBtn" onclick="triggerImageUpload('edit')" title="画像を追加（最大10枚）">
                         🖼️ <span style="font-size:var(--font-size-xs); margin-left:2px;">画像を追加</span>
+                        <span id="editImageCount" class="image-count-badge" style="display:none;"></span>
                     </button>
                 </div>
             </div>
@@ -1046,8 +1054,8 @@ $version = defined('TOOL_VERSION') ? TOOL_VERSION : 'v1.0.0';
         </div>
     </div>
 
-    <!-- Hidden File Input -->
-    <input type="file" id="globalImageInput" style="display:none;" accept="image/jpeg,image/png,image/webp">
+    <!-- Hidden File Input (multiple) -->
+    <input type="file" id="globalImageInput" style="display:none;" accept="image/jpeg,image/png,image/webp" multiple>
 
     <script src="assets/js/app.js"></script>
 </body>

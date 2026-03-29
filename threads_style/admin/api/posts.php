@@ -66,7 +66,18 @@ switch ($action) {
         $is_ai_generated = (int)($_POST['is_ai_generated'] ?? 0);
         $source_type = $_POST['source_type'] ?? 'manual';
         $source_url = $_POST['source_url'] ?? '';
-        $media_url = $_POST['media_url'] ?? '';
+        // 複数画像対応: media_urls (JSON配列) が優先、なければ media_url
+        $media_url = '';
+        if (!empty($_POST['media_urls'])) {
+            $urls = json_decode($_POST['media_urls'], true);
+            if (is_array($urls) && count($urls) > 1) {
+                $media_url = json_encode(array_values(array_filter($urls)));
+            } elseif (is_array($urls) && count($urls) === 1) {
+                $media_url = $urls[0];
+            }
+        } elseif (!empty($_POST['media_url'])) {
+            $media_url = $_POST['media_url'];
+        }
 
         $now = date('Y-m-d H:i:s');
         $stmt = $pdo->prepare("
@@ -99,7 +110,18 @@ switch ($action) {
             $scheduled_at = date('Y-m-d H:i:s', strtotime($scheduled_at));
         }
         $ai_label = (int)($_POST['ai_label'] ?? 0);
-        $media_url = $_POST['media_url'] ?? '';
+        // 複数画像対応: media_urls (JSON配列) が優先、なければ media_url
+        $media_url = '';
+        if (!empty($_POST['media_urls'])) {
+            $urls = json_decode($_POST['media_urls'], true);
+            if (is_array($urls) && count($urls) > 1) {
+                $media_url = json_encode(array_values(array_filter($urls)));
+            } elseif (is_array($urls) && count($urls) === 1) {
+                $media_url = $urls[0];
+            }
+        } elseif (isset($_POST['media_url'])) {
+            $media_url = $_POST['media_url'];
+        }
 
         if (empty($content)) {
             echo json_encode(['success' => false, 'message' => '投稿内容を入力してください']);
@@ -137,7 +159,23 @@ switch ($action) {
     case 'publish_now':
         $content = trim($_POST['content'] ?? '');
         $ai_label = (int)($_POST['ai_label'] ?? 0);
-        $media_url = $_POST['media_url'] ?? '';
+
+        // 複数画像対応: media_urls (JSON配列) が優先、なければ media_url
+        $media_url_raw = '';
+        $media_for_api = ''; // APIに渡す値（単一URL or 配列）
+        if (!empty($_POST['media_urls'])) {
+            $urls = json_decode($_POST['media_urls'], true);
+            if (is_array($urls) && count($urls) >= 2) {
+                $media_for_api = array_values(array_filter($urls));
+                $media_url_raw = json_encode($media_for_api);
+            } elseif (is_array($urls) && count($urls) === 1) {
+                $media_for_api = $urls[0];
+                $media_url_raw = $urls[0];
+            }
+        } elseif (!empty($_POST['media_url'])) {
+            $media_for_api = $_POST['media_url'];
+            $media_url_raw = $_POST['media_url'];
+        }
 
         if (empty($content)) {
             echo json_encode(['success' => false, 'message' => '投稿内容を入力してください']);
@@ -147,7 +185,7 @@ switch ($action) {
         // Threads APIで投稿
         require_once __DIR__ . '/ThreadsAPI.php';
         $api = new ThreadsAPI();
-        $result = $api->publishPost($content, $ai_label == 1, $media_url);
+        $result = $api->publishPost($content, $ai_label == 1, $media_for_api);
 
         if ($result['success']) {
             // DBに投稿済みとして保存
@@ -158,13 +196,14 @@ switch ($action) {
             ");
             $stmt->execute([
                 ':content' => $content,
-                ':media_url' => $media_url,
+                ':media_url' => $media_url_raw,
                 ':post_id' => $result['post_id'] ?? '',
                 ':media_id' => $result['media_id'] ?? '',
                 ':ai_label' => $ai_label,
                 ':now' => $now,
             ]);
-            echo json_encode(['success' => true, 'message' => '投稿しました！']);
+            $msg = isset($result['carousel']) ? "カルーセル投稿({$result['image_count']}枚)しました！" : '投稿しました！';
+            echo json_encode(['success' => true, 'message' => $msg]);
         } else {
             echo json_encode(['success' => false, 'message' => $result['message'] ?? '投稿に失敗しました']);
         }

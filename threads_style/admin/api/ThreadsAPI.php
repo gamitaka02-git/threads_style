@@ -107,12 +107,18 @@ class ThreadsAPI {
      * Threads APIに投稿を公開する
      * @param string $content
      * @param bool $aiLabel
-     * @param string $mediaUrl 画像URL（任意）
+     * @param string|array $mediaUrl 画像URL（単一文字列 or 複数URLの配列）
      * @return array
      */
     public function publishPost($content, $aiLabel = false, $mediaUrl = '') {
         if (empty($this->accessToken) || empty($this->userId)) {
             return ['success' => false, 'message' => 'API設定が不足しています（トークンまたはユーザーIDが無効）。'];
+        }
+
+        // 複数画像URLの場合はカルーセル投稿へ委譲
+        $mediaUrls = $this->parseMediaUrls($mediaUrl);
+        if (count($mediaUrls) >= 2) {
+            return $this->publishCarouselPost($content, $mediaUrls, $aiLabel);
         }
 
         // Step 1: メディアコンテナ作成
@@ -122,9 +128,11 @@ class ThreadsAPI {
             'access_token' => $this->accessToken,
         ];
 
-        if (!empty($mediaUrl)) {
+        $singleUrl = count($mediaUrls) === 1 ? $mediaUrls[0] : '';
+
+        if (!empty($singleUrl)) {
             $params['media_type'] = 'IMAGE';
-            $params['image_url'] = $mediaUrl;
+            $params['image_url'] = $singleUrl;
             $params['text'] = $content;
         } else {
             $params['media_type'] = 'TEXT';
@@ -141,12 +149,103 @@ class ThreadsAPI {
         }
 
         $mediaId = $response['data']['id'];
-
-        // Step 2: 投稿公開の完了を待機（画像の場合は処理に時間がかかる場合があるため。ここではそのままStep 2へ進むが、通常はstatusなどをチェックするのが望ましい）
-        // Threads API では画像投稿後すぐに公開できないことがあるが、ここではシンプルな実装にとどめる
         
         // Step 2: 公開
         return $this->publishContainer($mediaId);
+    }
+
+    /**
+     * カルーセル投稿（複数画像）を公開する
+     * Threads API のカルーセル投稿は3ステップ:
+     *   1. 各画像のメディアコンテナ作成 (is_carousel_item=true)
+     *   2. カルーセルコンテナ作成 (media_type=CAROUSEL, children=id1,id2,...)
+     *   3. 公開
+     * @param string $content 投稿テキスト
+     * @param array $imageUrls 画像URLの配列（2〜20枚）
+     * @param bool $aiLabel
+     * @return array
+     */
+    public function publishCarouselPost($content, array $imageUrls, $aiLabel = false) {
+        if (empty($this->accessToken) || empty($this->userId)) {
+            return ['success' => false, 'message' => 'API設定が不足しています。'];
+        }
+
+        if (count($imageUrls) < 2) {
+            return ['success' => false, 'message' => 'カルーセル投稿には2枚以上の画像が必要です。'];
+        }
+        if (count($imageUrls) > 20) {
+            $imageUrls = array_slice($imageUrls, 0, 20); // 最大20枚
+        }
+
+        $containerUrl = "https://graph.threads.net/v1.0/{$this->userId}/threads";
+        $childIds = [];
+
+        // Step 1: 各画像のメディアコンテナを作成
+        foreach ($imageUrls as $idx => $imageUrl) {
+            $params = [
+                'media_type' => 'IMAGE',
+                'image_url' => $imageUrl,
+                'is_carousel_item' => 'true',
+                'access_token' => $this->accessToken,
+            ];
+            if ($aiLabel) {
+                $params['is_made_with_ai'] = 'true';
+            }
+
+            $response = $this->apiRequest($containerUrl, $params, 'POST');
+            if (!$response['success'] || empty($response['data']['id'])) {
+                return ['success' => false, 'message' => "画像{$idx}のコンテナ作成失敗: " . ($response['error'] ?? '不明なエラー')];
+            }
+            $childIds[] = $response['data']['id'];
+        }
+
+        // Threads API の推奨: コンテナ作成後 30 秒程度待機
+        sleep(2); // サーバー負荷を考慮して短めに設定
+
+        // Step 2: カルーセルコンテナを作成
+        $carouselParams = [
+            'media_type' => 'CAROUSEL',
+            'children' => implode(',', $childIds),
+            'text' => $content,
+            'access_token' => $this->accessToken,
+        ];
+        if ($aiLabel) {
+            $carouselParams['is_made_with_ai'] = 'true';
+        }
+
+        $carouselResponse = $this->apiRequest($containerUrl, $carouselParams, 'POST');
+        if (!$carouselResponse['success'] || empty($carouselResponse['data']['id'])) {
+            return ['success' => false, 'message' => 'カルーセルコンテナ作成失敗: ' . ($carouselResponse['error'] ?? '不明なエラー')];
+        }
+
+        $carouselId = $carouselResponse['data']['id'];
+
+        // Step 3: 公開
+        $result = $this->publishContainer($carouselId);
+        if ($result['success']) {
+            $result['carousel'] = true;
+            $result['image_count'] = count($imageUrls);
+        }
+        return $result;
+    }
+
+    /**
+     * media_url フィールドを画像URLの配列に変換する（後方互換性あり）
+     * @param string|array $mediaUrl
+     * @return array
+     */
+    private function parseMediaUrls($mediaUrl) {
+        if (empty($mediaUrl)) return [];
+        if (is_array($mediaUrl)) {
+            return array_values(array_filter($mediaUrl));
+        }
+        // JSON配列として試みる
+        $decoded = json_decode($mediaUrl, true);
+        if (is_array($decoded)) {
+            return array_values(array_filter($decoded));
+        }
+        // 単一URL文字列
+        return [$mediaUrl];
     }
 
     /**

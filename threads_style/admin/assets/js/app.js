@@ -34,62 +34,140 @@ document.addEventListener('DOMContentLoaded', () => {
 
 let activeUploadContext = 'create'; // 'create' or 'edit'
 
+// ===== Multi-Image State =====
+const mediaState = {
+    create: [], // [{url: '...'}]
+    edit: []    // [{url: '...'}]
+};
+const MAX_IMAGES = 10;
+
 function triggerImageUpload(context) {
+    const current = mediaState[context] || [];
+    if (current.length >= MAX_IMAGES) {
+        showToast(`画像は最大${MAX_IMAGES}枚まで追加できます`, 'warning');
+        return;
+    }
     activeUploadContext = context;
-    document.getElementById('globalImageInput').click();
+    const input = document.getElementById('globalImageInput');
+    input.value = ''; // リセット
+    input.click();
 }
 
 async function handleFileSelect(e) {
-    const file = e.target.files[0];
-    if (!file) return;
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
 
-    const formData = new FormData();
-    formData.append('image', file);
+    const context = activeUploadContext;
+    const current = mediaState[context] || [];
+    const remaining = MAX_IMAGES - current.length;
+    const filesToUpload = files.slice(0, remaining);
 
-    showLoading('画像をアップロード中');
-    try {
-        const response = await fetch('api/upload.php', {
-            method: 'POST',
-            body: formData
-        });
-        const result = await response.json();
-        hideLoading();
-
-        if (result.success) {
-            setMediaPreview(activeUploadContext, result.url);
-            showToast('画像をアップロードしました', 'success');
-        } else {
-            showToast(result.message || 'アップロード失敗', 'error');
-        }
-    } catch (err) {
-        hideLoading();
-        showToast('通信エラーが発生しました', 'error');
+    if (files.length > remaining) {
+        showToast(`${files.length}枚選択されましたが、残り${remaining}枚分のみアップロードします`, 'warning');
     }
-    // 入力をクリアして同じファイルを再度選べるようにする
+
+    showLoading(`画像をアップロード中 (0/${filesToUpload.length})`);
+
+    let successCount = 0;
+    for (let i = 0; i < filesToUpload.length; i++) {
+        const file = filesToUpload[i];
+        const formData = new FormData();
+        formData.append('image', file);
+
+        const loadingText = document.getElementById('loadingText');
+        if (loadingText) loadingText.innerHTML = `画像をアップロード中 (${i + 1}/${filesToUpload.length})<span class="loading-dots"></span>`;
+
+        try {
+            const response = await fetch('api/upload.php', { method: 'POST', body: formData });
+            const result = await response.json();
+            if (result.success) {
+                mediaState[context].push({ url: result.url });
+                successCount++;
+            } else {
+                showToast(`${file.name}: ${result.message || 'アップロード失敗'}`, 'error');
+            }
+        } catch (err) {
+            showToast(`${file.name}: 通信エラー`, 'error');
+        }
+    }
+
+    hideLoading();
+    renderMediaGallery(context);
+
+    if (successCount > 0) {
+        showToast(`${successCount}枚の画像をアップロードしました`, 'success');
+    }
     e.target.value = '';
 }
 
-function setMediaPreview(context, url) {
+/**
+ * 画像ギャラリー UI を再描画する
+ */
+function renderMediaGallery(context) {
     const prefix = context === 'edit' ? 'edit' : 'post';
-    const previewContainer = document.getElementById(prefix + 'MediaPreview');
-    const urlInput = document.getElementById(prefix + 'MediaUrl');
-    const btn = document.getElementById(context + 'UploadBtn');
+    const urls = mediaState[context] || [];
+    const count = urls.length;
 
-    if (url) {
-        urlInput.value = url;
-        const img = previewContainer.querySelector('img');
-        if (img) img.src = url;
-        previewContainer.classList.add('active');
-        if (btn) btn.classList.add('has-media');
+    const galleryEl = document.getElementById(prefix + 'MediaGallery');
+    const legacyPreview = document.getElementById(prefix + 'MediaPreview');
+    const urlInput = document.getElementById(prefix + 'MediaUrl');
+    const uploadBtn = document.getElementById(context + 'UploadBtn');
+    const countBadge = document.getElementById(context + 'ImageCount');
+
+    if (count === 0) {
+        // 画像なし
+        if (galleryEl) { galleryEl.innerHTML = ''; galleryEl.style.display = 'none'; }
+        if (legacyPreview) legacyPreview.classList.remove('active');
+        if (urlInput) urlInput.value = '';
+        if (uploadBtn) uploadBtn.classList.remove('has-media');
+        if (countBadge) countBadge.style.display = 'none';
     } else {
-        urlInput.value = '';
-        previewContainer.classList.remove('active');
-        if (btn) btn.classList.remove('has-media');
+        // 1枚以上: すべてギャラリー表示（サムネイル統一）
+        if (legacyPreview) legacyPreview.classList.remove('active');
+        if (urlInput) urlInput.value = count === 1 ? urls[0].url : JSON.stringify(urls.map(u => u.url));
+        if (uploadBtn) uploadBtn.classList.add('has-media');
+        if (countBadge) {
+            if (count >= 2) { countBadge.textContent = count; countBadge.style.display = 'inline-flex'; }
+            else { countBadge.style.display = 'none'; }
+        }
+
+        if (galleryEl) {
+            galleryEl.style.display = 'flex';
+            galleryEl.innerHTML = urls.map((u, i) => `
+                <div class="media-thumb" style="position:relative; flex-shrink:0;">
+                    <img src="${u.url}" alt="画像${i + 1}" style="width:80px; height:80px; object-fit:cover; border-radius:8px; border:2px solid var(--color-border);">
+                    <button onclick="removePostMedia('${context}', ${i})" title="削除" style="position:absolute; top:-6px; right:-6px; background:#ff4757; border:none; color:#fff; border-radius:50%; width:20px; height:20px; cursor:pointer; font-size:11px; line-height:1; display:flex; align-items:center; justify-content:center;">✕</button>
+                    ${count >= 2 && i === 0 ? '<div style="position:absolute; bottom:2px; left:2px; background:rgba(0,0,0,0.6); color:#fff; font-size:9px; padding:1px 4px; border-radius:3px;">表紙</div>' : ''}
+                </div>
+            `).join('');
+        }
     }
 }
 
-function removePostMedia(context) {
-    setMediaPreview(context, '');
+function removePostMedia(context, index = 0) {
+    const urls = mediaState[context] || [];
+    urls.splice(index, 1);
+    mediaState[context] = urls;
+    renderMediaGallery(context);
+}
+
+/**
+ * 既存の media_url 値（文字列 or JSON）を mediaState に読み込む
+ */
+function loadMediaState(context, mediaUrlValue) {
+    mediaState[context] = [];
+    if (!mediaUrlValue) return;
+    try {
+        const parsed = JSON.parse(mediaUrlValue);
+        if (Array.isArray(parsed)) {
+            mediaState[context] = parsed.map(u => ({ url: u }));
+            return;
+        }
+    } catch(e) {}
+    // 単一URL
+    if (mediaUrlValue.startsWith('http')) {
+        mediaState[context] = [{ url: mediaUrlValue }];
+    }
 }
 
 // ===== Sidebar Navigation =====
@@ -272,19 +350,23 @@ async function savePostDraft() {
         return;
     }
 
-    const result = await apiCall('posts.php', {
+    const urls = mediaState['create'].map(u => u.url);
+    const params = {
         action: 'create',
         content: content,
-        media_url: document.getElementById('postMediaUrl').value,
         status: 'draft',
         ai_label: document.getElementById('aiLabelToggle').checked ? 1 : 0
-    });
+    };
+    if (urls.length > 0) params.media_urls = JSON.stringify(urls);
+
+    const result = await apiCall('posts.php', params);
 
     if (result.success) {
         showToast('下書きを保存しました', 'success');
         document.getElementById('postContent').value = '';
         document.getElementById('charCount').textContent = '0';
-        removePostMedia('create');
+        mediaState['create'] = [];
+        renderMediaGallery('create');
         loadPostList();
     } else {
         showToast(result.message || 'エラーが発生しました', 'error');
@@ -304,21 +386,25 @@ async function schedulePost() {
         return;
     }
 
-    const result = await apiCall('posts.php', {
+    const urls = mediaState['create'].map(u => u.url);
+    const params = {
         action: 'create',
         content: content,
-        media_url: document.getElementById('postMediaUrl').value,
         status: 'scheduled',
         scheduled_at: scheduledAt,
         ai_label: document.getElementById('aiLabelToggle').checked ? 1 : 0
-    });
+    };
+    if (urls.length > 0) params.media_urls = JSON.stringify(urls);
+
+    const result = await apiCall('posts.php', params);
 
     if (result.success) {
         showToast('予約投稿を設定しました', 'success');
         document.getElementById('postContent').value = '';
         document.getElementById('charCount').textContent = '0';
         document.getElementById('scheduleAt').value = '';
-        removePostMedia('create');
+        mediaState['create'] = [];
+        renderMediaGallery('create');
         loadPostList();
     } else {
         showToast(result.message || 'エラーが発生しました', 'error');
@@ -332,21 +418,27 @@ async function publishPostNow() {
         return;
     }
 
-    if (!confirm('この投稿を今すぐThreadsに公開しますか？')) return;
+    const urls = mediaState['create'].map(u => u.url);
+    const carouselWarn = urls.length >= 2 ? `\n\n🖼️ ${urls.length}枚の画像をカルーセル投稿します` : '';
+    if (!confirm(`この投稿を今すぐThreadsに公開しますか？${carouselWarn}`)) return;
 
-    showLoading('投稿中');
-    const result = await apiCall('posts.php', {
+    const params = {
         action: 'publish_now',
         content: content,
-        media_url: document.getElementById('postMediaUrl').value,
         ai_label: document.getElementById('aiLabelToggle').checked ? 1 : 0
-    });
+    };
+    if (urls.length > 0) params.media_urls = JSON.stringify(urls);
+
+    showLoading(urls.length >= 2 ? 'カルーセル投稿中（数秒かかる場合があります）' : '投稿中');
+    const result = await apiCall('posts.php', params);
     hideLoading();
 
     if (result.success) {
-        showToast('投稿しました！', 'success');
+        showToast(result.message || '投稿しました！', 'success');
         document.getElementById('postContent').value = '';
         document.getElementById('charCount').textContent = '0';
+        mediaState['create'] = [];
+        renderMediaGallery('create');
         loadPostList();
     } else {
         showToast(result.message || '投稿に失敗しました', 'error');
@@ -377,7 +469,20 @@ async function loadPostList(filter = null) {
             const badge = badgeMap[post.status] || badgeMap.draft;
             const aiTag = post.ai_label == 1 ? ' <span class="badge badge-warning">AI</span>' : '';
             const contentStr = post.content || '';
-            const hasMedia = post.media_url ? ' <span class="media-indicator" title="画像あり">🖼️ 画像あり</span>' : '';
+            // 複数画像判定
+            let hasMedia = '';
+            if (post.media_url) {
+                try {
+                    const parsed = JSON.parse(post.media_url);
+                    if (Array.isArray(parsed) && parsed.length >= 2) {
+                        hasMedia = ` <span class="carousel-indicator" title="カルーセル投稿">🖼️ ${parsed.length}枚</span>`;
+                    } else {
+                        hasMedia = ' <span class="media-indicator" title="画像あり">🖼️ 画像あり</span>';
+                    }
+                } catch(e) {
+                    hasMedia = ' <span class="media-indicator" title="画像あり">🖼️ 画像あり</span>';
+                }
+            }
             const preview = escapeHtml(contentStr).substring(0, 60) + (contentStr.length > 60 ? '...' : '');
 
             html += `<tr>
@@ -414,7 +519,9 @@ async function editPost(postId) {
         document.getElementById('editPostStatus').value = post.status === 'posted' ? 'draft' : post.status;
         document.getElementById('editPostSchedule').value = post.scheduled_at ? post.scheduled_at.replace(' ', 'T').substring(0, 16) : '';
         document.getElementById('editPostAiLabel').checked = post.ai_label == 1;
-        setMediaPreview('edit', post.media_url || '');
+        // 画像変数を初期化して読み込み
+        loadMediaState('edit', post.media_url || '');
+        renderMediaGallery('edit');
         openModal('editPostModal');
     } else {
         showToast('投稿データの取得に失敗しました', 'error');
@@ -423,15 +530,22 @@ async function editPost(postId) {
 
 async function updatePost() {
     const id = document.getElementById('editPostId').value;
-    const result = await apiCall('posts.php', {
+    const urls = mediaState['edit'].map(u => u.url);
+    const params = {
         action: 'update',
         id: id,
         content: document.getElementById('editPostContent').value,
-        media_url: document.getElementById('editMediaUrl').value,
         status: document.getElementById('editPostStatus').value,
         scheduled_at: document.getElementById('editPostSchedule').value,
         ai_label: document.getElementById('editPostAiLabel').checked ? 1 : 0
-    });
+    };
+    if (urls.length > 0) {
+        params.media_urls = JSON.stringify(urls);
+    } else {
+        params.media_url = ''; // 画像を削除
+    }
+
+    const result = await apiCall('posts.php', params);
 
     if (result.success) {
         showToast('投稿を更新しました', 'success');
