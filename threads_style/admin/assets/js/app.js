@@ -15,11 +15,82 @@ document.addEventListener('DOMContentLoaded', () => {
     loadPostList();
     loadStyleGuide();
     loadKeywords();
+    loadEngagementTable();
     initCharts();
     
     // アカウント情報の初期表示
     getThreadsProfile(true);
+
+    // 保存されたセクションの復元
+    const savedSection = localStorage.getItem('activeSection') || 'dashboard';
+    switchSection(savedSection, false); // 第2引数は保存処理をスキップするため
+
+    // 画像アップロードのイベントリスナー
+    const imgInput = document.getElementById('globalImageInput');
+    if (imgInput) {
+        imgInput.addEventListener('change', handleFileSelect);
+    }
 });
+
+let activeUploadContext = 'create'; // 'create' or 'edit'
+
+function triggerImageUpload(context) {
+    activeUploadContext = context;
+    document.getElementById('globalImageInput').click();
+}
+
+async function handleFileSelect(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('image', file);
+
+    showLoading('画像をアップロード中');
+    try {
+        const response = await fetch('api/upload.php', {
+            method: 'POST',
+            body: formData
+        });
+        const result = await response.json();
+        hideLoading();
+
+        if (result.success) {
+            setMediaPreview(activeUploadContext, result.url);
+            showToast('画像をアップロードしました', 'success');
+        } else {
+            showToast(result.message || 'アップロード失敗', 'error');
+        }
+    } catch (err) {
+        hideLoading();
+        showToast('通信エラーが発生しました', 'error');
+    }
+    // 入力をクリアして同じファイルを再度選べるようにする
+    e.target.value = '';
+}
+
+function setMediaPreview(context, url) {
+    const prefix = context === 'edit' ? 'edit' : 'post';
+    const previewContainer = document.getElementById(prefix + 'MediaPreview');
+    const urlInput = document.getElementById(prefix + 'MediaUrl');
+    const btn = document.getElementById(context + 'UploadBtn');
+
+    if (url) {
+        urlInput.value = url;
+        const img = previewContainer.querySelector('img');
+        if (img) img.src = url;
+        previewContainer.classList.add('active');
+        if (btn) btn.classList.add('has-media');
+    } else {
+        urlInput.value = '';
+        previewContainer.classList.remove('active');
+        if (btn) btn.classList.remove('has-media');
+    }
+}
+
+function removePostMedia(context) {
+    setMediaPreview(context, '');
+}
 
 // ===== Sidebar Navigation =====
 function initSidebar() {
@@ -50,7 +121,9 @@ function initSidebar() {
     }
 }
 
-function switchSection(sectionName) {
+function switchSection(sectionName, save = true) {
+    if (save) localStorage.setItem('activeSection', sectionName);
+
     // Hide all sections
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
     // Show target section
@@ -61,6 +134,13 @@ function switchSection(sectionName) {
     document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
     const activeLink = document.querySelector(`.sidebar-nav a[data-section="${sectionName}"]`);
     if (activeLink) activeLink.classList.add('active');
+
+    // 復元されたタブがあれば適用
+    const savedTab = localStorage.getItem('activeTab_' + sectionName);
+    if (savedTab) {
+        const tabBtn = document.querySelector(`.tab-btn[data-tab="${savedTab}"]`);
+        if (tabBtn) tabBtn.click();
+    }
 
     // Close mobile sidebar
     const sidebar = document.getElementById('sidebar');
@@ -82,6 +162,12 @@ function initTabs() {
             btn.classList.add('active');
             const panel = document.getElementById(tabId);
             if (panel) panel.classList.add('active');
+
+            // タブの状態を保存 (セクションごとに個別に保存)
+            if (tabContainer.id) {
+                const sectionId = tabContainer.id.replace('section-', '');
+                localStorage.setItem('activeTab_' + sectionId, tabId);
+            }
         });
     });
 }
@@ -189,6 +275,7 @@ async function savePostDraft() {
     const result = await apiCall('posts.php', {
         action: 'create',
         content: content,
+        media_url: document.getElementById('postMediaUrl').value,
         status: 'draft',
         ai_label: document.getElementById('aiLabelToggle').checked ? 1 : 0
     });
@@ -197,6 +284,7 @@ async function savePostDraft() {
         showToast('下書きを保存しました', 'success');
         document.getElementById('postContent').value = '';
         document.getElementById('charCount').textContent = '0';
+        removePostMedia('create');
         loadPostList();
     } else {
         showToast(result.message || 'エラーが発生しました', 'error');
@@ -219,6 +307,7 @@ async function schedulePost() {
     const result = await apiCall('posts.php', {
         action: 'create',
         content: content,
+        media_url: document.getElementById('postMediaUrl').value,
         status: 'scheduled',
         scheduled_at: scheduledAt,
         ai_label: document.getElementById('aiLabelToggle').checked ? 1 : 0
@@ -229,6 +318,7 @@ async function schedulePost() {
         document.getElementById('postContent').value = '';
         document.getElementById('charCount').textContent = '0';
         document.getElementById('scheduleAt').value = '';
+        removePostMedia('create');
         loadPostList();
     } else {
         showToast(result.message || 'エラーが発生しました', 'error');
@@ -248,6 +338,7 @@ async function publishPostNow() {
     const result = await apiCall('posts.php', {
         action: 'publish_now',
         content: content,
+        media_url: document.getElementById('postMediaUrl').value,
         ai_label: document.getElementById('aiLabelToggle').checked ? 1 : 0
     });
     hideLoading();
@@ -286,12 +377,13 @@ async function loadPostList(filter = null) {
             const badge = badgeMap[post.status] || badgeMap.draft;
             const aiTag = post.ai_label == 1 ? ' <span class="badge badge-warning">AI</span>' : '';
             const contentStr = post.content || '';
+            const hasMedia = post.media_url ? ' <span class="media-indicator" title="画像あり">🖼️ 画像あり</span>' : '';
             const preview = escapeHtml(contentStr).substring(0, 60) + (contentStr.length > 60 ? '...' : '');
 
             html += `<tr>
-                <td class="post-preview">${preview}</td>
+                <td class="post-preview">${preview}${hasMedia}</td>
                 <td>${badge}${aiTag}</td>
-                <td style="white-space:nowrap; color:var(--color-text-secondary); font-size:var(--font-size-xs);">${post.scheduled_at || '-'}</td>
+                <td style="white-space:nowrap; color:var(--color-text-secondary); font-size:var(--font-size-xs);">${post.status === 'scheduled' ? (post.scheduled_at || '-') : '-'}</td>
                 <td style="white-space:nowrap; color:var(--color-text-secondary); font-size:var(--font-size-xs);">${post.created_at}</td>
                 <td style="white-space:nowrap;">
                     <button class="btn btn-ghost btn-sm" onclick="editPost(${post.id})">編集</button>
@@ -320,8 +412,9 @@ async function editPost(postId) {
         document.getElementById('editPostId').value = post.id;
         document.getElementById('editPostContent').value = post.content;
         document.getElementById('editPostStatus').value = post.status === 'posted' ? 'draft' : post.status;
-        document.getElementById('editPostSchedule').value = post.scheduled_at || '';
+        document.getElementById('editPostSchedule').value = post.scheduled_at ? post.scheduled_at.replace(' ', 'T').substring(0, 16) : '';
         document.getElementById('editPostAiLabel').checked = post.ai_label == 1;
+        setMediaPreview('edit', post.media_url || '');
         openModal('editPostModal');
     } else {
         showToast('投稿データの取得に失敗しました', 'error');
@@ -334,6 +427,7 @@ async function updatePost() {
         action: 'update',
         id: id,
         content: document.getElementById('editPostContent').value,
+        media_url: document.getElementById('editMediaUrl').value,
         status: document.getElementById('editPostStatus').value,
         scheduled_at: document.getElementById('editPostSchedule').value,
         ai_label: document.getElementById('editPostAiLabel').checked ? 1 : 0

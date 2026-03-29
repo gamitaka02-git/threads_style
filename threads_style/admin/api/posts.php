@@ -66,14 +66,16 @@ switch ($action) {
         $is_ai_generated = (int)($_POST['is_ai_generated'] ?? 0);
         $source_type = $_POST['source_type'] ?? 'manual';
         $source_url = $_POST['source_url'] ?? '';
+        $media_url = $_POST['media_url'] ?? '';
 
         $now = date('Y-m-d H:i:s');
         $stmt = $pdo->prepare("
-            INSERT INTO posts (content, status, scheduled_at, ai_label, is_ai_generated, source_type, source_url, created_at, updated_at)
-            VALUES (:content, :status, :scheduled_at, :ai_label, :is_ai_generated, :source_type, :source_url, :now, :now)
+            INSERT INTO posts (content, media_url, status, scheduled_at, ai_label, is_ai_generated, source_type, source_url, created_at, updated_at)
+            VALUES (:content, :media_url, :status, :scheduled_at, :ai_label, :is_ai_generated, :source_type, :source_url, :now, :now)
         ");
         $stmt->execute([
             ':content' => $content,
+            ':media_url' => $media_url,
             ':status' => $status,
             ':scheduled_at' => $scheduled_at,
             ':ai_label' => $ai_label,
@@ -97,6 +99,7 @@ switch ($action) {
             $scheduled_at = date('Y-m-d H:i:s', strtotime($scheduled_at));
         }
         $ai_label = (int)($_POST['ai_label'] ?? 0);
+        $media_url = $_POST['media_url'] ?? '';
 
         if (empty($content)) {
             echo json_encode(['success' => false, 'message' => '投稿内容を入力してください']);
@@ -105,12 +108,13 @@ switch ($action) {
 
         $now = date('Y-m-d H:i:s');
         $stmt = $pdo->prepare("
-            UPDATE posts SET content = :content, status = :status, scheduled_at = :scheduled_at,
+            UPDATE posts SET content = :content, media_url = :media_url, status = :status, scheduled_at = :scheduled_at,
             ai_label = :ai_label, updated_at = :now
             WHERE id = :id
         ");
         $stmt->execute([
             ':content' => $content,
+            ':media_url' => $media_url,
             ':status' => $status,
             ':scheduled_at' => $scheduled_at ?: null,
             ':ai_label' => $ai_label,
@@ -133,6 +137,7 @@ switch ($action) {
     case 'publish_now':
         $content = trim($_POST['content'] ?? '');
         $ai_label = (int)($_POST['ai_label'] ?? 0);
+        $media_url = $_POST['media_url'] ?? '';
 
         if (empty($content)) {
             echo json_encode(['success' => false, 'message' => '投稿内容を入力してください']);
@@ -142,17 +147,18 @@ switch ($action) {
         // Threads APIで投稿
         require_once __DIR__ . '/ThreadsAPI.php';
         $api = new ThreadsAPI();
-        $result = $api->publishPost($content, $ai_label == 1);
+        $result = $api->publishPost($content, $ai_label == 1, $media_url);
 
         if ($result['success']) {
             // DBに投稿済みとして保存
             $now = date('Y-m-d H:i:s');
             $stmt = $pdo->prepare("
-                INSERT INTO posts (content, status, posted_at, threads_post_id, threads_media_id, ai_label, is_ai_generated, source_type, created_at, updated_at)
-                VALUES (:content, 'posted', :now, :post_id, :media_id, :ai_label, 0, 'manual', :now, :now)
+                INSERT INTO posts (content, media_url, status, posted_at, threads_post_id, threads_media_id, ai_label, is_ai_generated, source_type, created_at, updated_at)
+                VALUES (:content, :media_url, 'posted', :now, :post_id, :media_id, :ai_label, 0, 'manual', :now, :now)
             ");
             $stmt->execute([
                 ':content' => $content,
+                ':media_url' => $media_url,
                 ':post_id' => $result['post_id'] ?? '',
                 ':media_id' => $result['media_id'] ?? '',
                 ':ai_label' => $ai_label,
@@ -206,14 +212,14 @@ switch ($action) {
     // ----- リサイクル（優秀投稿を下書き複製） -----
     case 'recycle':
         $id = (int)($_POST['id'] ?? 0);
-        $stmt = $pdo->prepare("SELECT content FROM posts WHERE id = :id");
+        $stmt = $pdo->prepare("SELECT content, media_url FROM posts WHERE id = :id");
         $stmt->execute([':id' => $id]);
         $original = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($original) {
             $now = date('Y-m-d H:i:s');
-            $stmt = $pdo->prepare("INSERT INTO posts (content, status, source_type, created_at, updated_at) VALUES (:content, 'draft', 'recycle', :now, :now)");
-            $stmt->execute([':content' => $original['content'], ':now' => $now]);
+            $stmt = $pdo->prepare("INSERT INTO posts (content, media_url, status, source_type, created_at, updated_at) VALUES (:content, :media_url, 'draft', 'recycle', :now, :now)");
+            $stmt->execute([':content' => $original['content'], ':media_url' => $original['media_url'] ?? '', ':now' => $now]);
             echo json_encode(['success' => true, 'message' => 'リサイクル投稿を下書きに追加しました']);
         } else {
             echo json_encode(['success' => false, 'message' => '元の投稿が見つかりません']);

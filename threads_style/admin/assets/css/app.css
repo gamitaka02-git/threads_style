@@ -1493,3 +1493,85 @@ h4 { font-size: var(--font-size-md); }
     font-size: 10px;
     white-space: nowrap;
 }
+/* ---------- Image Upload UI ---------- */
+.post-media-preview {
+    margin-bottom: var(--space-md);
+    position: relative;
+    display: none;
+    max-width: 100%;
+}
+
+.post-media-preview.active {
+    display: block;
+}
+
+.post-media-preview img {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    object-fit: cover;
+}
+
+.remove-media-btn {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 24px;
+    height: 24px;
+    background: var(--color-error);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    z-index: 2;
+}
+
+.remove-media-btn:hover {
+    background: #e01540;
+    transform: scale(1.1);
+}
+
+.btn-upload {
+    padding: 0 10px;
+    width: auto;
+    min-width: 135px;
+    height: 36px;
+    font-size: 18px;
+    border: 1px solid var(--color-border);
+    background: var(--color-bg);
+    color: var(--color-text-secondary);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-fast);
+}
+
+.btn-upload:hover {
+    color: var(--color-text);
+    border-color: var(--color-border-light);
+    background: var(--color-surface);
+}
+
+.btn-upload.has-media {
+    color: var(--color-success);
+    border-color: var(--color-success);
+}
+
+.media-indicator {
+    display: inline-flex;
+    align-items: center;
+    margin-left: var(--space-xs);
+    color: var(--color-text-secondary);
+}
+
+/* Modal specific media preview */
+.modal .post-media-preview img {
+    max-height: 200px;
+}

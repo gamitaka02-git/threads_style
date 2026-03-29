@@ -357,6 +357,11 @@ $version = defined('TOOL_VERSION') ? TOOL_VERSION : 'v1.0.0';
                 <!-- Tab: 新規作成 -->
                 <div class="tab-panel active" id="tab-post-create">
                     <div class="post-composer">
+                        <div id="postMediaPreview" class="post-media-preview">
+                            <img src="" alt="Preview">
+                            <button class="remove-media-btn" onclick="removePostMedia('create')">✕</button>
+                        </div>
+                        <input type="hidden" id="postMediaUrl" value="">
                         <div class="post-composer-body">
                             <textarea id="postContent"
                                 placeholder="いま何を考えていますか？&#10;&#10;Threads に投稿する内容を入力してください..."></textarea>
@@ -371,8 +376,11 @@ $version = defined('TOOL_VERSION') ? TOOL_VERSION : 'v1.0.0';
                                         <input type="checkbox" id="aiLabelToggle">
                                         <span class="toggle-slider"></span>
                                     </label>
-                                    <span class="text-sm">AIラベル付与</span>
+                                    <span class="text-sm">AIラベル</span>
                                 </div>
+                                <button class="btn-upload" id="createUploadBtn" onclick="triggerImageUpload('create')" title="画像を追加">
+                                    🖼️ <span style="font-size:var(--font-size-xs); margin-left:10px;">画像を追加</span>
+                                </button>
                                 <div class="form-group" style="margin:0;">
                                     <input type="datetime-local" id="scheduleAt" class="form-input"
                                         style="width:auto; padding:6px 10px; font-size:var(--font-size-xs);">
@@ -996,6 +1004,11 @@ $version = defined('TOOL_VERSION') ? TOOL_VERSION : 'v1.0.0';
             </div>
             <div class="modal-body">
                 <input type="hidden" id="editPostId">
+                <div id="editMediaPreview" class="post-media-preview">
+                    <img src="" alt="Preview">
+                    <button class="remove-media-btn" onclick="removePostMedia('edit')">✕</button>
+                </div>
+                <input type="hidden" id="editMediaUrl" value="">
                 <div class="form-group">
                     <label class="form-label">内容</label>
                     <textarea id="editPostContent" class="form-textarea" rows="6"></textarea>
@@ -1013,12 +1026,17 @@ $version = defined('TOOL_VERSION') ? TOOL_VERSION : 'v1.0.0';
                         <input type="datetime-local" id="editPostSchedule" class="form-input">
                     </div>
                 </div>
-                <div class="toggle-wrap">
-                    <label class="toggle">
-                        <input type="checkbox" id="editPostAiLabel">
-                        <span class="toggle-slider"></span>
-                    </label>
-                    <span class="text-sm">AIラベル付与</span>
+                <div class="flex items-center gap-md mt-md">
+                    <div class="toggle-wrap">
+                        <label class="toggle">
+                            <input type="checkbox" id="editPostAiLabel">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span class="text-sm">AIラベル</span>
+                    </div>
+                    <button class="btn-upload" id="editUploadBtn" onclick="triggerImageUpload('edit')" title="画像を追加">
+                        🖼️ <span style="font-size:var(--font-size-xs); margin-left:2px;">画像を追加</span>
+                    </button>
                 </div>
             </div>
             <div class="modal-footer">
@@ -1027,6 +1045,9 @@ $version = defined('TOOL_VERSION') ? TOOL_VERSION : 'v1.0.0';
             </div>
         </div>
     </div>
+
+    <!-- Hidden File Input -->
+    <input type="file" id="globalImageInput" style="display:none;" accept="image/jpeg,image/png,image/webp">
 
     <script src="assets/js/app.js"></script>
 </body>

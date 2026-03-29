@@ -177,8 +177,8 @@ if ($auto_post_enabled !== '1') {
                 sleep($delay);
             }
 
-            cron_log("API呼び出し開始 ID:{$post['id']} content_length:" . strlen($post['content']));
-            $result = $api->publishPost($post['content'], $post['ai_label'] == 1);
+            cron_log("API呼び出し開始 ID:{$post['id']} content_length:" . strlen($post['content']) . ($post['media_url'] ? " image:yes" : ""));
+            $result = $api->publishPost($post['content'], $post['ai_label'] == 1, $post['media_url'] ?? '');
             cron_log("API呼び出し完了 ID:{$post['id']} result: " . json_encode($result, JSON_UNESCAPED_UNICODE));
             
             if ($result['success']) {
