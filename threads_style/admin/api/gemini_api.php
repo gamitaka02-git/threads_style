@@ -30,8 +30,9 @@ switch ($action) {
         }
 
         // 手動投稿のみを取得（純度保持ロジック: AI生成投稿を除外）
-        require_once __DIR__ . '/threads_api.php';
-        $posts_result = threads_get_user_posts(30);
+        require_once __DIR__ . '/ThreadsAPI.php';
+        $api = new ThreadsAPI();
+        $posts_result = $api->getUserPosts(30);
 
         $sample_posts = [];
         if ($posts_result['success'] && !empty($posts_result['posts'])) {
@@ -334,8 +335,8 @@ function fetch_url_content($url) {
     $text = trim($text);
 
     // 長すぎる場合は切り詰め
-    if (mb_strlen($text) > 5000) {
-        $text = mb_substr($text, 0, 5000) . '...';
+    if (mb_strlen($text, 'UTF-8') > 5000) {
+        $text = mb_substr($text, 0, 5000, 'UTF-8') . '...';
     }
 
     return $text;

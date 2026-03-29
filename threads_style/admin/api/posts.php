@@ -58,14 +58,19 @@ switch ($action) {
 
         $status = $_POST['status'] ?? 'draft';
         $scheduled_at = $_POST['scheduled_at'] ?? null;
+        // datetime-local の T区切りを スペース区切りに正規化（Cron比較用）
+        if ($scheduled_at) {
+            $scheduled_at = date('Y-m-d H:i:s', strtotime($scheduled_at));
+        }
         $ai_label = (int)($_POST['ai_label'] ?? 0);
         $is_ai_generated = (int)($_POST['is_ai_generated'] ?? 0);
         $source_type = $_POST['source_type'] ?? 'manual';
         $source_url = $_POST['source_url'] ?? '';
 
+        $now = date('Y-m-d H:i:s');
         $stmt = $pdo->prepare("
-            INSERT INTO posts (content, status, scheduled_at, ai_label, is_ai_generated, source_type, source_url)
-            VALUES (:content, :status, :scheduled_at, :ai_label, :is_ai_generated, :source_type, :source_url)
+            INSERT INTO posts (content, status, scheduled_at, ai_label, is_ai_generated, source_type, source_url, created_at, updated_at)
+            VALUES (:content, :status, :scheduled_at, :ai_label, :is_ai_generated, :source_type, :source_url, :now, :now)
         ");
         $stmt->execute([
             ':content' => $content,
@@ -75,6 +80,7 @@ switch ($action) {
             ':is_ai_generated' => $is_ai_generated,
             ':source_type' => $source_type,
             ':source_url' => $source_url,
+            ':now' => $now,
         ]);
 
         echo json_encode(['success' => true, 'id' => $pdo->lastInsertId(), 'message' => '投稿を作成しました']);
@@ -86,6 +92,10 @@ switch ($action) {
         $content = trim($_POST['content'] ?? '');
         $status = $_POST['status'] ?? 'draft';
         $scheduled_at = $_POST['scheduled_at'] ?? null;
+        // datetime-local の T区切りを スペース区切りに正規化
+        if ($scheduled_at) {
+            $scheduled_at = date('Y-m-d H:i:s', strtotime($scheduled_at));
+        }
         $ai_label = (int)($_POST['ai_label'] ?? 0);
 
         if (empty($content)) {
@@ -93,9 +103,10 @@ switch ($action) {
             break;
         }
 
+        $now = date('Y-m-d H:i:s');
         $stmt = $pdo->prepare("
             UPDATE posts SET content = :content, status = :status, scheduled_at = :scheduled_at,
-            ai_label = :ai_label, updated_at = datetime('now')
+            ai_label = :ai_label, updated_at = :now
             WHERE id = :id
         ");
         $stmt->execute([
@@ -104,6 +115,7 @@ switch ($action) {
             ':scheduled_at' => $scheduled_at ?: null,
             ':ai_label' => $ai_label,
             ':id' => $id,
+            ':now' => $now,
         ]);
 
         echo json_encode(['success' => true, 'message' => '投稿を更新しました']);
@@ -128,20 +140,23 @@ switch ($action) {
         }
 
         // Threads APIで投稿
-        require_once __DIR__ . '/threads_api.php';
-        $result = threads_publish_post($content, $ai_label);
+        require_once __DIR__ . '/ThreadsAPI.php';
+        $api = new ThreadsAPI();
+        $result = $api->publishPost($content, $ai_label == 1);
 
         if ($result['success']) {
             // DBに投稿済みとして保存
+            $now = date('Y-m-d H:i:s');
             $stmt = $pdo->prepare("
-                INSERT INTO posts (content, status, posted_at, threads_post_id, threads_media_id, ai_label, source_type)
-                VALUES (:content, 'posted', datetime('now'), :post_id, :media_id, :ai_label, 'manual')
+                INSERT INTO posts (content, status, posted_at, threads_post_id, threads_media_id, ai_label, is_ai_generated, source_type, created_at, updated_at)
+                VALUES (:content, 'posted', :now, :post_id, :media_id, :ai_label, 0, 'manual', :now, :now)
             ");
             $stmt->execute([
                 ':content' => $content,
                 ':post_id' => $result['post_id'] ?? '',
                 ':media_id' => $result['media_id'] ?? '',
                 ':ai_label' => $ai_label,
+                ':now' => $now,
             ]);
             echo json_encode(['success' => true, 'message' => '投稿しました！']);
         } else {
@@ -155,6 +170,10 @@ switch ($action) {
         $posts = json_decode($posts_json, true);
         $status = $_POST['status'] ?? 'draft';
         $scheduled_at = $_POST['scheduled_at'] ?? null;
+        // datetime-local の T区切りを スペース区切りに正規化
+        if ($scheduled_at) {
+            $scheduled_at = date('Y-m-d H:i:s', strtotime($scheduled_at));
+        }
 
         if (!is_array($posts) || count($posts) < 2) {
             echo json_encode(['success' => false, 'message' => 'スレッドには2つ以上の投稿が必要です']);
@@ -164,9 +183,10 @@ switch ($action) {
         // スレッドグループID生成（タイムスタンプベース）
         $group_id = (int)(microtime(true) * 1000);
 
+        $now = date('Y-m-d H:i:s');
         $stmt = $pdo->prepare("
-            INSERT INTO posts (content, status, scheduled_at, thread_group_id, thread_order)
-            VALUES (:content, :status, :scheduled_at, :group_id, :order)
+            INSERT INTO posts (content, status, scheduled_at, thread_group_id, thread_order, created_at, updated_at)
+            VALUES (:content, :status, :scheduled_at, :group_id, :order, :now, :now)
         ");
 
         foreach ($posts as $i => $content) {
@@ -176,6 +196,7 @@ switch ($action) {
                 ':scheduled_at' => $scheduled_at,
                 ':group_id' => $group_id,
                 ':order' => $i,
+                ':now' => $now,
             ]);
         }
 
@@ -190,8 +211,9 @@ switch ($action) {
         $original = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($original) {
-            $stmt = $pdo->prepare("INSERT INTO posts (content, status, source_type) VALUES (:content, 'draft', 'recycle')");
-            $stmt->execute([':content' => $original['content']]);
+            $now = date('Y-m-d H:i:s');
+            $stmt = $pdo->prepare("INSERT INTO posts (content, status, source_type, created_at, updated_at) VALUES (:content, 'draft', 'recycle', :now, :now)");
+            $stmt->execute([':content' => $original['content'], ':now' => $now]);
             echo json_encode(['success' => true, 'message' => 'リサイクル投稿を下書きに追加しました']);
         } else {
             echo json_encode(['success' => false, 'message' => '元の投稿が見つかりません']);

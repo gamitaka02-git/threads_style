@@ -75,9 +75,10 @@ $version = defined('TOOL_VERSION') ? TOOL_VERSION : 'v1.0.0';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ThreadsStyle | Dashboard</title>
-    <link rel="stylesheet" href="assets/css/app.css">
+    <title>Threads_Style | Dashboard</title>
+    <link rel="stylesheet" href="assets/css/app.css?v=<?= time() ?>">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+    <script src="assets/js/app.js?v=<?= time() ?>"></script>
 </head>
 <body>
 
@@ -89,9 +90,11 @@ $version = defined('TOOL_VERSION') ? TOOL_VERSION : 'v1.0.0';
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <div class="sidebar-logo">
-                ThreadsStyle
-                <span>運用・分析支援ツール</span>
+                Threads_Style
+                <span>運用・分析効率化ツール</span>
             </div>
+            <!-- Connected Account Info -->
+            <div id="threadsProfileSidebar"></div>
         </div>
 
         <nav class="sidebar-nav">
@@ -132,23 +135,30 @@ $version = defined('TOOL_VERSION') ? TOOL_VERSION : 'v1.0.0';
         <!-- ==================== DASHBOARD ==================== -->
         <section id="section-dashboard" class="section active">
             <div class="section-header">
-                <h2>ダッシュボード</h2>
-                <p>ThreadsStyle の概要と主要な指標です</p>
+                <div class="flex justify-between items-end w-full">
+                    <div>
+                        <h2>ダッシュボード</h2>
+                        <p>Threads_Style の概要と主要な指標です</p>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-ghost btn-xs" onclick="syncPastPosts()" style="color:var(--color-info);">🔄 過去投稿の同期</button>
+                    </div>
+                </div>
             </div>
 
             <!-- KPI Cards -->
             <div class="kpi-grid">
                 <div class="kpi-card">
-                    <div class="kpi-label">総投稿数</div>
-                    <div class="kpi-value"><?= $total_posts ?></div>
-                    <div class="kpi-change positive">全期間</div>
+                    <div class="kpi-label">システム総投稿数</div>
+                    <div class="kpi-value text-xl"><?= $total_posts ?></div>
+                    <div class="kpi-change positive">このツールから</div>
                     <div class="kpi-icon">✏️</div>
                 </div>
 
                 <div class="kpi-card">
-                    <div class="kpi-label">投稿済み</div>
+                    <div class="kpi-label">投稿完了</div>
                     <div class="kpi-value"><?= $posted_count ?></div>
-                    <div class="kpi-change positive">完了</div>
+                    <div class="kpi-change positive">配信済み</div>
                     <div class="kpi-icon">✅</div>
                 </div>
 
@@ -227,7 +237,7 @@ $version = defined('TOOL_VERSION') ? TOOL_VERSION : 'v1.0.0';
                         <div style="flex:1; min-width:200px;">
                             <div style="font-size:var(--font-size-sm); color:var(--color-text-secondary); margin-bottom:4px;">内容プレビュー</div>
                             <div style="font-size:var(--font-size-sm); line-height:1.6; color:var(--color-text);">
-                                <?= htmlspecialchars(mb_strimwidth($next_scheduled['content'], 0, 140, '...')) ?>
+                                <?= htmlspecialchars(mb_strimwidth($next_scheduled['content'], 0, 140, '...', 'UTF-8')) ?>
                             </div>
                         </div>
                     </div>
@@ -258,7 +268,7 @@ $version = defined('TOOL_VERSION') ? TOOL_VERSION : 'v1.0.0';
                         <tbody>
                             <?php foreach (array_slice($recent_posts, 0, 5) as $post): ?>
                             <tr>
-                                <td class="post-preview"><?= htmlspecialchars(mb_strimwidth($post['content'], 0, 60, '...')) ?></td>
+                                <td class="post-preview"><?= htmlspecialchars(mb_strimwidth($post['content'], 0, 60, '...', 'UTF-8')) ?></td>
                                 <td>
                                     <?php
                                     $badge_class = 'badge-draft';
@@ -576,7 +586,10 @@ $version = defined('TOOL_VERSION') ? TOOL_VERSION : 'v1.0.0';
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">📊 投稿別エンゲージメント</h3>
-                        <button class="btn btn-secondary btn-sm" onclick="fetchInsights()">📥 最新データを取得</button>
+                        <div class="flex" style="gap:var(--space-sm);">
+                            <button class="btn btn-ghost btn-sm" onclick="downloadInsightsCSV()">📄 CSVダウンロード</button>
+                            <button class="btn btn-secondary btn-sm" onclick="fetchInsights()">📥 最新データを取得</button>
+                        </div>
                     </div>
                     <div id="engagementTable">
                         <div class="empty-state">
@@ -649,17 +662,25 @@ $version = defined('TOOL_VERSION') ? TOOL_VERSION : 'v1.0.0';
                             <label class="form-label">アクセストークン</label>
                             <input type="password" id="settingsThreadsToken" class="form-input" placeholder="アクセストークンを入力"
                                 value="<?= htmlspecialchars(get_config('threads_access_token')) ?>">
+                            <div class="flex mt-sm justify-end">
+                                <button type="button" class="btn btn-ghost btn-xs" onclick="exchangeShortToken()" style="color:var(--color-primary);">✨ 短期トークンを長期に交換</button>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label class="form-label">ユーザーID</label>
                             <input type="text" id="settingsThreadsUserId" class="form-input" placeholder="Threads User ID"
                                 value="<?= htmlspecialchars(get_config('threads_user_id')) ?>">
+                            
+                            <div class="flex mt-sm justify-end">
+                                <button type="button" class="btn btn-ghost btn-xs" onclick="getThreadsProfile()" style="color:var(--color-info);">🔄 アカウント情報を同期</button>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label class="form-label">トークン有効期限</label>
                             <input type="date" id="settingsTokenExpires" class="form-input"
                                 value="<?= htmlspecialchars(get_config('threads_token_expires_at')) ?>">
                             <p class="form-help">長期トークンの有効期限（60日間）。自動リフレッシュの基準。</p>
+                            <p class="form-help text-xs" style="color:var(--color-warning);">※長期トークンへの変換（Exchange）には <code>config.php</code> での Meta App ID / Secret の設定が必要です。</p>
                         </div>
 
                         <!-- Token Countdown -->
@@ -675,6 +696,11 @@ $version = defined('TOOL_VERSION') ? TOOL_VERSION : 'v1.0.0';
                             <button class="btn btn-secondary btn-sm" onclick="refreshToken()" style="margin-left:auto;">🔄 手動更新</button>
                         </div>
                         <?php endif; ?>
+
+                        <div class="mt-md">
+                            <button class="btn btn-secondary btn-sm w-full" onclick="syncPastPosts()">📥 過去の投稿を同期</button>
+                            <p class="text-xs text-muted mt-sm">※ツール導入前の投稿データを分析対象として取り込みます。</p>
+                        </div>
 
                         <button class="btn btn-primary mt-md" onclick="saveThreadsSettings()">保存</button>
                     </div>
@@ -785,7 +811,7 @@ $version = defined('TOOL_VERSION') ? TOOL_VERSION : 'v1.0.0';
                             <label class="form-label">Cron設定用コマンド（1時間に1回実行を推奨）</label>
                             <div style="position:relative;">
                                 <input type="text" class="form-input" readonly id="cronCommand"
-                                    value="<?= htmlspecialchars('/usr/bin/php ' . realpath(__DIR__) . '/cron_dispatcher.php') ?>"
+                                    value="<?= htmlspecialchars('cd ' . realpath(__DIR__) . '; /usr/bin/php8.3 cron_dispatcher.php > /dev/null 2>&1') ?>"
                                     style="padding-right:80px; font-family:'SF Mono','Fira Code',monospace; font-size:var(--font-size-xs);">
                                 <button class="btn btn-secondary btn-sm" onclick="copyCronCommand()"
                                     style="position:absolute; right:4px; top:50%; transform:translateY(-50%);">
@@ -799,10 +825,10 @@ $version = defined('TOOL_VERSION') ? TOOL_VERSION : 'v1.0.0';
                             <label class="form-label">Crontabの設定例</label>
                             <div style="background:var(--color-bg); border:1px solid var(--color-border); border-radius:var(--radius-md); padding:var(--space-md); font-family:'SF Mono','Fira Code',monospace; font-size:var(--font-size-xs); color:var(--color-text-secondary); line-height:1.8; overflow-x:auto;">
                                 <div style="color:var(--color-text-muted);"># 毎時0分に実行（1時間に1回）← 推奨</div>
-                                <div>0 * * * * <?= htmlspecialchars('/usr/bin/php ' . realpath(__DIR__) . '/cron_dispatcher.php') ?> >> /dev/null 2>&amp;1</div>
+                                <div>0 * * * * <?= htmlspecialchars('cd ' . realpath(__DIR__) . '; /usr/bin/php8.3 cron_dispatcher.php > /dev/null 2>&1') ?></div>
                                 <br>
                                 <div style="color:var(--color-text-muted);"># 15分ごとに実行（より高頻度）</div>
-                                <div>*/15 * * * * <?= htmlspecialchars('/usr/bin/php ' . realpath(__DIR__) . '/cron_dispatcher.php') ?> >> /dev/null 2>&amp;1</div>
+                                <div>*/15 * * * * <?= htmlspecialchars('cd ' . realpath(__DIR__) . '; /usr/bin/php8.3 cron_dispatcher.php > /dev/null 2>&1') ?></div>
                             </div>
                         </div>
 

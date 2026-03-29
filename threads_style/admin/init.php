@@ -20,6 +20,9 @@ if (basename($_SERVER['PHP_SELF']) === 'setup.php') {
 }
 
 session_start();
+mb_internal_encoding("UTF-8");
+mb_regex_encoding("UTF-8");
+date_default_timezone_set('Asia/Tokyo');
 
 $dbPath = __DIR__ . '/database.sqlite';
 $setup_done = false;
@@ -291,7 +294,7 @@ function check_license_detail($license_key) {
 
     $result = json_decode($response_body, true);
     if ($result === null) {
-        return ['valid' => false, 'http_code' => $http_code, 'error' => 'レスポンスがJSONではありません', 'response' => mb_strimwidth($response_body, 0, 500, '...')];
+        return ['valid' => false, 'http_code' => $http_code, 'error' => 'レスポンスがJSONではありません', 'response' => mb_strimwidth($response_body, 0, 500, '...', 'UTF-8')];
     }
 
     $is_valid = (isset($result['status']) && $result['status'] === 'success');

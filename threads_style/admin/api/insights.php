@@ -24,15 +24,18 @@ switch ($action) {
 
     // ----- Threads API からインサイトを取得・保存 -----
     case 'fetch':
-        require_once __DIR__ . '/threads_api.php';
+        set_time_limit(120); // 多数の投稿を処理するため制限時間を延長
 
-        // 投稿済みの投稿を取得
-        $stmt = $pdo->query("SELECT id, threads_post_id FROM posts WHERE status = 'posted' AND threads_post_id != '' ORDER BY posted_at DESC LIMIT 50");
+        require_once __DIR__ . '/ThreadsAPI.php';
+        $api = new ThreadsAPI();
+
+        // 投稿済みの投稿を取得（直近30件）
+        $stmt = $pdo->query("SELECT id, threads_post_id FROM posts WHERE status = 'posted' AND threads_post_id != '' ORDER BY posted_at DESC LIMIT 30");
         $posted = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         $fetched = 0;
         foreach ($posted as $post) {
-            $result = threads_get_post_insights($post['threads_post_id']);
+            $result = $api->getPostInsights($post['threads_post_id']);
             if ($result['success'] && !empty($result['metrics'])) {
                 $m = $result['metrics'];
                 $stmt = $pdo->prepare("
@@ -75,7 +78,7 @@ switch ($action) {
         $threshold = (int)get_config('top_post_threshold', 50);
 
         // 最新のインサイトデータからスコアを計算（いいね*2 + 返信*3 + リポスト*4 + 引用*4）
-        $stmt = $pdo->query("
+        $stmt = $pdo->prepare("
             SELECT pi.post_id, p.content,
                    pi.likes, pi.replies, pi.reposts, pi.quotes, pi.views,
                    (pi.likes * 2 + pi.replies * 3 + pi.reposts * 4 + pi.quotes * 4) as score
@@ -83,8 +86,7 @@ switch ($action) {
             JOIN posts p ON p.id = pi.post_id
             WHERE pi.id IN (
                 SELECT MAX(id) FROM post_insights GROUP BY post_id
-            )
-            HAVING score >= :threshold
+            ) AND (pi.likes * 2 + pi.replies * 3 + pi.reposts * 4 + pi.quotes * 4) >= :threshold
             ORDER BY score DESC
             LIMIT 20
         ");

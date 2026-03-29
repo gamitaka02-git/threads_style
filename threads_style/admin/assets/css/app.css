@@ -1454,3 +1454,42 @@ h4 { font-size: var(--font-size-md); }
         justify-content: flex-end;
     }
 }
+/* ---------- Sidebar Account Info ---------- */
+.sidebar-account {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    margin-top: var(--space-md);
+    overflow: hidden;
+}
+
+.sidebar-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border-color-light);
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.sidebar-account .account-info {
+    min-width: 0;
+}
+
+.sidebar-account .account-name {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.2;
+}
+
+.sidebar-account .account-stats {
+    font-size: 10px;
+    white-space: nowrap;
+}

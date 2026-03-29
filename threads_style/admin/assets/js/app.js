@@ -16,6 +16,9 @@ document.addEventListener('DOMContentLoaded', () => {
     loadStyleGuide();
     loadKeywords();
     initCharts();
+    
+    // アカウント情報の初期表示
+    getThreadsProfile(true);
 });
 
 // ===== Sidebar Navigation =====
@@ -464,13 +467,18 @@ async function repurposeContent() {
 }
 
 function useAsSuggestion(btn) {
-    const content = btn.parentElement.querySelector('.ai-suggestion-content').textContent;
+    const content = btn.closest('.ai-suggestion-card').querySelector('.ai-suggestion-content').textContent;
     document.getElementById('postContent').value = content;
     document.getElementById('charCount').textContent = content.length;
     switchSection('posts');
     // Switch to create tab
     document.querySelector('[data-tab="tab-post-create"]').click();
     showToast('投稿フォームにコピーしました', 'success');
+}
+
+function copySuggestion(btn) {
+    const content = btn.closest('.ai-suggestion-card').querySelector('.ai-suggestion-content').textContent;
+    copyToClipboard(content);
 }
 
 // ===== AI Analysis =====
@@ -509,6 +517,13 @@ async function startAnalysis() {
     document.getElementById('analysisResult').classList.remove('hidden');
     document.getElementById('analysisResultContent').textContent = result.style_guide || '分析結果を取得できませんでした。';
 
+    // 再分析できるようにボタンを復活させる
+    const startBtn = document.getElementById('startAnalysisBtn');
+    if (startBtn) {
+        startBtn.innerHTML = '🔄 再度、自己解析を実行';
+        startBtn.classList.remove('hidden');
+    }
+
     showToast('自己解析が完了しました！', 'success');
     loadStyleGuide();
 }
@@ -528,6 +543,21 @@ async function loadStyleGuide() {
     if (result.success && result.content) {
         document.getElementById('styleGuideEditor').value = result.content;
         updateStyleGuidePreview();
+
+        // 分析結果（AIトーン学習）タブにも同期表示して再分析可能にする
+        const resultDiv = document.getElementById('analysisResult');
+        const contentDiv = document.getElementById('analysisResultContent');
+        const startBtn = document.getElementById('startAnalysisBtn');
+        
+        if (resultDiv && contentDiv && result.content.trim() !== '') {
+            contentDiv.textContent = result.content;
+            resultDiv.classList.remove('hidden');
+            
+            if (startBtn) {
+                startBtn.innerHTML = '🔄 再度、自己解析を実行';
+                startBtn.classList.remove('hidden');
+            }
+        }
     }
 }
 
@@ -602,7 +632,7 @@ async function generatePosts() {
                     <div class="ai-suggestion-content">${escapeHtml(s)}</div>
                     <div class="flex gap-sm mt-md">
                         <button class="btn btn-secondary btn-sm" onclick="useAsSuggestion(this)">📋 投稿に使う</button>
-                        <button class="btn btn-ghost btn-sm" onclick="copyToClipboard('${escapeHtml(s).replace(/'/g, "\\'")}')">コピー</button>
+                        <button class="btn btn-ghost btn-sm" onclick="copySuggestion(this)">コピー</button>
                     </div>
                 </div>
             `;
@@ -628,30 +658,111 @@ async function fetchInsights() {
     }
 }
 
+let currentInsightsData = [];
+let currentInsightSort = { key: 'fetched_at', dir: 'desc' };
+
 async function loadEngagementTable() {
     const container = document.getElementById('engagementTable');
     if (!container) return;
 
     const result = await apiCall('insights.php', { action: 'list' });
     if (result.success && result.insights && result.insights.length > 0) {
-        let html = '<table class="data-table"><thead><tr>';
-        html += '<th>投稿</th><th>👍 いいね</th><th>💬 返信</th><th>🔄 リポスト</th><th>👁 閲覧</th><th>取得日</th>';
-        html += '</tr></thead><tbody>';
-
-        result.insights.forEach(ins => {
-            const preview = escapeHtml(ins.content || '').substring(0, 40) + '...';
-            html += `<tr>
-                <td class="post-preview">${preview}</td>
-                <td>${ins.likes}</td>
-                <td>${ins.replies}</td>
-                <td>${ins.reposts}</td>
-                <td>${ins.views}</td>
-                <td style="font-size:var(--font-size-xs); color:var(--color-text-secondary);">${ins.fetched_at}</td>
-            </tr>`;
-        });
-        html += '</tbody></table>';
-        container.innerHTML = html;
+        currentInsightsData = result.insights;
+        renderEngagementTable();
     }
+}
+
+function sortInsights(key) {
+    if (currentInsightSort.key === key) {
+        currentInsightSort.dir = currentInsightSort.dir === 'asc' ? 'desc' : 'asc';
+    } else {
+        currentInsightSort.key = key;
+        // 数字項目（閲覧数、いいね等）はデフォルト降順がおすすめ
+        currentInsightSort.dir = key === 'content' ? 'asc' : 'desc';
+    }
+    renderEngagementTable();
+}
+
+function renderEngagementTable() {
+    const container = document.getElementById('engagementTable');
+    if (!container || !currentInsightsData.length) return;
+
+    // ソート処理
+    currentInsightsData.sort((a, b) => {
+        let valA = a[currentInsightSort.key];
+        let valB = b[currentInsightSort.key];
+        
+        if (!isNaN(valA) && !isNaN(valB)) {
+            valA = Number(valA);
+            valB = Number(valB);
+        }
+
+        if (valA < valB) return currentInsightSort.dir === 'asc' ? -1 : 1;
+        if (valA > valB) return currentInsightSort.dir === 'asc' ? 1 : -1;
+        return 0;
+    });
+
+    const getSortIcon = (key) => {
+        if (currentInsightSort.key !== key) return '<span style="opacity:0.3">↕</span>';
+        return currentInsightSort.dir === 'asc' ? '⬆' : '⬇';
+    };
+
+    let html = '<div style="overflow-x:auto;"><table class="data-table" style="min-width:600px;"><thead><tr>';
+    html += `<th onclick="sortInsights('content')" style="cursor:pointer; user-select:none;">投稿 ${getSortIcon('content')}</th>`;
+    html += `<th onclick="sortInsights('likes')" style="cursor:pointer; user-select:none; white-space:nowrap;">👍 いいね ${getSortIcon('likes')}</th>`;
+    html += `<th onclick="sortInsights('replies')" style="cursor:pointer; user-select:none; white-space:nowrap;">💬 返信 ${getSortIcon('replies')}</th>`;
+    html += `<th onclick="sortInsights('reposts')" style="cursor:pointer; user-select:none; white-space:nowrap;">🔄 リポスト ${getSortIcon('reposts')}</th>`;
+    html += `<th onclick="sortInsights('views')" style="cursor:pointer; user-select:none; white-space:nowrap;">👁 閲覧 ${getSortIcon('views')}</th>`;
+    html += `<th onclick="sortInsights('fetched_at')" style="cursor:pointer; user-select:none; white-space:nowrap;">取得日 ${getSortIcon('fetched_at')}</th>`;
+    html += '</tr></thead><tbody>';
+
+    currentInsightsData.forEach(ins => {
+        const preview = escapeHtml(ins.content || '').substring(0, 40) + '...';
+        html += `<tr>
+            <td class="post-preview" style="max-width:300px;">${preview}</td>
+            <td>${ins.likes}</td>
+            <td>${ins.replies}</td>
+            <td>${ins.reposts}</td>
+            <td>${ins.views}</td>
+            <td style="font-size:var(--font-size-xs); color:var(--color-text-secondary); white-space:nowrap;">${ins.fetched_at}</td>
+        </tr>`;
+    });
+    html += '</tbody></table></div>';
+    
+    container.innerHTML = html;
+}
+
+function downloadInsightsCSV() {
+    if (!currentInsightsData || currentInsightsData.length === 0) {
+        showToast('ダウンロードするデータがありません', 'warning');
+        return;
+    }
+
+    // CSVヘッダー
+    let csvContent = "投稿内容,いいね,返信,リポスト,閲覧数,取得日時\n";
+
+    // データ行
+    currentInsightsData.forEach(ins => {
+        // Excel等で崩れないように内容をエスケープして囲む
+        let content = (ins.content || '').replace(/"/g, '""');
+        csvContent += `"${content}",${ins.likes},${ins.replies},${ins.reposts},${ins.views},"${ins.fetched_at}"\n`;
+    });
+
+    // BOMを追加してExcelで文字化けしないようにする（UTF-8 BOM）
+    const bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
+    const blob = new Blob([bom, csvContent], { type: 'text/csv;charset=utf-8;' });
+    
+    // ダウンロードトリガー
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    const dateStr = new Date().toISOString().slice(0, 10);
+    
+    link.setAttribute("href", url);
+    link.setAttribute("download", `threads_insights_${dateStr}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
 
 async function detectTopPosts() {
@@ -755,6 +866,65 @@ async function removeKeyword(id) {
 }
 
 // ===== Settings =====
+
+async function getThreadsProfile(isInitial = false) {
+    const profileContainer = document.getElementById('threadsProfileSidebar');
+    if (!profileContainer) return;
+
+    if (!isInitial) {
+        showLoading('アカウント情報を取得中');
+    }
+
+    try {
+        const result = await apiCall('settings.php', { action: 'get_threads_profile' });
+        if (!isInitial) hideLoading();
+
+        if (result.success && result.profile) {
+            const p = result.profile;
+            profileContainer.innerHTML = `
+                <div class="sidebar-account mt-md">
+                    <img src="${p.threads_profile_picture_url || 'assets/img/default-avatar.png'}" class="sidebar-avatar" alt="Avatar">
+                    <div class="account-info">
+                        <div class="account-name">@${escapeHtml(p.username)}</div>
+                        <div class="account-stats">
+                            <span class="text-xs text-muted">${p.follower_count.toLocaleString()} follower</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            if (!isInitial) showToast('アカウント情報を同期しました', 'success');
+        } else if (!isInitial) {
+            profileContainer.innerHTML = ``;
+        }
+    } catch (err) {
+        if (!isInitial) hideLoading();
+        console.error('Profile fetch error:', err);
+    }
+}
+
+async function syncPastPosts() {
+    if (!confirm('Threads アカウントの直近の投稿データを取得してツール内へ同期します。よろしいですか？')) {
+        return;
+    }
+
+    showLoading('過去投稿を同期中');
+    try {
+        const result = await apiCall('settings.php', { action: 'sync_posts' });
+        hideLoading();
+
+        if (result.success) {
+            showToast(result.message, 'success');
+            setTimeout(() => location.reload(), 1500);
+        } else {
+            showToast(result.message || '同期に失敗しました', 'error');
+        }
+    } catch (err) {
+        hideLoading();
+        console.error('Post sync error:', err);
+        showToast('通信エラーが発生しました', 'error');
+    }
+}
+
 async function saveThreadsSettings() {
     const result = await apiCall('settings.php', {
         action: 'save',
@@ -767,6 +937,42 @@ async function saveThreadsSettings() {
         showToast('Threads API 設定を保存しました', 'success');
     } else {
         showToast(result.message || '保存に失敗しました', 'error');
+    }
+}
+
+async function exchangeShortToken() {
+    console.log('exchangeShortToken called');
+    const tokenInput = document.getElementById('settingsThreadsToken');
+    const shortToken = tokenInput.value.trim();
+
+    if (!shortToken) {
+        showToast('交換する短期トークンを入力してください', 'warning');
+        return;
+    }
+
+    if (!confirm('入力されたトークンをAPI経由で長期トークン（60日間）に交換します。よろしいですか？')) {
+        return;
+    }
+
+    showLoading('トークンを交換中');
+    try {
+        const result = await apiCall('settings.php', {
+            action: 'exchange_token',
+            short_token: shortToken
+        });
+        hideLoading();
+
+        if (result.success) {
+            showToast('長期トークンへの交換に成功しました', 'success');
+            setTimeout(() => location.reload(), 1500);
+        } else {
+            showToast(result.message || '交換に失敗しました', 'error');
+            console.error('Exchange error:', result);
+        }
+    } catch (err) {
+        hideLoading();
+        showToast('通信エラーが発生しました。コンソールを確認してください。', 'error');
+        console.error('Exchange fatal error:', err);
     }
 }
 
@@ -846,9 +1052,9 @@ async function refreshToken() {
 
     if (result.success) {
         showToast('トークンを更新しました', 'success');
-        location.reload();
+        setTimeout(() => location.reload(), 1500);
     } else {
-        showToast(result.message || 'トークン更新に失敗しました', 'error');
+        showToast(result.message || 'トークンの更新に失敗しました', 'error');
     }
 }
 
