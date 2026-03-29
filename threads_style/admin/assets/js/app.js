@@ -262,7 +262,10 @@ async function publishPostNow() {
     }
 }
 
-async function loadPostList(filter = 'all') {
+async function loadPostList(filter = null) {
+    if (!filter) {
+        filter = document.querySelector('[data-filter].active')?.dataset.filter || 'all';
+    }
     const container = document.getElementById('postListContainer');
     if (!container) return;
 
@@ -282,7 +285,8 @@ async function loadPostList(filter = 'all') {
             };
             const badge = badgeMap[post.status] || badgeMap.draft;
             const aiTag = post.ai_label == 1 ? ' <span class="badge badge-warning">AI</span>' : '';
-            const preview = escapeHtml(post.content).substring(0, 60) + (post.content.length > 60 ? '...' : '');
+            const contentStr = post.content || '';
+            const preview = escapeHtml(contentStr).substring(0, 60) + (contentStr.length > 60 ? '...' : '');
 
             html += `<tr>
                 <td class="post-preview">${preview}</td>

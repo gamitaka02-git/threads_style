@@ -13,7 +13,7 @@ cookies.txt
 
 # --- 配布用ツール（フォルダ名がツールごとに異なるため ** で汎用指定）---
 **/admin/config.php
-**/admin/database.sqlite
+**/admin/*.sqlite*
 **/admin/*.log
 **/admin/_tmp_update_*
 

@@ -354,7 +354,7 @@ $version = defined('TOOL_VERSION') ? TOOL_VERSION : 'v1.0.0';
                         <button class="btn btn-ghost btn-sm" data-filter="scheduled">予約中</button>
                         <button class="btn btn-ghost btn-sm" data-filter="posted">投稿済</button>
                     </div>
-                    <button class="btn btn-secondary btn-sm" onclick="loadPostList()">🔄 更新</button>
+                    <button class="btn btn-secondary btn-sm" onclick="loadPostList(document.querySelector('[data-filter].active')?.dataset.filter || 'all')">🔄 更新</button>
                 </div>
                 <div id="postListContainer">
                     <div class="empty-state">
