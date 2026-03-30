@@ -33,7 +33,7 @@
 
         <section class="cta-card">
             <div class="price-tag">¥2,980 <span>(税込)</span></div>
-            <p style="color:var(--color-text-secondary); font-size:14px;">買い切りライセンス</p>
+            <p class="price-subtitle">買い切りライセンス</p>
             
             <ul class="features-list">
                 <li>予約投稿（カレンダー管理）</li>
@@ -45,7 +45,7 @@
 
             <a href="checkout.php" class="btn-buy">今すぐ購入する</a>
             
-            <p style="margin-top: 24px; font-size: 12px; color: var(--color-text-secondary);">
+            <p class="cta-note">
                 Stripeによる安全な決済がご利用いただけます
             </p>
         </section>

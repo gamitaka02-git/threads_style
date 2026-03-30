@@ -160,6 +160,17 @@ footer {
     }
 }
 
+.price-subtitle {
+    color: var(--color-text-secondary);
+    font-size: 14px;
+}
+
+.cta-note {
+    margin-top: 24px;
+    font-size: 12px;
+    color: var(--color-text-secondary);
+}
+
 /* --- Success Page Styles --- */
 .success-body {
     display: flex;
