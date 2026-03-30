@@ -21,7 +21,7 @@ require_once __DIR__ . '/../admin/stripe-php/init.php';
 
 // この商品の価格ID（Stripeダッシュボードから取得）
 // 同一Stripeアカウントで複数商品を扱う場合、自分の商品以外のイベントを無視するために使用
-define('EXPECTED_PRICE_ID', '[ここにStripe価格ID（price_xxx）を入力]');
+define('EXPECTED_PRICE_ID', 'price_1TFoZgEzNfjI6wO4mNHyCZQE');
 
 // データベース接続関数
 function get_db_connection()
@@ -78,7 +78,7 @@ if ($event->type === 'checkout.session.completed') {
     $key_part = function () use ($chars) {
         return substr(str_shuffle($chars), 0, 4);
     };
-    $license_key = "YOUR_PREFIX-" . $key_part() . "-" . $key_part() . "-" . $key_part();
+    $license_key = "TS-" . $key_part() . "-" . $key_part() . "-" . $key_part();
 
     // DB（MySQL）に保存
     try {
@@ -92,28 +92,53 @@ if ($event->type === 'checkout.session.completed') {
         mb_language("Japanese");
         mb_internal_encoding("UTF-8");
 
-        $subject = "【重要】ライセンスキーのご送付 / YOUR_APP_NAME｜Gamitaka Tools";
-        
-        $body = "この度は「YOUR_APP_NAME」をご購入いただき、誠にありがとうございます。\n\n";
-        $body .= "以下の通り、ライセンスキーを発行いたしました。\n\n";
+        $subject = "【重要】Threads_Style ライセンスキーのご送付と設置のご案内";
+
+        $body = "この度は、Threads運用・分析支援ツール「Threads_Style」をご購入いただき、誠にありがとうございます。\n";
+        $body .= "開発者のがみたかです。\n\n";
+
+        $body .= "本ツールは、Threadsでの発信をより戦略的に、そしてAI（Gemini）を活用して効率化するために開発いたしました。\n";
+        $body .= "日々の運用負荷を軽減し、質の高いコミュニケーションを生む一助となれば幸いです。\n\n";
+
+        $body .= "以下の通り、ライセンスキーを発行いたしましたのでご確認ください。\n\n";
+
+        $body .= "--------------------------------------------------\n";
         $body .= "【ライセンスキー】\n";
-        $body .= "{$license_key}\n\n";
+        $body .= "{$license_key}\n";
+        $body .= "--------------------------------------------------\n\n";
+
+        $body .= "■ ツールの設置・設定について\n";
+        $body .= "以下のマニュアルにて、サーバーへの設置から初期設定までの手順を詳しく解説しております。\n";
+        $body .= "まずは、こちらの手順に沿って作業を進めていただけますでしょうか。\n\n";
+
         $body .= "【設置・設定マニュアル】\n";
-        $body .= "以下のURLよりマニュアルをご参照の上、ツールの設置・設定をお願いいたします。\n";
         $body .= "[ここにマニュアルURLを入力]\n\n";
+
+        $body .= "■ サポートについて\n";
+        $body .= "万が一、設置作業中に不明な点や動作の不具合がございましたら、お気軽にお問い合わせください。\n";
+        $body .= "開発者として、しっかりサポートさせていただきます。\n\n";
+
         $body .= "【お問い合わせ先】\n";
-        $body .= "ご不明な点がございましたら、以下のメールアドレスまでお問い合わせください。\n";
         $body .= (defined('SUPPORT_EMAIL') ? SUPPORT_EMAIL : '[ここにサポートメールアドレスを入力]') . "\n\n";
-        $body .= "今後とも何卒よろしくお願い申し上げます。";
+
+        $body .= "これから「Threads_Style」が、あなたのThreads運用を強力にバックアップできることを願っております。\n";
+        $body .= "今後とも、何卒よろしくお願い申し上げます。\n\n";
+
+        $body .= "--------------------------------------------------\n";
+        $body .= "Gamitaka Tools\n";
+        $body .= "https://www.gamitaka.com/\n";
+        $body .= "--------------------------------------------------";
 
         $from_email = defined('FROM_EMAIL') ? FROM_EMAIL : '[ここに送信元メールアドレスを入力]';
         $support_email = defined('SUPPORT_EMAIL') ? SUPPORT_EMAIL : $from_email;
 
+        // ヘッダー等の送信処理が続く...
+
         // 送信元表示名（日本語をMIMEエンコード）
-        $from_name = mb_encode_mimeheader("YOUR_APP_NAME 開発事務局", "UTF-8", "B") . " <{$from_email}>";
+        $from_name = mb_encode_mimeheader("Gamitaka Tools", "UTF-8", "B") . " <{$from_email}>";
 
         // メールヘッダー
-        $headers  = "MIME-Version: 1.0\r\n";
+        $headers = "MIME-Version: 1.0\r\n";
         $headers .= "From: " . $from_name . "\r\n";
         $headers .= "Reply-To: " . $support_email . "\r\n";
         $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";

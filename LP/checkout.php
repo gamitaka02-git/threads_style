@@ -25,7 +25,7 @@ $domainName = $_SERVER['HTTP_HOST'] . '';
 $base_url = $protocol . $domainName . dirname($_SERVER['REQUEST_URI']);
 
 // Stripeダッシュボードから取得した商品の「価格ID (Price ID)」
-$price_id = '[ここにStripe価格ID（price_xxx）を入力]'; // ★ここを実際の価格IDに変更します
+$price_id = 'price_1TFoZgEzNfjI6wO4mNHyCZQE'; // ★ここを実際の価格IDに変更します
 
 try {
     $session = \Stripe\Checkout\Session::create([
