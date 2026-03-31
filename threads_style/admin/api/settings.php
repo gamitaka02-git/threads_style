@@ -26,6 +26,8 @@ switch ($action) {
         $allowed_keys = [
             'threads_access_token',
             'threads_user_id',
+            'threads_app_id',
+            'threads_app_secret',
             'threads_token_expires_at',
             'gemini_api_key',
             'gemini_model',
@@ -68,7 +70,7 @@ switch ($action) {
         $configs = [];
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             // トークンなどの機密値はマスク
-            if (in_array($row['key'], ['threads_access_token', 'gemini_api_key'])) {
+            if (in_array($row['key'], ['threads_access_token', 'gemini_api_key', 'threads_app_secret'])) {
                 $row['value'] = !empty($row['value']) ? '***設定済み***' : '';
             }
             $configs[$row['key']] = $row['value'];

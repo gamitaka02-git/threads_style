@@ -22,9 +22,9 @@ class ThreadsAPI {
         $this->accessToken = $accessToken ?? get_config('threads_access_token');
         $this->userId = $userId ?? get_config('threads_user_id');
         
-        // アプリIDとシークレットは定数から取得
-        $this->appId = defined('THREADS_APP_ID') ? THREADS_APP_ID : '';
-        $this->appSecret = defined('THREADS_APP_SECRET') ? THREADS_APP_SECRET : '';
+        // アプリIDとシークレットはDBから取得（定数はフォールバック）
+        $this->appId = get_config('threads_app_id', defined('THREADS_APP_ID') ? THREADS_APP_ID : '');
+        $this->appSecret = get_config('threads_app_secret', defined('THREADS_APP_SECRET') ? THREADS_APP_SECRET : '');
     }
 
     /**

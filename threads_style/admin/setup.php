@@ -224,6 +224,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $defaults = [
                 ['threads_access_token', $threads_token],
                 ['threads_user_id', $threads_user_id],
+                ['threads_app_id', trim($_POST['threads_app_id'] ?? '')],
+                ['threads_app_secret', trim($_POST['threads_app_secret'] ?? '')],
                 ['threads_token_expires_at', $threads_token ? date('Y-m-d', strtotime('+60 days')) : ''],
                 ['gemini_api_key', ''],
                 ['gemini_model', 'gemini-3.1-flash-lite-preview'],
@@ -311,6 +313,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <input type="text" name="threads_user_id"
                         class="auth-input"
                         placeholder="ユーザーID">
+                </div>
+                <div style="margin-top:var(--space-md);">
+                    <label class="form-label">Meta App ID（任意）</label>
+                    <input type="text" name="threads_app_id"
+                        class="auth-input"
+                        placeholder="App ID">
+                </div>
+                <div style="margin-top:var(--space-md);">
+                    <label class="form-label">Meta App Secret（任意）</label>
+                    <input type="password" name="threads_app_secret"
+                        class="auth-input"
+                        placeholder="App Secret">
                 </div>
             </div>
 

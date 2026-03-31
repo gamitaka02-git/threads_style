@@ -440,6 +440,18 @@ h4 { font-size: var(--font-size-md); }
     border-radius: var(--radius-sm);
 }
 
+.btn-sm.sync {
+    width: 160px;
+    padding: 10px 0 8px;
+    margin: 0 0 30px;
+    background: #1e4290;
+}
+
+.btn-sm.sync:hover {
+    transform: translateY(-2px);
+    background: #2c5ecb;
+}
+
 .btn-lg {
     padding: 14px 28px;
     font-size: var(--font-size-md);

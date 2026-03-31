@@ -1138,12 +1138,21 @@ async function syncPastPosts() {
 }
 
 async function saveThreadsSettings() {
-    const result = await apiCall('settings.php', {
+    const params = {
         action: 'save',
         threads_access_token: document.getElementById('settingsThreadsToken').value,
+        threads_app_id: document.getElementById('settingsThreadsAppId').value,
         threads_user_id: document.getElementById('settingsThreadsUserId').value,
         threads_token_expires_at: document.getElementById('settingsTokenExpires').value
-    });
+    };
+
+    // マスクされている場合は送信しない（上書き防止）
+    const appSecret = document.getElementById('settingsThreadsAppSecret').value;
+    if (appSecret !== '***設定済み***') {
+        params.threads_app_secret = appSecret;
+    }
+
+    const result = await apiCall('settings.php', params);
 
     if (result.success) {
         showToast('Threads API 設定を保存しました', 'success');

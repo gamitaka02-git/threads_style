@@ -737,6 +737,18 @@ $version = defined('TOOL_VERSION') ? TOOL_VERSION : 'v1.0.0';
                                 </div>
                             </div>
                             <div class="form-group">
+                                <label class="form-label">Meta App ID</label>
+                                <input type="text" id="settingsThreadsAppId" class="form-input"
+                                    placeholder="<?= defined('THREADS_APP_ID') && THREADS_APP_ID ? 'config.php で設定中' : 'App ID を入力' ?>"
+                                    value="<?= htmlspecialchars(get_config('threads_app_id')) ?>">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Meta App Secret</label>
+                                <input type="password" id="settingsThreadsAppSecret" class="form-input"
+                                    placeholder="<?= defined('THREADS_APP_SECRET') && THREADS_APP_SECRET ? 'config.php で設定中' : 'App Secret を入力' ?>"
+                                    value="<?= get_config('threads_app_secret') ? '***設定済み***' : '' ?>">
+                            </div>
+                            <div class="form-group">
                                 <label class="form-label">ユーザーID</label>
                                 <input type="text" id="settingsThreadsUserId" class="form-input"
                                     placeholder="Threads User ID"
@@ -752,8 +764,7 @@ $version = defined('TOOL_VERSION') ? TOOL_VERSION : 'v1.0.0';
                                 <input type="date" id="settingsTokenExpires" class="form-input"
                                     value="<?= htmlspecialchars(get_config('threads_token_expires_at')) ?>">
                                 <p class="form-help">長期トークンの有効期限（60日間）。自動リフレッシュの基準。</p>
-                                <p class="form-help text-xs" style="color:var(--color-warning);">※長期トークンへの変換（Exchange）には
-                                    <code>config.php</code> での Meta App ID / Secret の設定が必要です。
+                                <p class="form-help text-xs" style="color:var(--color-info);">※これらの設定は <code>config.php</code> よりも優先されます。空欄の場合は <code>config.php</code> の値が使用されます。
                                 </p>
                             </div>
 
@@ -774,7 +785,7 @@ $version = defined('TOOL_VERSION') ? TOOL_VERSION : 'v1.0.0';
                             <?php endif; ?>
 
                             <div class="mt-md">
-                                <button class="btn btn-secondary btn-sm w-full" onclick="syncPastPosts()">📥
+                                <button class="btn btn-secondary btn-sm sync" onclick="syncPastPosts()">📥
                                     過去の投稿を同期</button>
                                 <p class="text-xs text-muted mt-sm">※ツール導入前の投稿データを分析対象として取り込みます。</p>
                             </div>
