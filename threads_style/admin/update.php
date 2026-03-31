@@ -105,7 +105,7 @@ function update_plugin_remove_dir($dir) {
 
 if ($action === 'check') {
     // GitHub Releases APIからリリース一覧を取得（latestはプレリリースが含まれない場合に404を返すため）
-    $repo = defined('GITHUB_REPO') ? GITHUB_REPO : '[ここにGitHubリポジトリを入力]';
+    $repo = defined('GITHUB_REPO') ? GITHUB_REPO : 'gamitaka02-git/threads_style';
     $url = "https://api.github.com/repos/{$repo}/releases";
 
     $ch = curl_init();
@@ -178,12 +178,27 @@ if ($action === 'execute') {
     }
 
     $data = $data_list[0];
-    if (empty($data['zipball_url'])) {
+    $zip_url = '';
+
+    // 1. 手動アップロードされたアセット（.zip）を優先的に探す
+    if (!empty($data['assets']) && is_array($data['assets'])) {
+        foreach ($data['assets'] as $asset) {
+            if (isset($asset['name']) && strpos(strtolower($asset['name']), '.zip') !== false) {
+                $zip_url = $asset['browser_download_url'] ?? '';
+                if ($zip_url) break;
+            }
+        }
+    }
+
+    // 2. アセットがなければ自動生成の zipball_url を使う
+    if (!$zip_url) {
+        $zip_url = $data['zipball_url'] ?? '';
+    }
+
+    if (empty($zip_url)) {
         echo json_encode(['success' => false, 'message' => 'ZIPダウンロードURLが見つかりません。']);
         exit;
     }
-
-    $zip_url = $data['zipball_url'];
     $tmp_dir = __DIR__ . '/_tmp_update_' . time();
     $zip_file = $tmp_dir . '/update.zip';
 
@@ -228,15 +243,30 @@ if ($action === 'execute') {
         exit;
     }
 
-    // GitHubからのZIP解凍時、中身は "owner-repo-hash/" のようなルートフォルダに入る
-    $extracted_folders = array_diff(scandir($extract_dir), array('.', '..'));
+    // コピー元となるツール本体フォルダを特定するロジック
+    // 手動ZIP（中身のみ / フォルダごと）とGitHub自動ZIPの両方に対応
     $extracted_root = '';
-    foreach ($extracted_folders as $f) {
-        if (is_dir($extract_dir . '/' . $f)) {
-            // ★ ここをあなたのリポジトリ内の配布用ツールフォルダ名に変更する
-            // 例: リポジトリの中に 'tool_app' というフォルダがある場合
-            $extracted_root = $extract_dir . '/' . $f . '/threads_style';
-            break;
+    
+    // 候補1: 解凍直下に admin がある場合（個別ZIPで中身のみ固めたケース）
+    if (is_dir($extract_dir . '/admin')) {
+        $extracted_root = $extract_dir;
+    } 
+    // 候補2: 解凍直下に threads_style がある場合
+    elseif (is_dir($extract_dir . '/threads_style/admin')) {
+        $extracted_root = $extract_dir . '/threads_style';
+    }
+    // 候補3: 解凍直下のフォルダの中にツールがある場合（GitHub自動ZIPまたはラップされたZIP）
+    else {
+        $extracted_folders = array_diff(scandir($extract_dir), array('.', '..'));
+        foreach ($extracted_folders as $f) {
+            $path = $extract_dir . '/' . $f;
+            if (is_dir($path . '/threads_style/admin')) {
+                $extracted_root = $path . '/threads_style';
+                break;
+            } elseif (is_dir($path . '/admin')) {
+                $extracted_root = $path;
+                break;
+            }
         }
     }
 
@@ -262,9 +292,15 @@ if ($action === 'execute') {
     update_plugin_remove_dir($tmp_dir);
 
     if (isset($success) && $success) {
+        $msg = "アップデート完了！\nコピー元: " . str_replace($tmp_dir, '', $extracted_root) . "\nコピー先: " . $target_dir;
         echo json_encode([
             'success' => true,
-            'message' => 'アップデートが正常に完了しました。最新バージョンに更新されました。'
+            'message' => $msg,
+            'debug' => [
+                'extracted_root' => $extracted_root,
+                'target_dir' => $target_dir,
+                'tmp_dir' => $tmp_dir
+            ]
         ]);
     } else {
         echo json_encode([
