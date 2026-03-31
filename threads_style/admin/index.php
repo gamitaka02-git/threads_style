@@ -372,6 +372,20 @@ $version = defined('TOOL_VERSION') ? TOOL_VERSION : 'v1.0.0';
                         <div class="post-char-count">
                             <span id="charCount">0</span> / 500
                         </div>
+
+                        <!-- トピック入力エリア -->
+                        <div class="topic-tag-area">
+                            <div class="topic-tag-input-row">
+                                <span class="topic-tag-hash">#</span>
+                                <input type="text" id="postTopicTag" class="topic-tag-input"
+                                    placeholder="トピックタグ（任意）"
+                                    maxlength="50"
+                                    oninput="sanitizeTopicTagInput(this)">
+                                <button class="topic-popular-btn" onclick="togglePopularTopics('create')" id="createPopularBtn" title="人気トピックを見る">📊 人気</button>
+                            </div>
+                            <div id="createPopularTopics" class="popular-topics-panel" style="display:none;"></div>
+                        </div>
+
                         <div class="post-composer-footer">
                             <div class="post-composer-options">
                                 <div class="toggle-wrap" title="ツール内でAI生成投稿を識別する管理用タグです。Threads上には表示されません。">
@@ -1031,6 +1045,18 @@ $version = defined('TOOL_VERSION') ? TOOL_VERSION : 'v1.0.0';
                 <div class="form-group">
                     <label class="form-label">内容</label>
                     <textarea id="editPostContent" class="form-textarea" rows="6"></textarea>
+                </div>
+                <!-- トピックタグ（編集時） -->
+                <div class="topic-tag-area" style="margin-bottom: var(--space-md);">
+                    <div class="topic-tag-input-row">
+                        <span class="topic-tag-hash">#</span>
+                        <input type="text" id="editPostTopicTag" class="topic-tag-input"
+                            placeholder="トピックタグ（任意）"
+                            maxlength="50"
+                            oninput="sanitizeTopicTagInput(this)">
+                        <button class="topic-popular-btn" onclick="togglePopularTopics('edit')" id="editPopularBtn" title="人気トピックを見る">📊 人気</button>
+                    </div>
+                    <div id="editPopularTopics" class="popular-topics-panel" style="display:none;"></div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">

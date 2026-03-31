@@ -60,6 +60,7 @@ if (file_exists($dbPath)) {
                         thread_order INTEGER DEFAULT 0,
                         content TEXT NOT NULL,
                         media_url TEXT DEFAULT '',
+                        topic_tag TEXT DEFAULT '',
                         status TEXT DEFAULT 'draft',
                         scheduled_at DATETIME DEFAULT NULL,
                         posted_at DATETIME DEFAULT NULL,
@@ -73,6 +74,12 @@ if (file_exists($dbPath)) {
                         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
                     )
                 ");
+            } else {
+                // 既存テーブルへの topic_tag カラム追加（マイグレーション）
+                $cols = $pdo->query("PRAGMA table_info(posts)")->fetchAll(PDO::FETCH_COLUMN, 1);
+                if (!in_array('topic_tag', $cols)) {
+                    $pdo->exec("ALTER TABLE posts ADD COLUMN topic_tag TEXT DEFAULT ''");
+                }
             }
 
             // post_insights テーブル

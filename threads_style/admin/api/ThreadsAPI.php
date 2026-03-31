@@ -108,9 +108,10 @@ class ThreadsAPI {
      * @param string $content
      * @param bool $aiLabel
      * @param string|array $mediaUrl 画像URL（単一文字列 or 複数URLの配列）
+     * @param string $topicTag トピックタグ（1-50文字・「.」「&」不可）
      * @return array
      */
-    public function publishPost($content, $aiLabel = false, $mediaUrl = '') {
+    public function publishPost($content, $aiLabel = false, $mediaUrl = '', $topicTag = '') {
         if (empty($this->accessToken) || empty($this->userId)) {
             return ['success' => false, 'message' => 'API設定が不足しています（トークンまたはユーザーIDが無効）。'];
         }
@@ -118,7 +119,7 @@ class ThreadsAPI {
         // 複数画像URLの場合はカルーセル投稿へ委譲
         $mediaUrls = $this->parseMediaUrls($mediaUrl);
         if (count($mediaUrls) >= 2) {
-            return $this->publishCarouselPost($content, $mediaUrls, $aiLabel);
+            return $this->publishCarouselPost($content, $mediaUrls, $aiLabel, $topicTag);
         }
 
         // Step 1: メディアコンテナ作成
@@ -143,6 +144,12 @@ class ThreadsAPI {
             $params['is_made_with_ai'] = 'true';
         }
 
+        // topic_tag を適用（API制約: 1-50文字、「.」「&」不可）
+        $topicTag = $this->sanitizeTopicTag($topicTag);
+        if (!empty($topicTag)) {
+            $params['topic_tag'] = $topicTag;
+        }
+
         $response = $this->apiRequest($containerUrl, $params, 'POST');
         if (!$response['success'] || empty($response['data']['id'])) {
             return ['success' => false, 'message' => 'メディアコンテナ作成失敗: ' . ($response['error'] ?? '不明なエラー')];
@@ -163,9 +170,10 @@ class ThreadsAPI {
      * @param string $content 投稿テキスト
      * @param array $imageUrls 画像URLの配列（2〜20枚）
      * @param bool $aiLabel
+     * @param string $topicTag
      * @return array
      */
-    public function publishCarouselPost($content, array $imageUrls, $aiLabel = false) {
+    public function publishCarouselPost($content, array $imageUrls, $aiLabel = false, $topicTag = '') {
         if (empty($this->accessToken) || empty($this->userId)) {
             return ['success' => false, 'message' => 'API設定が不足しています。'];
         }
@@ -212,6 +220,10 @@ class ThreadsAPI {
         if ($aiLabel) {
             $carouselParams['is_made_with_ai'] = 'true';
         }
+        $topicTag = $this->sanitizeTopicTag($topicTag);
+        if (!empty($topicTag)) {
+            $carouselParams['topic_tag'] = $topicTag;
+        }
 
         $carouselResponse = $this->apiRequest($containerUrl, $carouselParams, 'POST');
         if (!$carouselResponse['success'] || empty($carouselResponse['data']['id'])) {
@@ -227,6 +239,21 @@ class ThreadsAPI {
             $result['image_count'] = count($imageUrls);
         }
         return $result;
+    }
+
+    /**
+     * topic_tag をサニタイズする（API制約を適用）
+     * - 先頭の # を除去
+     * - . と & を除去
+     * - 50文字までに指定
+     */
+    private function sanitizeTopicTag($tag) {
+        if (empty($tag)) return '';
+        $tag = trim($tag);
+        $tag = ltrim($tag, '#');          // 先頭 # を除去
+        $tag = str_replace(['.', '&'], '', $tag); // 禁止文字を除去
+        $tag = mb_strimwidth($tag, 0, 50, '', 'UTF-8'); // 50文字まで
+        return $tag;
     }
 
     /**

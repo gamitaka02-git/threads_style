@@ -355,7 +355,8 @@ async function savePostDraft() {
         action: 'create',
         content: content,
         status: 'draft',
-        ai_label: document.getElementById('aiLabelToggle').checked ? 1 : 0
+        ai_label: document.getElementById('aiLabelToggle').checked ? 1 : 0,
+        topic_tag: (document.getElementById('postTopicTag')?.value || '').trim()
     };
     if (urls.length > 0) params.media_urls = JSON.stringify(urls);
 
@@ -363,10 +364,7 @@ async function savePostDraft() {
 
     if (result.success) {
         showToast('下書きを保存しました', 'success');
-        document.getElementById('postContent').value = '';
-        document.getElementById('charCount').textContent = '0';
-        mediaState['create'] = [];
-        renderMediaGallery('create');
+        clearComposer();
         loadPostList();
     } else {
         showToast(result.message || 'エラーが発生しました', 'error');
@@ -392,7 +390,8 @@ async function schedulePost() {
         content: content,
         status: 'scheduled',
         scheduled_at: scheduledAt,
-        ai_label: document.getElementById('aiLabelToggle').checked ? 1 : 0
+        ai_label: document.getElementById('aiLabelToggle').checked ? 1 : 0,
+        topic_tag: (document.getElementById('postTopicTag')?.value || '').trim()
     };
     if (urls.length > 0) params.media_urls = JSON.stringify(urls);
 
@@ -400,11 +399,7 @@ async function schedulePost() {
 
     if (result.success) {
         showToast('予約投稿を設定しました', 'success');
-        document.getElementById('postContent').value = '';
-        document.getElementById('charCount').textContent = '0';
-        document.getElementById('scheduleAt').value = '';
-        mediaState['create'] = [];
-        renderMediaGallery('create');
+        clearComposer();
         loadPostList();
     } else {
         showToast(result.message || 'エラーが発生しました', 'error');
@@ -420,12 +415,15 @@ async function publishPostNow() {
 
     const urls = mediaState['create'].map(u => u.url);
     const carouselWarn = urls.length >= 2 ? `\n\n🖼️ ${urls.length}枚の画像をカルーセル投稿します` : '';
-    if (!confirm(`この投稿を今すぐThreadsに公開しますか？${carouselWarn}`)) return;
+    const topicTag = (document.getElementById('postTopicTag')?.value || '').trim();
+    const topicWarn = topicTag ? `\n🏷️ トピック: #${topicTag}` : '';
+    if (!confirm(`この投稿を今すぐThreadsに公開しますか？${carouselWarn}${topicWarn}`)) return;
 
     const params = {
         action: 'publish_now',
         content: content,
-        ai_label: document.getElementById('aiLabelToggle').checked ? 1 : 0
+        ai_label: document.getElementById('aiLabelToggle').checked ? 1 : 0,
+        topic_tag: topicTag
     };
     if (urls.length > 0) params.media_urls = JSON.stringify(urls);
 
@@ -435,14 +433,28 @@ async function publishPostNow() {
 
     if (result.success) {
         showToast(result.message || '投稿しました！', 'success');
-        document.getElementById('postContent').value = '';
-        document.getElementById('charCount').textContent = '0';
-        mediaState['create'] = [];
-        renderMediaGallery('create');
+        clearComposer();
         loadPostList();
     } else {
         showToast(result.message || '投稿に失敗しました', 'error');
     }
+}
+
+// コンポーザーリセット
+function clearComposer() {
+    const el = document.getElementById('postContent');
+    if (el) el.value = '';
+    const cc = document.getElementById('charCount');
+    if (cc) cc.textContent = '0';
+    const sa = document.getElementById('scheduleAt');
+    if (sa) sa.value = '';
+    const tt = document.getElementById('postTopicTag');
+    if (tt) tt.value = '';
+    // 人気トピックパネルを閉じる
+    const panel = document.getElementById('createPopularTopics');
+    if (panel) panel.style.display = 'none';
+    mediaState['create'] = [];
+    renderMediaGallery('create');
 }
 
 async function loadPostList(filter = null) {
@@ -519,6 +531,9 @@ async function editPost(postId) {
         document.getElementById('editPostStatus').value = post.status === 'posted' ? 'draft' : post.status;
         document.getElementById('editPostSchedule').value = post.scheduled_at ? post.scheduled_at.replace(' ', 'T').substring(0, 16) : '';
         document.getElementById('editPostAiLabel').checked = post.ai_label == 1;
+        // topic_tagを読み込む
+        const topicEl = document.getElementById('editPostTopicTag');
+        if (topicEl) topicEl.value = post.topic_tag || '';
         // 画像変数を初期化して読み込み
         loadMediaState('edit', post.media_url || '');
         renderMediaGallery('edit');
@@ -537,7 +552,8 @@ async function updatePost() {
         content: document.getElementById('editPostContent').value,
         status: document.getElementById('editPostStatus').value,
         scheduled_at: document.getElementById('editPostSchedule').value,
-        ai_label: document.getElementById('editPostAiLabel').checked ? 1 : 0
+        ai_label: document.getElementById('editPostAiLabel').checked ? 1 : 0,
+        topic_tag: (document.getElementById('editPostTopicTag')?.value || '').trim()
     };
     if (urls.length > 0) {
         params.media_urls = JSON.stringify(urls);
@@ -554,6 +570,83 @@ async function updatePost() {
     } else {
         showToast(result.message || '更新に失敗しました', 'error');
     }
+}
+
+// ===== Topic Tag Helpers =====
+
+/**
+ * トピックタグ入力欄のサニタイズ（入力中リアルタイム）
+ */
+function sanitizeTopicTagInput(input) {
+    let v = input.value;
+    v = v.replace(/^#+/, '');          // 先頭 # を除去
+    v = v.replace(/[.&]/g, '');        // . と & を除去
+    input.value = v;
+}
+
+/**
+ * 人気トピックパネルの開閉
+ */
+async function togglePopularTopics(context) {
+    const panelId = context === 'edit' ? 'editPopularTopics' : 'createPopularTopics';
+    const panel = document.getElementById(panelId);
+    if (!panel) return;
+
+    if (panel.style.display !== 'none') {
+        panel.style.display = 'none';
+        return;
+    }
+
+    // 読み込みがまだの場合は取得
+    if (panel.dataset.loaded !== '1') {
+        await loadPopularTopics(panelId, context);
+    }
+    panel.style.display = 'grid';
+}
+
+/**
+ * 人気トピックを読み込んでパネルに表示
+ */
+async function loadPopularTopics(panelId, context) {
+    const panel = document.getElementById(panelId);
+    if (!panel) return;
+
+    panel.innerHTML = '<span style="color:var(--color-text-muted); font-size:var(--font-size-xs)">読み込み中...</span>';
+
+    const result = await apiCall('posts.php', { action: 'popular_topics' });
+    const dbTags = (result.success && result.tags) ? result.tags : [];
+
+    if (dbTags.length === 0) {
+        panel.innerHTML = '<span style="color:var(--color-text-muted); font-size:var(--font-size-xs)">まだトピックの履歴がありません</span>';
+        panel.dataset.loaded = '1';
+        return;
+    }
+
+    panel.innerHTML = dbTags.map(t => `
+        <button class="topic-chip"
+            onclick="selectTopicTag('${escapeHtml(t.topic_tag)}', '${context}')"
+            title="${escapeHtml(t.topic_tag)} (${t.cnt}回使用)">
+            #${escapeHtml(t.topic_tag)}
+            <span class="topic-chip-count">${t.cnt}</span>
+        </button>
+    `).join('');
+    panel.dataset.loaded = '1';
+}
+
+/**
+ * チップをクリックしてそのタグを入力欄にセット
+ */
+function selectTopicTag(tag, context) {
+    const inputId = context === 'edit' ? 'editPostTopicTag' : 'postTopicTag';
+    const input = document.getElementById(inputId);
+    if (input) {
+        input.value = tag;
+        input.focus();
+    }
+    // パネルを閉じる
+    const panelId = context === 'edit' ? 'editPopularTopics' : 'createPopularTopics';
+    const panel = document.getElementById(panelId);
+    if (panel) panel.style.display = 'none';
 }
 
 async function deletePost(postId) {
@@ -1094,7 +1187,7 @@ async function getThreadsProfile(isInitial = false) {
         if (result.success && result.profile) {
             const p = result.profile;
             profileContainer.innerHTML = `
-                <div class="sidebar-account mt-md">
+                <a href="https://www.threads.net/@${encodeURIComponent(p.username)}" target="_blank" class="sidebar-account mt-md" title="Threads プロフィールを開く">
                     <img src="${p.threads_profile_picture_url || 'assets/img/default-avatar.png'}" class="sidebar-avatar" alt="Avatar">
                     <div class="account-info">
                         <div class="account-name">@${escapeHtml(p.username)}</div>
@@ -1102,7 +1195,7 @@ async function getThreadsProfile(isInitial = false) {
                             <span class="text-xs text-muted">${p.follower_count.toLocaleString()} follower</span>
                         </div>
                     </div>
-                </div>
+                </a>
             `;
             if (!isInitial) showToast('アカウント情報を同期しました', 'success');
         } else if (!isInitial) {

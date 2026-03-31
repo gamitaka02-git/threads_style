@@ -66,6 +66,7 @@ switch ($action) {
         $is_ai_generated = (int)($_POST['is_ai_generated'] ?? 0);
         $source_type = $_POST['source_type'] ?? 'manual';
         $source_url = $_POST['source_url'] ?? '';
+        $topic_tag = trim($_POST['topic_tag'] ?? '');
         // 複数画像対応: media_urls (JSON配列) が優先、なければ media_url
         $media_url = '';
         if (!empty($_POST['media_urls'])) {
@@ -81,12 +82,13 @@ switch ($action) {
 
         $now = date('Y-m-d H:i:s');
         $stmt = $pdo->prepare("
-            INSERT INTO posts (content, media_url, status, scheduled_at, ai_label, is_ai_generated, source_type, source_url, created_at, updated_at)
-            VALUES (:content, :media_url, :status, :scheduled_at, :ai_label, :is_ai_generated, :source_type, :source_url, :now, :now)
+            INSERT INTO posts (content, media_url, topic_tag, status, scheduled_at, ai_label, is_ai_generated, source_type, source_url, created_at, updated_at)
+            VALUES (:content, :media_url, :topic_tag, :status, :scheduled_at, :ai_label, :is_ai_generated, :source_type, :source_url, :now, :now)
         ");
         $stmt->execute([
             ':content' => $content,
             ':media_url' => $media_url,
+            ':topic_tag' => $topic_tag,
             ':status' => $status,
             ':scheduled_at' => $scheduled_at,
             ':ai_label' => $ai_label,
@@ -110,6 +112,7 @@ switch ($action) {
             $scheduled_at = date('Y-m-d H:i:s', strtotime($scheduled_at));
         }
         $ai_label = (int)($_POST['ai_label'] ?? 0);
+        $topic_tag = trim($_POST['topic_tag'] ?? '');
         // 複数画像対応: media_urls (JSON配列) が優先、なければ media_url
         $media_url = '';
         if (!empty($_POST['media_urls'])) {
@@ -130,13 +133,15 @@ switch ($action) {
 
         $now = date('Y-m-d H:i:s');
         $stmt = $pdo->prepare("
-            UPDATE posts SET content = :content, media_url = :media_url, status = :status, scheduled_at = :scheduled_at,
+            UPDATE posts SET content = :content, media_url = :media_url, topic_tag = :topic_tag,
+            status = :status, scheduled_at = :scheduled_at,
             ai_label = :ai_label, updated_at = :now
             WHERE id = :id
         ");
         $stmt->execute([
             ':content' => $content,
             ':media_url' => $media_url,
+            ':topic_tag' => $topic_tag,
             ':status' => $status,
             ':scheduled_at' => $scheduled_at ?: null,
             ':ai_label' => $ai_label,
@@ -159,6 +164,7 @@ switch ($action) {
     case 'publish_now':
         $content = trim($_POST['content'] ?? '');
         $ai_label = (int)($_POST['ai_label'] ?? 0);
+        $topic_tag = trim($_POST['topic_tag'] ?? '');
 
         // 複数画像対応: media_urls (JSON配列) が優先、なければ media_url
         $media_url_raw = '';
@@ -185,18 +191,19 @@ switch ($action) {
         // Threads APIで投稿
         require_once __DIR__ . '/ThreadsAPI.php';
         $api = new ThreadsAPI();
-        $result = $api->publishPost($content, $ai_label == 1, $media_for_api);
+        $result = $api->publishPost($content, $ai_label == 1, $media_for_api, $topic_tag);
 
         if ($result['success']) {
             // DBに投稿済みとして保存
             $now = date('Y-m-d H:i:s');
             $stmt = $pdo->prepare("
-                INSERT INTO posts (content, media_url, status, posted_at, threads_post_id, threads_media_id, ai_label, is_ai_generated, source_type, created_at, updated_at)
-                VALUES (:content, :media_url, 'posted', :now, :post_id, :media_id, :ai_label, 0, 'manual', :now, :now)
+                INSERT INTO posts (content, media_url, topic_tag, status, posted_at, threads_post_id, threads_media_id, ai_label, is_ai_generated, source_type, created_at, updated_at)
+                VALUES (:content, :media_url, :topic_tag, 'posted', :now, :post_id, :media_id, :ai_label, 0, 'manual', :now, :now)
             ");
             $stmt->execute([
                 ':content' => $content,
                 ':media_url' => $media_url_raw,
+                ':topic_tag' => $topic_tag,
                 ':post_id' => $result['post_id'] ?? '',
                 ':media_id' => $result['media_id'] ?? '',
                 ':ai_label' => $ai_label,
@@ -263,6 +270,21 @@ switch ($action) {
         } else {
             echo json_encode(['success' => false, 'message' => '元の投稿が見つかりません']);
         }
+        break;
+
+    // ----- 人気トピック一覧 -----
+    case 'popular_topics':
+        // DB内の過去投稿から使用頻度順に取得
+        $stmt = $pdo->query("
+            SELECT topic_tag, COUNT(*) as cnt
+            FROM posts
+            WHERE topic_tag IS NOT NULL AND topic_tag != ''
+            GROUP BY topic_tag
+            ORDER BY cnt DESC
+            LIMIT 20
+        ");
+        $db_tags = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        echo json_encode(['success' => true, 'tags' => $db_tags]);
         break;
 
     default:
