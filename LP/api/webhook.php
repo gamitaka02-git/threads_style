@@ -108,6 +108,8 @@ if ($event->type === 'checkout.session.completed') {
         $body .= "--------------------------------------------------\n\n";
 
         $body .= "■ ツールの設置・設定について\n";
+        $body .= "こちらからツールをダウンロードしてください。\n";
+        $body .= "https://www.gamitaka.com/short_url/download_threadsstyle \n";
         $body .= "以下のマニュアルにて、サーバーへの設置から初期設定までの手順を詳しく解説しております。\n";
         $body .= "まずは、こちらの手順に沿って作業を進めていただけますでしょうか。\n\n";
 
