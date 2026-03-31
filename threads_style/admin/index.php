@@ -374,12 +374,12 @@ $version = defined('TOOL_VERSION') ? TOOL_VERSION : 'v1.0.0';
                         </div>
                         <div class="post-composer-footer">
                             <div class="post-composer-options">
-                                <div class="toggle-wrap">
+                                <div class="toggle-wrap" title="ツール内でAI生成投稿を識別する管理用タグです。Threads上には表示されません。">
                                     <label class="toggle">
                                         <input type="checkbox" id="aiLabelToggle">
                                         <span class="toggle-slider"></span>
                                     </label>
-                                    <span class="text-sm">AIラベル</span>
+                                    <span class="text-sm">AIタグ <span style="font-size:var(--font-size-xs); color:var(--color-text-muted);">（管理用）</span></span>
                                 </div>
                                 <button class="btn-upload" id="createUploadBtn" onclick="triggerImageUpload('create')" title="画像を追加（最大10枚）">
                                     🖼️ <span style="font-size:var(--font-size-xs); margin-left:10px;">画像を追加</span>
@@ -883,8 +883,9 @@ $version = defined('TOOL_VERSION') ? TOOL_VERSION : 'v1.0.0';
                                         <?= get_config('ai_label_default') === '1' ? 'checked' : '' ?>>
                                     <span class="toggle-slider"></span>
                                 </label>
-                                <span>AI生成投稿にデフォルトでAIラベルを付与</span>
+                                <span>AI生成投稿にデフォルトでAIタグを付与（管理用）</span>
                             </div>
+                            <p class="form-help" style="margin-top:-8px; margin-bottom:var(--space-md); color:var(--color-text-muted); font-size:var(--font-size-xs);">※ AIタグはツール内での管理・識別用です。現時点ではThreads上に「AIラベル」として表示されません。</p>
                             <button class="btn btn-primary" onclick="saveAutoPostSettings()">保存</button>
                         </div>
                     </div>
