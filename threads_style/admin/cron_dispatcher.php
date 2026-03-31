@@ -44,15 +44,14 @@ if (php_sapi_name() !== 'cli' && !defined('CRON_VIA_WEB')) {
     }
 }
 
-// 出力バッファリング（CLI/Web両対応）+ ファイルログ
+// 出力バッファリング（CLI/Web両対応）
 $log = [];
-$cron_log_file = __DIR__ . '/cron_debug.log';
 function cron_log($message) {
-    global $log, $cron_log_file;
+    global $log;
     $time = date('Y-m-d H:i:s');
     $log[] = "[{$time}] {$message}";
-    // ファイルにもログを書き出し（デバッグ用）
-    file_put_contents($cron_log_file, "[{$time}] {$message}\n", FILE_APPEND);
+    // ファイルへのデバッグログは無効（デバッグ時は下記をコメント解除）
+    // file_put_contents(__DIR__ . '/cron_debug.log', "[{$time}] {$message}\n", FILE_APPEND);
     if (php_sapi_name() === 'cli') {
         echo "[{$time}] {$message}\n";
     }

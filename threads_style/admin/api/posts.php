@@ -222,6 +222,7 @@ switch ($action) {
         $posts = json_decode($posts_json, true);
         $status = $_POST['status'] ?? 'draft';
         $scheduled_at = $_POST['scheduled_at'] ?? null;
+        $topic_tag = trim($_POST['topic_tag'] ?? '');
         // datetime-local の T区切りを スペース区切りに正規化
         if ($scheduled_at) {
             $scheduled_at = date('Y-m-d H:i:s', strtotime($scheduled_at));
@@ -237,13 +238,14 @@ switch ($action) {
 
         $now = date('Y-m-d H:i:s');
         $stmt = $pdo->prepare("
-            INSERT INTO posts (content, status, scheduled_at, thread_group_id, thread_order, created_at, updated_at)
-            VALUES (:content, :status, :scheduled_at, :group_id, :order, :now, :now)
+            INSERT INTO posts (content, topic_tag, status, scheduled_at, thread_group_id, thread_order, created_at, updated_at)
+            VALUES (:content, :topic_tag, :status, :scheduled_at, :group_id, :order, :now, :now)
         ");
 
         foreach ($posts as $i => $content) {
             $stmt->execute([
                 ':content' => $content,
+                ':topic_tag' => $topic_tag,
                 ':status' => $status,
                 ':scheduled_at' => $scheduled_at,
                 ':group_id' => $group_id,

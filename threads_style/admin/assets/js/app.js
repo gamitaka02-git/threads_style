@@ -588,7 +588,9 @@ function sanitizeTopicTagInput(input) {
  * 人気トピックパネルの開閉
  */
 async function togglePopularTopics(context) {
-    const panelId = context === 'edit' ? 'editPopularTopics' : 'createPopularTopics';
+    const panelId = context === 'edit' ? 'editPopularTopics'
+                  : context === 'thread' ? 'threadPopularTopics'
+                  : 'createPopularTopics';
     const panel = document.getElementById(panelId);
     if (!panel) return;
 
@@ -597,7 +599,6 @@ async function togglePopularTopics(context) {
         return;
     }
 
-    // 読み込みがまだの場合は取得
     if (panel.dataset.loaded !== '1') {
         await loadPopularTopics(panelId, context);
     }
@@ -637,14 +638,18 @@ async function loadPopularTopics(panelId, context) {
  * チップをクリックしてそのタグを入力欄にセット
  */
 function selectTopicTag(tag, context) {
-    const inputId = context === 'edit' ? 'editPostTopicTag' : 'postTopicTag';
+    const inputId = context === 'edit' ? 'editPostTopicTag'
+                  : context === 'thread' ? 'threadTopicTag'
+                  : 'postTopicTag';
     const input = document.getElementById(inputId);
     if (input) {
         input.value = tag;
         input.focus();
     }
     // パネルを閉じる
-    const panelId = context === 'edit' ? 'editPopularTopics' : 'createPopularTopics';
+    const panelId = context === 'edit' ? 'editPopularTopics'
+                  : context === 'thread' ? 'threadPopularTopics'
+                  : 'createPopularTopics';
     const panel = document.getElementById(panelId);
     if (panel) panel.style.display = 'none';
 }
@@ -690,7 +695,8 @@ async function saveThreadDraft() {
     const result = await apiCall('posts.php', {
         action: 'create_thread',
         posts: JSON.stringify(posts),
-        status: 'draft'
+        status: 'draft',
+        topic_tag: (document.getElementById('threadTopicTag')?.value || '').trim()
     });
 
     if (result.success) {
@@ -722,7 +728,8 @@ async function scheduleThread() {
         action: 'create_thread',
         posts: JSON.stringify(posts),
         status: 'scheduled',
-        scheduled_at: scheduledAt
+        scheduled_at: scheduledAt,
+        topic_tag: (document.getElementById('threadTopicTag')?.value || '').trim()
     });
 
     if (result.success) {

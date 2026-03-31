@@ -455,6 +455,19 @@ $version = defined('TOOL_VERSION') ? TOOL_VERSION : 'v1.0.0';
                             </div>
                         </div>
 
+                        <!-- トピックタグ（スレッド作成） -->
+                        <div class="topic-tag-area">
+                            <div class="topic-tag-input-row">
+                                <span class="topic-tag-hash">#</span>
+                                <input type="text" id="threadTopicTag" class="topic-tag-input"
+                                    placeholder="トピックタグ（任意・スレッド全体に適用）"
+                                    maxlength="50"
+                                    oninput="sanitizeTopicTagInput(this)">
+                                <button class="topic-popular-btn" onclick="togglePopularTopics('thread')" id="threadPopularBtn" title="人気トピックを見る">📊 人気</button>
+                            </div>
+                            <div id="threadPopularTopics" class="popular-topics-panel" style="display:none;"></div>
+                        </div>
+
                         <div class="flex justify-between items-center mt-lg"
                             style="flex-wrap:wrap; gap:var(--space-sm);">
                             <div class="form-group" style="margin:0;">
@@ -469,6 +482,8 @@ $version = defined('TOOL_VERSION') ? TOOL_VERSION : 'v1.0.0';
                         </div>
                     </div>
                 </div>
+
+
 
                 <!-- Tab: リパーパス -->
                 <div class="tab-panel" id="tab-post-repurpose">
