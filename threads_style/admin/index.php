@@ -888,18 +888,17 @@ $version = defined('TOOL_VERSION') ? TOOL_VERSION : 'v1.0.0';
                         <div class="settings-card-header">
                             <div class="settings-card-icon" style="background:rgba(225,48,108,0.15);">📅</div>
                             <div>
-                                <h4>自動投稿設定</h4>
+                                <h4>予約投稿設定</h4>
                                 <p class="text-xs text-muted">投稿スケジュール・ゆらぎ設定</p>
                             </div>
                         </div>
                         <div class="settings-card-body">
-                            <div class="toggle-wrap mb-md">
+                            <div class="toggle-wrap mb-md" style="display:none;">
                                 <label class="toggle">
-                                    <input type="checkbox" id="settingsAutoPost"
-                                        <?= get_config('auto_post_enabled') === '1' ? 'checked' : '' ?>>
+                                    <input type="checkbox" id="settingsAutoPost" checked>
                                     <span class="toggle-slider"></span>
                                 </label>
-                                <span>自動投稿を有効にする</span>
+                                <span>予約投稿を有効にする</span>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">投稿間隔のゆらぎ（分）</label>
@@ -974,7 +973,7 @@ $version = defined('TOOL_VERSION') ? TOOL_VERSION : 'v1.0.0';
                                 <ul class="text-xs text-muted"
                                     style="list-style:disc; padding-left:var(--space-xl); line-height:2;">
                                     <li>サーバーが定期的に <code>cron_dispatcher.php</code> を実行します</li>
-                                    <li>ツールがSQLiteをチェックし「今、投稿すべきデータ」があれば自動投稿</li>
+                                    <li>ツールがSQLiteをチェックし「今、投稿すべきデータ」があれば予約投稿を実行</li>
                                     <li>なければ何もせず終了します（負荷ゼロ）</li>
                                     <li>トークンの自動更新・インサイト取得も同時に行います</li>
                                 </ul>

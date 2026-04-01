@@ -66,6 +66,7 @@ switch ($action) {
             SELECT pi.*, p.content
             FROM post_insights pi
             JOIN posts p ON p.id = pi.post_id
+            WHERE pi.id IN (SELECT MAX(id) FROM post_insights GROUP BY post_id)
             ORDER BY pi.fetched_at DESC
             LIMIT 50
         ");

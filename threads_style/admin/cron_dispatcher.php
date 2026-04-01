@@ -117,11 +117,11 @@ $api = new ThreadsAPI();
 // ============================================================
 cron_log("--- 予約投稿チェック ---");
 
-$auto_post_enabled = get_config('auto_post_enabled', '0');
-cron_log("auto_post_enabled = " . $auto_post_enabled);
+$auto_post_enabled = '1'; // 常に予約投稿を有効にする
+cron_log("auto_post_enabled (forced) = " . $auto_post_enabled);
 
 if ($auto_post_enabled !== '1') {
-    cron_log("自動投稿は無効です。スキップします。");
+    cron_log("予約投稿は無効です。スキップします。");
 } else {
     $variance = (int)get_config('post_interval_variance', 30);
 
