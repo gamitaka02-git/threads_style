@@ -640,7 +640,7 @@ $version = defined('TOOL_VERSION') ? TOOL_VERSION : 'v1.0.0';
                     <button class="tab-btn active" data-tab="tab-analytics-overview">概要</button>
                     <button class="tab-btn" data-tab="tab-analytics-engagement">エンゲージメント</button>
                     <button class="tab-btn" data-tab="tab-analytics-top">優秀投稿</button>
-                    <button class="tab-btn" data-tab="tab-analytics-keywords">キーワード監視</button>
+                    <!-- <button class="tab-btn" data-tab="tab-analytics-keywords">キーワード監視</button> -->
                 </div>
 
                 <!-- Tab: 概要 -->
@@ -713,7 +713,7 @@ $version = defined('TOOL_VERSION') ? TOOL_VERSION : 'v1.0.0';
                     </div>
                 </div>
 
-                <!-- Tab: キーワード監視 -->
+                <!-- Tab: キーワード監視 (将来的な拡張用として一時コメントアウト)
                 <div class="tab-panel" id="tab-analytics-keywords">
                     <div class="card">
                         <div class="card-header">
@@ -735,6 +735,7 @@ $version = defined('TOOL_VERSION') ? TOOL_VERSION : 'v1.0.0';
                         </div>
                     </div>
                 </div>
+                -->
             </section>
 
             <!-- ==================== SETTINGS ==================== -->
