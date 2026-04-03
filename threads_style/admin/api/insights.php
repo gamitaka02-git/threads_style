@@ -29,6 +29,34 @@ switch ($action) {
         require_once __DIR__ . '/ThreadsAPI.php';
         $api = new ThreadsAPI();
 
+        // 最新の投稿リストを取得し未登録なら同期する（過去投稿の同期）
+        $syncResult = $api->getUserPosts(30);
+        if ($syncResult['success'] && !empty($syncResult['posts'])) {
+            $checkStmt = $pdo->prepare("SELECT id FROM posts WHERE threads_post_id = :tid");
+            $insertStmt = $pdo->prepare("
+                INSERT INTO posts (content, status, posted_at, threads_post_id, source_type)
+                VALUES (:content, 'posted', :posted_at, :tid, 'sync')
+            ");
+
+            foreach ($syncResult['posts'] as $p) {
+                $tid = $p['id'];
+                $checkStmt->execute([':tid' => $tid]);
+                if ($checkStmt->fetch() === false) {
+                    $postedAt = date('Y-m-d H:i:s', strtotime($p['timestamp']));
+                    $text = $p['text'] ?? '';
+                    if (empty($text)) {
+                        $mediaType = $p['media_type'] ?? '不明';
+                        $text = "({$mediaType}投稿)";
+                    }
+                    $insertStmt->execute([
+                        ':content'   => $text,
+                        ':posted_at' => $postedAt,
+                        ':tid'       => $tid,
+                    ]);
+                }
+            }
+        }
+
         // 投稿済みの投稿を取得（直近30件）
         $stmt = $pdo->query("SELECT id, threads_post_id FROM posts WHERE status = 'posted' AND threads_post_id != '' ORDER BY posted_at DESC LIMIT 30");
         $posted = $stmt->fetchAll(PDO::FETCH_ASSOC);
