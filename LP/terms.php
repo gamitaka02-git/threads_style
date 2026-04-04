@@ -28,11 +28,11 @@
 
     <main class="legal-page">
         <h1>利用規約</h1>
-        <p class="legal-meta">最終更新日：<span class="info-placeholder">【要挿入：更新日】</span></p>
+        <p class="legal-meta">最終更新日：2026年4月5日</p>
 
         <div class="legal-section">
             <h2>第1条（適用）</h2>
-            <p>本規約は、<span class="info-placeholder">【要挿入：運営者名】</span>（以下「当方」）が提供するThreads運用支援ツール「Threads_Style」（以下「本ツール」）の利用に関する条件を定めるものです。ユーザーは本規約に同意の上、本ツールをご利用ください。</p>
+            <p>本規約は、ブログサポーターがみたか（以下「当方」）が提供するThreads運用支援ツール「Threads_Style」（以下「本ツール」）の利用に関する条件を定めるものです。ユーザーは本規約に同意の上、本ツールをご利用ください。</p>
         </div>
 
         <div class="legal-section">
@@ -97,11 +97,6 @@
         <div class="legal-section">
             <h2>第8条（規約の変更）</h2>
             <p>当方は、必要に応じて本規約を変更することがあります。変更後の利用規約は、本ツールのアップデート等を通じてお知らせいたします。変更後も本ツールの利用を継続した場合、ユーザーは変更後の規約に同意したものとみなされます。</p>
-        </div>
-
-        <div class="legal-section">
-            <h2>第9条（準拠法・管轄裁判所）</h2>
-            <p>本規約は日本法に準拠するものとし、本ツールに関する紛争については、<span class="info-placeholder">【要挿入：管轄裁判所】</span>を第一審の専属的合意管轄裁判所とします。</p>
         </div>
 
         <a href="index.php" class="legal-back">← トップページに戻る</a>

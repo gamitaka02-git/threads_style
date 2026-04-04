@@ -28,7 +28,7 @@
 
     <main class="legal-page">
         <h1>プライバシーポリシー</h1>
-        <p class="legal-meta">最終更新日：<span class="info-placeholder">【要挿入：更新日】</span></p>
+        <p class="legal-meta">最終更新日：2026年4月5日</p>
 
         <div class="legal-section">
             <h2>1. 個人情報の定義</h2>
@@ -90,8 +90,8 @@
         <div class="legal-section">
             <h2>8. お問い合わせ窓口</h2>
             <p>個人情報の取り扱いに関するお問い合わせは、以下の窓口までご連絡ください。</p>
-            <p>運営者：<span class="info-placeholder">【要挿入：運営者名】</span><br>
-               メール：<span class="info-placeholder">【要挿入：メールアドレス】</span></p>
+            <p>運営者：ブログサポーターがみたか<br>
+               メール：tools@gamitaka.com</p>
         </div>
 
         <a href="index.php" class="legal-back">← トップページに戻る</a>

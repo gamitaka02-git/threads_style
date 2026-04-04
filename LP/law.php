@@ -28,37 +28,38 @@
 
     <main class="legal-page">
         <h1>特定商取引法に基づく表記</h1>
-        <p class="legal-meta">最終更新日：<span class="info-placeholder">【要挿入：更新日】</span></p>
+        <p class="legal-meta">最終更新日：2026年 4月5日</p>
 
         <div class="legal-section">
             <table class="legal-table">
                 <tr>
                     <th>販売業者</th>
-                    <td><span class="info-placeholder">【要挿入：事業者名または氏名】</span></td>
+                    <td>石上 貴哉</td>
                 </tr>
                 <tr>
                     <th>運営統括責任者</th>
-                    <td><span class="info-placeholder">【要挿入：責任者氏名】</span></td>
+                    <td>石上 貴哉</td>
                 </tr>
                 <tr>
                     <th>所在地</th>
-                    <td><span class="info-placeholder">【要挿入：住所】</span></td>
+                    <td>〒675-0023 兵庫県加古川市尾上町池田1779-2</td>
                 </tr>
                 <tr>
                     <th>電話番号</th>
-                    <td><span class="info-placeholder">【要挿入：電話番号】</span><br><small>※お問い合わせはメールにてお願いいたします</small></td>
+                    <td>079-426-0906<br>
+                    <small>※お問い合わせはメールにてお願いいたします</small></td>
                 </tr>
                 <tr>
                     <th>メールアドレス</th>
-                    <td><span class="info-placeholder">【要挿入：メールアドレス】</span></td>
+                    <td>tools@gamitaka.com</td>
                 </tr>
                 <tr>
                     <th>販売URL</th>
-                    <td><span class="info-placeholder">【要挿入：販売ページURL】</span></td>
+                    <td>https://gamitaka.com/tools/threads_style/</td>
                 </tr>
                 <tr>
                     <th>販売価格</th>
-                    <td>¥2,980（税込）</td>
+                    <td>¥5,980（税込）</td>
                 </tr>
                 <tr>
                     <th>追加手数料</th>
@@ -66,7 +67,8 @@
                 </tr>
                 <tr>
                     <th>支払い方法</th>
-                    <td>クレジットカード（Stripe決済）</td>
+                    <td>クレジットカード（Stripe決済）のみ
+                    </td>
                 </tr>
                 <tr>
                     <th>支払い時期</th>
@@ -74,7 +76,7 @@
                 </tr>
                 <tr>
                     <th>商品引き渡し時期</th>
-                    <td>決済完了後、即時ダウンロード可能</td>
+                    <td>決済完了後、メールにて即時ダウンロード可能</td>
                 </tr>
                 <tr>
                     <th>返品・交換</th>

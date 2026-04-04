@@ -139,6 +139,7 @@ nav {
     list-style: none;
     margin: 0;
     gap: 0;
+    align-items: center;
 }
 
 .nav-wrap .menu li:not(:last-child) {
@@ -177,6 +178,18 @@ nav {
 
 .hamburger {
     display: none;
+}
+
+.menu-cta {
+    border-right: none !important;
+    margin-left: 40px;
+}
+
+.menu-cta a.btn-primary {
+    color: #fff;
+    padding: 8px 20px;
+    font-size: 0.85rem;
+    border-radius: 8px;
 }
 
 
@@ -289,10 +302,10 @@ nav {
 }
 
 .btn-buy {
-    display: block;
+    display: inline-block;
     text-align: center;
-    padding: 16px 40px;
-    font-size: 1.1rem;
+    padding: 15px 20px;
+    font-size: 1.3rem;
 }
 
 
@@ -341,7 +354,7 @@ p.page-text {
 
 .empathy-card {
     width: 300px;
-    padding: 30px 24px;
+    padding: 30px 15px;
     background: #fff;
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -361,6 +374,7 @@ p.page-text {
 }
 
 .empathy-heading {
+    text-align: center;
     font-size: 1rem;
     font-weight: 700;
     margin-bottom: 10px;
@@ -450,7 +464,35 @@ p.page-text {
 }
 
 .page-text.concept-ai {
-    padding: 100px 4%;
+    padding: 100px 4% 50px;
+}
+
+.concept-detail {
+    max-width: 750px;
+    margin: 0 auto;
+    padding: 0 4% 60px;
+    text-align: center;
+}
+
+.concept-detail p {
+    font-size: 0.95rem;
+    color: #555;
+    line-height: 2.2;
+    margin-bottom: 20px;
+
+    span {
+        font-size: 1.3rem;
+        color: #d40c0c;
+        margin: 0 6px;
+        text-shadow: 1px 1px 5px #ccc;
+    }
+}
+
+.concept-detail-accent {
+    font-size: 1.2rem !important;
+    font-weight: 700;
+    color: #222 !important;
+    margin-top: 30px !important;
 }
 
 .service .text-wrap .text-left {
@@ -578,10 +620,10 @@ p.page-text {
 
 .professional-wrap {
     position: relative;
-    max-width: 750px;
+    max-width: 900px;
     margin: 0 auto;
     text-align: center;
-    padding: 40px 30px;
+    padding: 40px;
     background: rgba(255, 255, 255, 0.88);
     border: 1px solid #fff;
     z-index: 3;
@@ -601,14 +643,88 @@ p.page-text {
 }
 
 .pro-message {
-    font-size: 1.6rem;
+    font-size: 1.4rem;
     font-weight: 700;
+    color: #040dbe;
     text-align: center;
-    color: #fff;
-    padding: 20px 30px;
     margin-top: 50px;
-    background: #0e228e;
-    border-radius: 6px;
+    text-shadow: 1px 1px 10px #aaa;
+}
+
+
+/* ============================================================
+   Hero CTA
+   ============================================================ */
+.hero-cta-copy {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 12px;
+}
+
+.hero-cta-note {
+    margin-top: 10px;
+    font-size: 0.8rem;
+    color: #888;
+}
+
+
+/* ============================================================
+   中間 CTA セクション
+   ============================================================ */
+.mid-cta-section {
+    text-align: center;
+    padding: 60px 4% 80px;
+    background: #f8f8f8;
+}
+
+.mid-cta-wrap {
+    max-width: 700px;
+    margin: 0 auto;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 16px;
+    padding: 50px 30px;
+}
+
+.mid-cta-lead {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 24px;
+    line-height: 1.8;
+}
+
+.mid-cta-note {
+    margin-top: 16px;
+    font-size: 0.8rem;
+    color: #999;
+}
+
+
+/* ============================================================
+   Professional CTA
+   ============================================================ */
+.pro-cta {
+    text-align: center;
+    margin-top: 40px;
+    padding: 40px 10px;
+    background: #f8f8f8;
+    border: 1px solid #ddd;
+    border-radius: 16px;
+}
+
+.pro-cta-lead {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.pro-cta-note {
+    margin-top: 16px;
+    font-size: 0.8rem;
+    color: #999;
 }
 
 
@@ -848,9 +964,9 @@ footer {
         top: 0;
         left: -350px;
         width: 280px;
-        height: 100vh;
+        height: auto;
         flex-direction: column;
-        justify-content: center;
+        justify-content: flex-start;
         gap: 0;
         background: rgba(255, 255, 255, 0.97);
         padding: 80px 0 0;
@@ -871,6 +987,24 @@ footer {
         text-decoration: none;
         border-bottom: 1px solid #eee;
         font-size: 1rem;
+    }
+
+    /* メニュー内CTA */
+    ul.globalMenuSp li.menu-cta {
+        display: block;
+        padding: 20px 24px;
+        border-bottom: none;
+        margin: 0;
+    }
+
+    ul.globalMenuSp li.menu-cta a {
+        display: block;
+        text-align: center;
+        color: #fff;
+        padding: 14px 20px;
+        border-bottom: none;
+        border-radius: 10px;
+        font-weight: 600;
     }
 
     .globalMenuSp.active {
@@ -900,7 +1034,7 @@ footer {
     }
 
     .header-content {
-        width: 90%;
+        width: 100%;
         margin: 0 auto;
         padding: 30px 24px;
     }
@@ -915,7 +1049,7 @@ footer {
     }
 
     .header-bg.top {
-        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 80%);
+        clip-path: polygon(75% 0, 100% 0, 100% 100%, 40% 100%);
         width: 100%;
         opacity: 0.7;
     }
@@ -945,6 +1079,18 @@ footer {
 
     .service .text-wrap .text-right {
         margin: 0 auto;
+    }
+
+    /* Concept（横並び→縦並び） */
+    .service.concept-ai .text-wrap {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .service.concept-ai .text-wrap .text-right {
+        position: relative;
+        top: 0;
+        width: 92%;
     }
 
     /* Empathy */
@@ -994,6 +1140,15 @@ footer {
 
     .price-tag {
         font-size: 2rem;
+    }
+
+    /* CTA */
+    .btn-buy {
+        font-size: 1rem;
+    }
+
+    .cta-card {
+        padding: 40px 5px;
     }
 }
 
