@@ -14,7 +14,8 @@ html {
 
 * {
     box-sizing: border-box;
-    font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+    font-family: 'Times New Roman', Times, serif;
+    /* font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif; */
 }
 
 body {
@@ -28,7 +29,9 @@ ul {
     margin: 0;
 }
 
-p, li, td {
+p,
+li,
+td {
     font-size: 1rem;
     line-height: 1.7;
 }
@@ -82,10 +85,21 @@ h3 {
 }
 
 @media (max-width: 600px) {
-    .pc { display: none; }
-    .sp { display: block; }
-    h2 { font-size: 1.1rem; }
-    h3 { font-size: 1.1rem; }
+    .pc {
+        display: none;
+    }
+
+    .sp {
+        display: block;
+    }
+
+    h2 {
+        font-size: 1.1rem;
+    }
+
+    h3 {
+        font-size: 1.1rem;
+    }
 }
 
 
@@ -95,7 +109,7 @@ h3 {
 nav {
     width: 100%;
     background: #fff;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
     position: fixed;
     top: 0;
     z-index: 100;
@@ -180,7 +194,7 @@ nav {
 
 .header.lp-top {
     min-height: 100vh;
-    background-image: url(img/placeholder.jpg);
+    /* background-image: url(img/placeholder.jpg); */
     background-attachment: fixed;
     display: flex;
     align-items: center;
@@ -193,17 +207,18 @@ nav {
     width: 55%;
     padding: 40px 60px;
     margin-left: 5%;
-    background: rgba(255, 255, 255, 0.88);
-    box-shadow: 2px 2px 15px rgba(0,0,0,0.1);
 }
 
 .hero-label {
     font-size: 0.85rem;
     font-weight: 600;
     letter-spacing: 3px;
-    color: #5d76ff;
-    text-transform: uppercase;
+    color: #777;
     margin-bottom: 16px;
+
+    span {
+        font-size: 1.8rem;
+    }
 }
 
 .header-content h1 {
@@ -232,7 +247,7 @@ nav {
 
 .hero-image img {
     border-radius: 8px;
-    box-shadow: 5px 5px 30px rgba(0,0,0,0.25);
+    box-shadow: 5px 5px 30px rgba(0, 0, 0, 0.25);
 }
 
 .header-bg.top {
@@ -241,8 +256,8 @@ nav {
     right: 0;
     width: 50%;
     height: 100%;
-    background: linear-gradient(180deg, rgb(93, 118, 255) 0%, rgb(14, 34, 142) 100%);
-    clip-path: polygon(35% 0, 100% 0, 100% 100%, 10% 100%);
+    background-image: url(img/placeholder.jpg);
+    clip-path: polygon(30% 0, 100% 0, 100% 100%, 0% 100%);
     z-index: 2;
     opacity: 0.85;
 }
@@ -256,8 +271,8 @@ nav {
     color: #fff;
     text-decoration: none;
     padding: 14px 40px;
-    border-radius: 50px;
-    background: linear-gradient(180deg, rgb(93, 118, 255) 0%, rgb(14, 34, 142) 100%);
+    border-radius: 10px;
+    background: #0e228e;
     font-size: 1rem;
     font-weight: 600;
     transition: opacity 0.3s, transform 0.3s;
@@ -330,13 +345,13 @@ p.page-text {
     background: #fff;
     border: 1px solid #ddd;
     border-radius: 8px;
-    box-shadow: 2px 2px 10px rgba(0,0,0,0.06);
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.06);
     transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .empathy-card:hover {
     transform: translateY(-5px);
-    box-shadow: 2px 8px 20px rgba(0,0,0,0.1);
+    box-shadow: 2px 8px 20px rgba(0, 0, 0, 0.1);
 }
 
 .empathy-icon {
@@ -366,7 +381,7 @@ p.page-text {
 .service {
     position: relative;
     top: 0;
-    height: 450px;
+    padding: 100px 0;
     background-size: cover;
     background-attachment: fixed;
     overflow: hidden;
@@ -375,12 +390,12 @@ p.page-text {
 
 /* --- Concept --- */
 .service.concept-ai {
-    background-image: url(img/placeholder.jpg);
+    background-image: url(img/placeholder2.jpg);
     background-position: 80%;
 }
 
 .service.concept-you {
-    background-image: url(img/placeholder.jpg);
+    background-image: url(img/placeholder2.jpg);
     background-position: 20%;
 }
 
@@ -391,7 +406,7 @@ p.page-text {
 }
 
 .service.evidence-guide {
-    background-image: url(img/placeholder.jpg);
+    background-image: url(img/placeholder2.jpg);
     background-position: 30%;
 }
 
@@ -402,7 +417,7 @@ p.page-text {
 }
 
 .service.feature-insight {
-    background-image: url(img/placeholder.jpg);
+    background-image: url(img/placeholder2.jpg);
     background-position: 40%;
 }
 
@@ -415,11 +430,34 @@ p.page-text {
     z-index: 3;
 }
 
+.service.concept-ai {
+    .text-wrap {
+        display: flex;
+        max-width: 1200px;
+        gap: 40px;
+
+        .text-right {
+            position: relative;
+            top: 30px;
+            width: 45%;
+        }
+    }
+
+    .service-bg-left {
+        clip-path: polygon(0 0, 50% 0, 65% 100%, 0 100%);
+    }
+
+}
+
+.page-text.concept-ai {
+    padding: 100px 4%;
+}
+
 .service .text-wrap .text-left {
-    width: 63%;
+    width: 70%;
     padding: 30px 40px;
     background: rgba(255, 255, 255, 0.88);
-    box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .service .text-wrap .text-left div {
@@ -427,10 +465,10 @@ p.page-text {
 }
 
 .service .text-wrap .text-right {
-    width: 63%;
+    width: 70%;
     padding: 30px 40px;
     background: rgba(255, 255, 255, 0.88);
-    box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
     margin-left: auto;
 }
 
@@ -563,13 +601,13 @@ p.page-text {
 }
 
 .pro-message {
-    font-size: 1.1rem;
+    font-size: 1.6rem;
     font-weight: 700;
     text-align: center;
     color: #fff;
     padding: 20px 30px;
-    margin-top: 20px;
-    background: linear-gradient(180deg, rgb(93, 118, 255) 0%, rgb(14, 34, 142) 100%);
+    margin-top: 50px;
+    background: #0e228e;
     border-radius: 6px;
 }
 
@@ -612,7 +650,7 @@ p.page-text {
     margin-bottom: 30px;
 }
 
-.closing-wrap > p {
+.closing-wrap>p {
     font-size: 0.95rem;
     line-height: 2.2;
     color: #555;
@@ -657,30 +695,36 @@ p.page-text {
 /* ============================================================
    Footer
    ============================================================ */
+footer {
+    text-align: center;
+    color: #fff;
+    padding: 20px 0;
+    background: #0e228e;
+}
+
 .footer-links {
     display: flex;
     justify-content: center;
     gap: 30px;
     padding: 30px 4%;
     flex-wrap: wrap;
+
+    a {
+        color: #fff;
+        text-decoration: none;
+    }
 }
 
-.footer-links a {
-    color: #666;
-    text-decoration: none;
-    font-size: 0.85rem;
-    transition: 0.3s;
+.footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    padding: 0px 4% 20px;
+    flex-wrap: wrap;
 }
 
 .footer-links a:hover {
     color: #2d17ee;
-}
-
-.copyright {
-    text-align: center;
-    color: #fff;
-    padding: 20px 0;
-    background: linear-gradient(180deg, rgb(93, 118, 255) 0%, rgb(14, 34, 142) 100%);
 }
 
 
@@ -772,9 +816,17 @@ p.page-text {
         transition: 0.3s ease-in-out;
     }
 
-    .hamburger span:nth-child(1) { top: 10px; }
-    .hamburger span:nth-child(2) { top: 20px; }
-    .hamburger span:nth-child(3) { top: 30px; }
+    .hamburger span:nth-child(1) {
+        top: 10px;
+    }
+
+    .hamburger span:nth-child(2) {
+        top: 20px;
+    }
+
+    .hamburger span:nth-child(3) {
+        top: 30px;
+    }
 
     .hamburger.active span:nth-child(1) {
         top: 20px;
@@ -803,7 +855,7 @@ p.page-text {
         background: rgba(255, 255, 255, 0.97);
         padding: 80px 0 0;
         transition: 0.4s ease-in-out;
-        box-shadow: 2px 0 10px rgba(0,0,0,0.15);
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.15);
     }
 
     ul.globalMenuSp li {
@@ -839,6 +891,7 @@ p.page-text {
    レスポンシブ
    ============================================================ */
 @media (max-width: 900px) {
+
     /* Hero */
     .header.lp-top {
         flex-direction: column;
@@ -869,6 +922,7 @@ p.page-text {
 }
 
 @media (max-width: 600px) {
+
     /* Service セクション */
     .service {
         height: auto;
@@ -961,7 +1015,7 @@ p.page-text {
     background: #fff;
     padding: 60px 40px;
     border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     max-width: 500px;
     width: 90%;
     border: 1px solid #ddd;
@@ -1116,7 +1170,7 @@ p.page-text {
 
 .legal-nav {
     background: #fff;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
     width: 100%;
     position: fixed;
     top: 0;

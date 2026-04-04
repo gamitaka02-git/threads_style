@@ -19,9 +19,7 @@
 require_once __DIR__ . '/../admin/config.php';
 require_once __DIR__ . '/../admin/stripe-php/init.php';
 
-// この商品の価格ID（Stripeダッシュボードから取得）
-// 同一Stripeアカウントで複数商品を扱う場合、自分の商品以外のイベントを無視するために使用
-define('EXPECTED_PRICE_ID', 'price_1TFoZgEzNfjI6wO4mNHyCZQE');
+// config.php にて STRIPE_PRICE_ID を定義済み
 
 // データベース接続関数
 function get_db_connection()
@@ -65,7 +63,7 @@ if ($event->type === 'checkout.session.completed') {
     $line_items = \Stripe\Checkout\Session::allLineItems($session->id, ['limit' => 1]);
     $purchased_price_id = $line_items->data[0]->price->id ?? null;
 
-    if ($purchased_price_id !== EXPECTED_PRICE_ID) {
+    if ($purchased_price_id !== STRIPE_PRICE_ID) {
         error_log("YOUR_APP_NAME Webhook: 対象外の商品のため処理をスキップ (price_id: $purchased_price_id)");
         http_response_code(200);
         exit();

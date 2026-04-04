@@ -51,7 +51,7 @@
     <!-- ======================================== -->
     <header class="header lp-top">
         <div class="header-content">
-            <p class="hero-label slide-in-left">Threads運用支援ツール</p>
+            <p class="hero-label slide-in-left">Threads運用支援ツール ー<span> Threads_Style </span>ー</p>
             <h1 class="slide-in-left">AIに頼って、<br>でも自分の言葉は<br class="sp">渡さない。</h1>
             <p class="hero-sub slide-in-left">Threadsの投稿、8割はAIに任せていい。<br>
                 残りの2割——そこだけに、あなたらしさを込める。<br>
@@ -60,9 +60,9 @@
                 <a href="#empathy" class="btn-primary" id="cta-hero">ツールを詳しく見る</a>
             </div>
         </div>
-        <div class="hero-image slide-in-right">
-            <img src="img/placeholder.jpg" alt="Threads_Style ダッシュボード">
-        </div>
+        <!-- <div class="hero-image slide-in-right">
+            <img src="img/placeholder2.jpg" alt="Threads_Style ダッシュボード">
+        </div> -->
         <div class="header-bg top"></div>
     </header>
 
@@ -73,17 +73,14 @@
         <h2 class="section-h2 fade-up">発信に誠実なあなただからこそ、しんどい。</h2>
         <div class="empathy-grid">
             <div class="empathy-card fade-up">
-                <span class="empathy-icon">📝</span>
                 <p class="empathy-heading">「今日も投稿しなきゃ」——<br>自分でもよくわかってる、でも書けない。</p>
                 <p class="empathy-text">毎日続けることへのプレッシャーが、いつの間にか発信そのものを億劫にしてる。</p>
             </div>
             <div class="empathy-card fade-up">
-                <span class="empathy-icon">🤖</span>
-                <p class="empathy-heading">AIに書かせたら、なんか違う。</p>
+                <p class="empathy-heading">AIに書かせたら、なんか違う。違和感しかない。</p>
                 <p class="empathy-text">どこか他人行儀で、自分の声じゃない。結局また書き直しをするから、余計に時間がかかってしまう。</p>
             </div>
             <div class="empathy-card fade-up">
-                <span class="empathy-icon">📊</span>
                 <p class="empathy-heading">数字は追えても、<br>何が正解かわからない。</p>
                 <p class="empathy-text">インサイトを見るたびに疲弊して、「分析のための分析」になっていないか？</p>
             </div>
@@ -98,27 +95,22 @@
         <div class="text-wrap">
             <div class="text-left slide-in-left">
                 <div class="slide-in-left">
-                    <h2>8割 — AIがやること</h2>
+                    <h2> 8割 — AIがやること</h2>
                 </div>
-                <p class="slide-in-left">あなたの過去の投稿を読み込み、言葉のクセ・視点・リズムを解析。「あなたが考えたような下書き」を、3パターン用意する。</p>
+                <p class="slide-in-left">あなたの過去の投稿を読み込み、言葉のクセ・視点・リズムを解析。<br>
+                「あなたが考えたような下書き」を、3パターン用意する。</p>
+            </div>
+             <div class="text-right slide-in-right">
+                <div class="slide-in-right">
+                    <h2> 2割 — あなたがやること</h2>
+                </div>
+                <p class="slide-in-right">気に入った下書きに、AIでは汲み取れない感性の<br class="pc">ひと言を加える。その2割が、投稿に体温を宿す。</p>
             </div>
         </div>
         <div class="service-bg-left"></div>
     </section>
 
-    <section class="service concept-you">
-        <div class="text-wrap">
-            <div class="text-right slide-in-right">
-                <div class="slide-in-right">
-                    <h2>2割 — あなたがやること</h2>
-                </div>
-                <p class="slide-in-right">気に入った下書きに、AIでは汲み取れない感性のひと言を加える。その2割が、投稿に体温を宿す。</p>
-            </div>
-        </div>
-        <div class="service-bg-right"></div>
-    </section>
-
-    <p class="page-text fade-up">Threadsで人の心を動かすのは、整った文章じゃなく、<br class="pc">あなた自身の「体温」です。<br>
+    <p class="page-text concept-ai fade-up">Threadsで人の心を動かすのは、整った文章じゃなく、<br class="pc">あなた自身の「体温」です。<br>
         だからこそ、私はあえて「魂を乗せる」ための2割の余白を残しました。</p>
 
     <!-- ======================================== -->
@@ -130,7 +122,7 @@
                 <div class="slide-in-left">
                     <h2>自己解析機能</h2>
                 </div>
-                <p class="slide-in-left">AI生成テキストを学習から除外。AIが書いたものをまたAIに学ばせても、あなたらしさは出てこない。</p>
+                <p class="slide-in-left">AI生成テキストを学習から除外。AIが書いたものをまたAIに学ばせても、<br class="pc">あなたらしさは出てこない。</p>
                 <p class="slide-in-left">Threads_Styleが分析するのは、あなた自身が書いた投稿だけです。</p>
             </div>
         </div>
@@ -143,8 +135,8 @@
                 <div class="slide-in-right">
                     <h2>スタイルガイド</h2>
                 </div>
-                <p class="slide-in-right">「あなたらしさ」を言語化して、AIと共有する。分析結果はスタイルガイドとして出力。</p>
-                <p class="slide-in-right">口癖、視点、温度感——それらをAIに渡すことで、下書きの精度が上がり続けます。</p>
+                <p class="slide-in-right">「あなたらしさ」を言語化し、AIと共有。分析結果はスタイルガイドとして出力。</p>
+                <p class="slide-in-right">あなたの性格、口癖、視点、温度感 ——それらをAIに渡すことで、下書きの精度が<br class="pc">上がり続けます。</p>
             </div>
         </div>
         <div class="service-bg-right"></div>
@@ -157,18 +149,18 @@
             <p class="page-text fade-up">その日の気分に合った叩き台を、すぐに3つ。<br>投稿の目的に合わせて使い分け。</p>
             <div class="examples-wrap">
                 <div class="examples-item fade-up">
-                    <img src="img/placeholder.jpg" alt="教育パターン">
-                    <p class="pattern-label-text">🎓 教育</p>
+                    <img src="img/placeholder2.jpg" alt="教育パターン">
+                    <p class="pattern-label-text">教育</p>
                     <p>知見や学びを伝える投稿パターン。フォロワーに価値を届けます。</p>
                 </div>
                 <div class="examples-item fade-up">
                     <img src="img/placeholder.jpg" alt="独り言パターン">
-                    <p class="pattern-label-text">💭 独り言</p>
+                    <p class="pattern-label-text">独り言</p>
                     <p>日常のつぶやきや思考を投稿パターン。親しみやすさを演出します。</p>
                 </div>
                 <div class="examples-item fade-up">
-                    <img src="img/placeholder.jpg" alt="交流パターン">
-                    <p class="pattern-label-text">🤝 交流</p>
+                    <img src="img/placeholder2.jpg" alt="交流パターン">
+                    <p class="pattern-label-text">交流</p>
                     <p>フォロワーとの対話を促す投稿パターン。エンゲージメントを高めます。</p>
                 </div>
             </div>
@@ -217,7 +209,7 @@
                 <p class="fade-up">その経験の中でずっと感じていたのは、「ツールに使われる人」と「ツールを使いこなす人」の差です。</p>
                 <p class="fade-up">AIが当たり前になった今、その差はさらに広がっています。</p>
                 <p class="fade-up">Threads_Styleを作ったのは、あなたに「ツールを使いこなす側」でいてほしいのと同時に「あなたの言葉で伝えられる人」であってほしいからです。</p>
-                <p class="fade-up">投稿の主導権は「あなた」にあり、AIはあくまで、あなたの発信を支える頼れる右腕なんです。</p>
+                <p class="fade-up">投稿の主導権は「あなた」にあり、AIはあくまで、あなたの発信を支える頼れる右腕。</p>
             </div>
             <p class="pro-message fade-up">このツールは、あなたの「発信者としてのスタイル」を守るための盾です。</p>
         </div>
@@ -233,7 +225,7 @@
             <p class="page-text fade-up">安心して使い続けるための機能を揃えました。</p>
             <div class="examples-wrap">
                 <div class="examples-item fade-up">
-                    <img src="img/placeholder.jpg" alt="簡単アップデート">
+                    <img src="img/placeholder2.jpg" alt="簡単アップデート">
                     <p class="pattern-label-text">🚀 簡単アップデート</p>
                     <p>ボタンひとつで最新版へ。難しい作業は不要。常に最新の状態を保てます。</p>
                 </div>
@@ -243,7 +235,7 @@
                     <p>Stripe連携による安心の認証。購入から利用開始まで、シームレスに。</p>
                 </div>
                 <div class="examples-item fade-up">
-                    <img src="img/placeholder.jpg" alt="トークン管理">
+                    <img src="img/placeholder2.jpg" alt="トークン管理">
                     <p class="pattern-label-text">🔑 トークン管理</p>
                     <p>Meta APIのトークン更新を自動化。有効期限の管理も、残り日数の確認も、表示はしているけど気にしなくてもいいんです。</p>
                 </div>
@@ -265,7 +257,7 @@
                 あなたの発信を「あなたのもの」にする。</p>
             <p class="closing-accent fade-up">「自分の言葉」を、最後の一筆に。</p>
             <div class="cta-card fade-up">
-                <div class="price-tag">¥2,980 <span>(税込・買い切り)</span></div>
+                <div class="price-tag">¥5,980 <span>(税込・買い切り)</span></div>
                 <a href="checkout.php" class="btn-primary btn-buy" id="cta-closing">今すぐThreads_Styleを導入する</a>
                 <p class="cta-note">Stripeによる安全な決済がご利用いただけます</p>
             </div>
@@ -278,9 +270,9 @@
     <!-- ======================================== -->
     <footer>
         <div class="footer-links">
-            <a href="law.php">特定商取引法に基づく表記</a>
-            <a href="privacy.php">プライバシーポリシー</a>
             <a href="terms.php">利用規約</a>
+            <a href="privacy.php">プライバシーポリシー</a>
+            <a href="law.php">特定商取引法に基づく表記</a>
         </div>
         <div class="copyright">
             <small>&copy; 2026 Threads_Style</small>
