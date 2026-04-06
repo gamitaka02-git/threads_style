@@ -11,6 +11,7 @@
 Thumbs.db
 cookies.txt
 
+
 # --- 配布用ツール（フォルダ名がツールごとに異なるため ** で汎用指定）---
 **/admin/config.php
 **/admin/*.sqlite*
@@ -22,3 +23,4 @@ LP/admin/stripe-php/
 
 # --- システム/ドキュメント ---
 docs/
+threads_style/
