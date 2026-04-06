@@ -91,7 +91,7 @@ switch ($action) {
     // ----- インサイト一覧 -----
     case 'list':
         $stmt = $pdo->query("
-            SELECT pi.*, p.content
+            SELECT pi.*, p.content, p.posted_at
             FROM post_insights pi
             JOIN posts p ON p.id = pi.post_id
             WHERE pi.id IN (SELECT MAX(id) FROM post_insights GROUP BY post_id)
@@ -157,12 +157,14 @@ switch ($action) {
     // ----- フォロワー推移データ -----
     case 'follower_history':
         $stmt = $pdo->query("
-            SELECT follower_count as count, strftime('%m/%d', recorded_at) as date
+            SELECT MAX(follower_count) as count, strftime('%m/%d', recorded_at) as date, date(recorded_at) as full_date
             FROM follower_history
-            ORDER BY recorded_at ASC
+            GROUP BY full_date
+            ORDER BY full_date DESC
             LIMIT 60
         ");
         $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $data = array_reverse($data); // チャート用に古い順にする
         echo json_encode(['success' => true, 'data' => $data]);
         break;
 
@@ -199,16 +201,18 @@ switch ($action) {
         $stmt = $pdo->query("
             SELECT
                 strftime('%m/%d', pi.fetched_at) as date,
+                date(pi.fetched_at) as full_date,
                 SUM(pi.likes) as likes,
                 SUM(pi.replies) as replies,
                 SUM(pi.reposts) as reposts
             FROM post_insights pi
             WHERE pi.id IN (SELECT MAX(id) FROM post_insights GROUP BY post_id)
-            GROUP BY date
-            ORDER BY pi.fetched_at ASC
+            GROUP BY full_date
+            ORDER BY full_date DESC
             LIMIT 30
         ");
         $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $data = array_reverse($data); // チャート用に古い順にする
         echo json_encode(['success' => true, 'data' => $data]);
         break;
 

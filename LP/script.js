@@ -86,8 +86,9 @@ function isElementPartiallyInViewport(element) {
     var rect = element.getBoundingClientRect();
     var windowHeight = window.innerHeight || document.documentElement.clientHeight;
     var windowWidth = window.innerWidth || document.documentElement.clientWidth;
-    var verticalOffset = windowHeight * 0.3;
-    var horizontalOffset = windowWidth * 0.3;
+    // オフセットを小さくして、要素が少しでも画面内に入れば判定されるように調整
+    var verticalOffset = windowHeight * 0.1;
+    var horizontalOffset = windowWidth * 0.1;
 
     return (
         rect.top < windowHeight - verticalOffset &&

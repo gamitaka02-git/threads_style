@@ -18,7 +18,7 @@
     <meta name="description" content="Threadsの投稿、8割はAIに任せていい。残りの2割にあなたらしさを込める。Threads運用・分析支援ツール Threads_Style。">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;600;700;800;900&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Shippori+Mincho:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>

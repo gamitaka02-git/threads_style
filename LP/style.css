@@ -14,7 +14,7 @@ html {
 
 * {
     box-sizing: border-box;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: "Noto Serif JP", "Yu Mincho", "游明朝", "MS PMincho", "MS 明朝", serif;
     /* font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif; */
 }
 
@@ -206,8 +206,6 @@ nav {
 }
 
 .header.lp-top {
-    min-height: 100vh;
-    /* background-image: url(img/placeholder.jpg); */
     background-attachment: fixed;
     display: flex;
     align-items: center;
@@ -226,8 +224,9 @@ nav {
     font-size: 0.85rem;
     font-weight: 600;
     letter-spacing: 3px;
-    color: #777;
+    color: #444; /* 少し濃くして視認性向上 */
     margin-bottom: 16px;
+    text-shadow: 0 0 10px #fff, 0 0 5px #fff; /* 白のシャドウを追加 */
 
     span {
         font-size: 1.8rem;
@@ -240,13 +239,15 @@ nav {
     line-height: 1.4;
     margin: 0 0 20px;
     color: #222;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 5px rgba(255, 255, 255, 0.5); /* 白のシャドウを追加 */
 }
 
 .hero-sub {
     font-size: 0.95rem;
-    color: #555;
+    color: #333; /* 少し濃く調整 */
     line-height: 2;
     margin-bottom: 30px;
+    text-shadow: 0 0 10px #fff, 0 0 5px #fff; /* 白のシャドウを追加 */
 }
 
 .hero-image {
@@ -269,10 +270,10 @@ nav {
     right: 0;
     width: 50%;
     height: 100%;
-    background-image: url(img/placeholder.jpg);
+    background-image: url(img/bg-hero2.png);
+    background-size: cover;
     clip-path: polygon(30% 0, 100% 0, 100% 100%, 0% 100%);
     z-index: 2;
-    opacity: 0.85;
 }
 
 
@@ -397,14 +398,14 @@ p.page-text {
     top: 0;
     padding: 100px 0;
     background-size: cover;
-    background-attachment: fixed;
+    /* background-attachment: fixed; */
     overflow: hidden;
     z-index: 1;
 }
 
 /* --- Concept --- */
 .service.concept-ai {
-    background-image: url(img/placeholder2.jpg);
+    background-image: url(img/bg-01.png);
     background-position: 80%;
 }
 
@@ -415,12 +416,12 @@ p.page-text {
 
 /* --- Evidence --- */
 .service.evidence-analysis {
-    background-image: url(img/placeholder.jpg);
-    background-position: center;
+    background-image: url(img/bg-02.png);
+    background-position: 70%;
 }
 
 .service.evidence-guide {
-    background-image: url(img/placeholder2.jpg);
+    background-image: url(img/bg-03.png);
     background-position: 30%;
 }
 
@@ -1082,6 +1083,10 @@ footer {
     }
 
     /* Concept（横並び→縦並び） */
+    .service.concept-ai {
+        background-position: 55%;
+    }
+
     .service.concept-ai .text-wrap {
         flex-direction: column;
         gap: 20px;
@@ -1134,6 +1139,10 @@ footer {
     }
 
     /* Hero label */
+    .hero-label {
+        color: #222; /* スマホではさらに濃くして視認性確保 */
+    }
+
     .header-content h1 {
         font-size: 1.6rem;
     }

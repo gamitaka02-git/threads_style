@@ -971,7 +971,7 @@ async function fetchInsights() {
 }
 
 let currentInsightsData = [];
-let currentInsightSort = { key: 'fetched_at', dir: 'desc' };
+let currentInsightSort = { key: 'posted_at', dir: 'desc' };
 
 async function loadEngagementTable() {
     const container = document.getElementById('engagementTable');
@@ -1025,7 +1025,7 @@ function renderEngagementTable() {
     html += `<th onclick="sortInsights('replies')" style="cursor:pointer; user-select:none; white-space:nowrap;">💬 返信 ${getSortIcon('replies')}</th>`;
     html += `<th onclick="sortInsights('reposts')" style="cursor:pointer; user-select:none; white-space:nowrap;">🔄 リポスト ${getSortIcon('reposts')}</th>`;
     html += `<th onclick="sortInsights('views')" style="cursor:pointer; user-select:none; white-space:nowrap;">👁 閲覧 ${getSortIcon('views')}</th>`;
-    html += `<th onclick="sortInsights('fetched_at')" style="cursor:pointer; user-select:none; white-space:nowrap;">取得日 ${getSortIcon('fetched_at')}</th>`;
+    html += `<th onclick="sortInsights('posted_at')" style="cursor:pointer; user-select:none; white-space:nowrap;">投稿日 ${getSortIcon('posted_at')}</th>`;
     html += '</tr></thead><tbody>';
 
     currentInsightsData.forEach(ins => {
@@ -1036,7 +1036,7 @@ function renderEngagementTable() {
             <td>${ins.replies}</td>
             <td>${ins.reposts}</td>
             <td>${ins.views}</td>
-            <td style="font-size:var(--font-size-xs); color:var(--color-text-secondary); white-space:nowrap;">${ins.fetched_at}</td>
+            <td style="font-size:var(--font-size-xs); color:var(--color-text-secondary); white-space:nowrap;">${ins.posted_at || ins.fetched_at}</td>
         </tr>`;
     });
     html += '</tbody></table></div>';
@@ -1051,13 +1051,13 @@ function downloadInsightsCSV() {
     }
 
     // CSVヘッダー
-    let csvContent = "投稿内容,いいね,返信,リポスト,閲覧数,取得日時\n";
+    let csvContent = "投稿内容,いいね,返信,リポスト,閲覧数,投稿日時\n";
 
     // データ行
     currentInsightsData.forEach(ins => {
         // Excel等で崩れないように内容をエスケープして囲む
         let content = (ins.content || '').replace(/"/g, '""');
-        csvContent += `"${content}",${ins.likes},${ins.replies},${ins.reposts},${ins.views},"${ins.fetched_at}"\n`;
+        csvContent += `"${content}",${ins.likes},${ins.replies},${ins.reposts},${ins.views},"${ins.posted_at || ins.fetched_at}"\n`;
     });
 
     // BOMを追加してExcelで文字化けしないようにする（UTF-8 BOM）
