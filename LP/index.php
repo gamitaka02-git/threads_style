@@ -146,7 +146,7 @@
                 <div class="slide-in-left">
                     <h2>自己解析機能</h2>
                 </div>
-                <p class="slide-in-left">AI生成テキストを学習から除外。AIが書いたものをまたAIに学ばせても、<br>あなたらしさは出てこない。</p>
+                <p class="slide-in-left">過去の投稿から自己解析する際、AI生成テキストを学習対象から除外。<br>AIが書いたものをまたAIに学ばせても、あなたらしさは出てこない。</p>
                 <p class="slide-in-left">Threads_Styleが分析するのは、<br class="sp">あなた自身が書いた投稿だけです。</p>
             </div>
         </div>
@@ -174,19 +174,19 @@
             <p class="page-text fade-up">その日の気分に合った<br class="sp">叩き台を、すぐに3つ。<br>投稿の目的に合わせて使い分け。</p>
             <div class="examples-wrap">
                 <div class="examples-item fade-up">
-                    <img src="img/placeholder2.jpg" alt="教育パターン">
+                    <img src="img/img-01.jpg" alt="教育パターン">
                     <p class="pattern-label-text">教育</p>
-                    <p>知見や学びを伝える投稿パターン。<br class="sp">フォロワーに価値を届けます。</p>
+                    <p>知見や学びを伝える投稿パターン。<br>フォロワーに価値を届けます。</p>
                 </div>
                 <div class="examples-item fade-up">
-                    <img src="img/placeholder.jpg" alt="独り言パターン">
+                    <img src="img/img-02.jpg" alt="独り言パターン">
                     <p class="pattern-label-text">独り言</p>
-                    <p>日常のつぶやきや思考を投稿パターン。<br class="sp">親しみやすさを演出します。</p>
+                    <p>日常のつぶやきや思考を投稿パターン。<br>親しみやすさを演出します。</p>
                 </div>
                 <div class="examples-item fade-up">
-                    <img src="img/placeholder2.jpg" alt="交流パターン">
+                    <img src="img/img-03.jpg" alt="交流パターン">
                     <p class="pattern-label-text">交流</p>
-                    <p>フォロワーとの対話を促す投稿パターン。<br class="sp">エンゲージメントを高めます。</p>
+                    <p>フォロワーとの対話を促す投稿パターン。<br>エンゲージメントを高めます。</p>
                 </div>
             </div>
             <p class="page-text fade-up">下書きを選んで、<br class="sp">「あなたの言葉」2割を加えるだけ。<br class="sp">それだけです。</p>
@@ -258,17 +258,17 @@
             <p class="page-text fade-up">安心して使い続けるための機能を<br class="sp">揃えました。</p>
             <div class="examples-wrap">
                 <div class="examples-item fade-up">
-                    <img src="img/placeholder2.jpg" alt="簡単アップデート">
+                    <img src="img/img-04.png" alt="簡単アップデート">
                     <p class="pattern-label-text">簡単アップデート</p>
                     <p>ボタンひとつで最新版へ。難しい作業は不要。<br class="sp">常に最新の状態を保てます。</p>
                 </div>
                 <div class="examples-item fade-up">
-                    <img src="img/placeholder.jpg" alt="ライセンス管理">
+                    <img src="img/img-05.png" alt="ライセンス管理">
                     <p class="pattern-label-text">ライセンス管理</p>
                     <p>Stripe連携による安心の認証。<br class="sp">購入から利用開始まで、シームレスに。</p>
                 </div>
                 <div class="examples-item fade-up">
-                    <img src="img/placeholder2.jpg" alt="トークン管理">
+                    <img src="img/img-06.png" alt="トークン管理">
                     <p class="pattern-label-text">トークン管理</p>
                     <p>Meta APIのトークン更新を自動化。<br class="sp">有効期限の管理も、残り日数の確認も、表示はしているけど気にしなくてもいいんです。</p>
                 </div>

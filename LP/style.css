@@ -417,12 +417,14 @@ p.page-text {
 /* --- Evidence --- */
 .service.evidence-analysis {
     background-image: url(img/bg-02.png);
-    background-position: 70%;
+    background-position: right;
+    background-size: contain;
 }
 
 .service.evidence-guide {
     background-image: url(img/bg-03.png);
-    background-position: 30%;
+    background-position: left;
+    background-size: contain;
 }
 
 /* --- Features --- */
