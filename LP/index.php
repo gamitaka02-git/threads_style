@@ -4,7 +4,7 @@
  * Threads Style - Landing Page
  * ============================================================
  * 役割: 商品紹介およびStripe決済への誘導を行うトップページ
- * 構成: Hero / Empathy / Concept / Evidence / Features / Professional / Spec / Closing
+ * 構成: Hero / Empathy / Concept / CTA① / Evidence / BrandProtect / Features / Liberation / Growth / Professional / Spec / EasyStart / Closing
  * ============================================================
  */
 ?>
@@ -18,7 +18,8 @@
     <meta name="description" content="Threadsの投稿、8割はAIに任せていい。残りの2割にあなたらしさを込める。Threads運用・分析支援ツール Threads_Style。">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Shippori+Mincho:wght@400;500;600;700;800&display=swap"
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Shippori+Mincho:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
@@ -194,6 +195,35 @@
     </section>
 
     <!-- ======================================== -->
+    <!-- 4.5 Brand Protection Section（ブランド保護）【追加①】 -->
+    <!-- ======================================== -->
+    <section id="brand-protect" class="brand-protect-section">
+        <div class="brand-protect-wrap">
+            <h2 class="section-h2 fade-up">あなたのスタイルは、<br class="sp">誰とも混ざらない。</h2>
+            <p class="brand-protect-lead fade-up">「AIで書いたら、みんな同じ文章になるんじゃ？」<br>
+                ——その不安は、もっともです。</p>
+            <div class="brand-protect-grid">
+                <div class="brand-protect-card fade-up">
+                    <p class="brand-protect-heading">学習データは、<br>あなただけのもの</p>
+                    <p class="brand-protect-text">Threads_Styleが分析するのは、あなた自身が書いた投稿だけ。<br>他のユーザーのデータが混ざることは、一切ありません。</p>
+                </div>
+                <div class="brand-protect-card fade-up">
+                    <p class="brand-protect-heading">スタイルガイドが、<br>個性の盾になる</p>
+                    <p class="brand-protect-text">
+                        あなたの口癖、語尾のクセ、思考のリズム——それを言語化した「スタイルガイド」が、AIの出力を常に<strong>あなたらしさ</strong>へ引き戻します。</p>
+                </div>
+                <div class="brand-protect-card fade-up">
+                    <p class="brand-protect-heading">同じツールでも、<br>同じ文章にはならない</p>
+                    <p class="brand-protect-text">
+                        10人が使えば、10通りの文体が生まれる。<br>テンプレートではなく、<strong>あなた専用のAIライター</strong>が育つ仕組みです。</p>
+                </div>
+            </div>
+            <p class="brand-protect-bottom fade-up">便利さと引き換えに、個性を手放す必要はありません。<br
+                    class="pc">Threads_Styleは、<strong>「あなたらしさ」を守るためのツール</strong>です。</p>
+        </div>
+    </section>
+
+    <!-- ======================================== -->
     <!-- 5. Feature Section（運用と分析） -->
     <!-- ======================================== -->
     <section id="features" class="service feature-post">
@@ -221,6 +251,77 @@
             </div>
         </div>
         <div class="service-bg-right"></div>
+    </section>
+
+    <!-- ======================================== -->
+    <!-- 5.5 Liberation Section（解放訴求）【更新②】 -->
+    <!-- ======================================== -->
+    <section id="liberation" class="liberation-section">
+        <div class="liberation-wrap">
+            <h2 class="section-h2 fade-up">今月分、もう終わった。</h2>
+            <p class="liberation-lead fade-up">「1投稿を○分短縮」なんて話じゃない。<br>
+                <strong>30分あれば、20投稿分の予約が完了する。</strong><br>
+                今週の発信も、来週の発信も——<br class="sp">もう、終わっている。
+            </p>
+            <div class="liberation-visual fade-up">
+                <div class="liberation-before">
+                    <p class="liberation-label">Before</p>
+                    <p class="liberation-time">毎日30分 × 30日</p>
+                    <p class="liberation-desc">ネタ探し、下書き、推敲、投稿…<br>毎日「書かなきゃ」に追われる日々</p>
+                </div>
+                <div class="liberation-arrow">→</div>
+                <div class="liberation-after">
+                    <p class="liberation-label">After</p>
+                    <p class="liberation-time">月2回 × 30分</p>
+                    <p class="liberation-desc">月の前半に予約完了。<br>あとは自動で投稿されるのを見届けるだけ</p>
+                </div>
+            </div>
+            <p class="liberation-message fade-up">これは時短ではなく、<strong>解放</strong>です。</p>
+        </div>
+    </section>
+
+    <!-- ======================================== -->
+    <!-- 5.6 Growth Section（継続と成果）【追加③】 -->
+    <!-- ======================================== -->
+    <section id="growth" class="growth-section">
+        <div class="growth-wrap">
+            <h2 class="section-h2 fade-up">続けていたら、<br class="sp">届くようになった。</h2>
+            <p class="growth-lead fade-up">「楽になる」だけじゃ、意味がない。<br>
+                大切なのは、楽になった先に何が起きるか。</p>
+            <div class="growth-chain">
+                <div class="growth-step fade-up">
+                    <div class="growth-step-number">1</div>
+                    <div class="growth-step-content">
+                        <p class="growth-step-title">解放感</p>
+                        <p class="growth-step-quote">「今週、Threadsのことを一度も考えなかった。<br class="pc">でも毎日投稿できていた。」</p>
+                    </div>
+                </div>
+                <div class="growth-step fade-up">
+                    <div class="growth-step-number">2</div>
+                    <div class="growth-step-content">
+                        <p class="growth-step-title">生活との両立</p>
+                        <p class="growth-step-quote">「本業の締め切り前でも、子どもと過ごす時間も、<br class="pc">発信が止まらなかった。」</p>
+                    </div>
+                </div>
+                <div class="growth-step fade-up">
+                    <div class="growth-step-number">3</div>
+                    <div class="growth-step-content">
+                        <p class="growth-step-title">発信の質の向上</p>
+                        <p class="growth-step-quote">「余裕ができたら、2割の体温を<br class="sp">ちゃんと込められるようになった。」</p>
+                    </div>
+                </div>
+                <div class="growth-step fade-up">
+                    <div class="growth-step-number">4</div>
+                    <div class="growth-step-content">
+                        <p class="growth-step-title">継続による成果</p>
+                        <p class="growth-step-quote">「3ヶ月続けたら、フォロワーから<br class="sp">声をかけてもらえた。」</p>
+                    </div>
+                </div>
+            </div>
+            <p class="growth-bottom fade-up">「楽になる」は、ゴールじゃない。<br>
+                <strong>「変わる」ための、スタート地点です。</strong>
+            </p>
+        </div>
     </section>
 
     <!-- ======================================== -->
@@ -273,6 +374,32 @@
                     <p>Meta APIのトークン更新を自動化。<br class="sp">有効期限の管理も、残り日数の確認も、表示はしているけど気にしなくてもいいんです。</p>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <!-- ======================================== -->
+    <!-- 7.5 Easy Start Section（導入ハードル払拭）【追加④】 -->
+    <!-- ======================================== -->
+    <section id="easy-start" class="easy-start-section">
+        <div class="easy-start-wrap">
+            <h3 class="easy-start-heading fade-up">レンタルサーバーは必要ですが、<br class="sp">難しい操作はありません。</h3>
+            <div class="easy-start-grid">
+                <div class="easy-start-card fade-up">
+                    <p class="easy-start-title">セットアップは約10分</p>
+                    <p class="easy-start-text">ZIPファイルをサーバーにアップロードして、初期設定を済ませるだけ。マニュアルに沿って進めれば、すぐに使い始められます。</p>
+                </div>
+                <div class="easy-start-card fade-up">
+                    <p class="easy-start-title">導入マニュアル付き</p>
+                    <p class="easy-start-text">Threads APIの取得方法から設置まで、画像付きでわかりやすく解説。一人でも安心して導入できます。</p>
+                </div>
+                <div class="easy-start-card fade-up">
+                    <p class="easy-start-title">一般的なブログが使えれば大丈夫</p>
+                    <p class="easy-start-text">専門的な知識は不要です。一般的なブログを使ったことがある方なら、迷わず操作できるシンプルな管理画面です。</p>
+                </div>
+            </div>
+            <p class="easy-start-bottom fade-up">「自分に使えるかな？」——その迷いが、<br class="sp">一番もったいない。<br class="pc">
+                <strong>あなたに必要なのは、始めてみること</strong>だけです。
+            </p>
         </div>
     </section>
 
