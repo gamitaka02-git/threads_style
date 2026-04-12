@@ -434,13 +434,25 @@ p.page-text {
 
 /* --- Features --- */
 .service.feature-post {
-    background-image: url(img/placeholder.jpg);
-    background-position: 70%;
+    background-image: url(img/bg-04.png);
+    background-position: right;
+    background-size: contain;
 }
 
 .service.feature-insight {
-    background-image: url(img/placeholder2.jpg);
-    background-position: 40%;
+    background-image: url(img/bg-05.png);
+    background-position: left;
+    background-size: contain;
+}
+
+@media (max-width: 600px) {
+
+    .service.evidence-analysis,
+    .service.evidence-guide,
+    .service.feature-post,
+    .service.feature-insight {
+        background-size: cover;
+    }
 }
 
 /* テキストラップ：参考サイトと同じ構造 */
@@ -609,7 +621,7 @@ p.page-text {
    ============================================================ */
 .professional-section {
     position: relative;
-    background-image: url(img/placeholder.jpg);
+    background-image: url(img/bg-06.png);
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -657,6 +669,21 @@ p.page-text {
     text-align: center;
     margin-top: 50px;
     text-shadow: 1px 1px 10px #aaa;
+}
+
+.proffessional-name {
+    text-align: right;
+    padding: 0 40px;
+}
+
+@media (max-width: 600px) {
+    .professional-content p {
+        text-align: justify;
+    }
+
+    .proffessional-name {
+        padding: 0 15px;
+    }
 }
 
 
@@ -741,7 +768,7 @@ p.page-text {
    ============================================================ */
 .closing-section {
     position: relative;
-    background-image: url(img/placeholder.jpg);
+    background-image: url(img/bg-07.png);
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -754,7 +781,6 @@ p.page-text {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
     z-index: 1;
 }
 
@@ -1481,6 +1507,11 @@ footer {
     }
 
     /* Examples */
+    .examples,
+    .brand-protect-section {
+        padding: 40px 4%;
+    }
+
     .examples-area .examples-wrap {
         flex-direction: column;
         align-items: center;
@@ -1533,6 +1564,10 @@ footer {
     }
 
     /* ブランド保護 */
+    .brand-protect-wrap h2 {
+        display: block;
+    }
+
     .brand-protect-grid {
         flex-direction: column;
         align-items: center;

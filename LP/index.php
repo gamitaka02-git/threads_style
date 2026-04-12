@@ -76,7 +76,7 @@
     <!-- 2. Empathy Section（共感） -->
     <!-- ======================================== -->
     <section id="empathy" class="empathy-section">
-        <h2 class="section-h2 fade-up">発信に誠実なあなただからこそ、しんどい。</h2>
+        <h2 class="section-h2 fade-up">発信に誠実なあなただから<br class="sp">こそ、しんどい。</h2>
         <div class="empathy-grid">
             <div class="empathy-card fade-up">
                 <p class="empathy-heading">「今日も投稿しなきゃ」——<br>自分でもよくわかってる、<br>…でも書けない。</p>
@@ -200,22 +200,22 @@
     <section id="brand-protect" class="brand-protect-section">
         <div class="brand-protect-wrap">
             <h2 class="section-h2 fade-up">あなたのスタイルは、<br class="sp">誰とも混ざらない。</h2>
-            <p class="brand-protect-lead fade-up">「AIで書いたら、みんな同じ文章になるんじゃ？」<br>
+            <p class="brand-protect-lead fade-up">「AIで書いたら、<br class="sp">みんな同じ文章になるんじゃ？」<br><br>
                 ——その不安は、もっともです。</p>
             <div class="brand-protect-grid">
                 <div class="brand-protect-card fade-up">
-                    <p class="brand-protect-heading">学習データは、<br>あなただけのもの</p>
-                    <p class="brand-protect-text">Threads_Styleが分析するのは、あなた自身が書いた投稿だけ。<br>他のユーザーのデータが混ざることは、一切ありません。</p>
+                    <p class="brand-protect-heading">学習データは、あなただけのもの</p>
+                    <p class="brand-protect-text">Threads_Styleが分析するのは、あなた自身が書いた投稿だけ。<br>AIの書いたデータや他人のデータが学習に混ざることはありません。</p>
                 </div>
                 <div class="brand-protect-card fade-up">
-                    <p class="brand-protect-heading">スタイルガイドが、<br>個性の盾になる</p>
+                    <p class="brand-protect-heading">スタイルガイドが、個性の盾になる</p>
                     <p class="brand-protect-text">
                         あなたの口癖、語尾のクセ、思考のリズム——それを言語化した「スタイルガイド」が、AIの出力を常に<strong>あなたらしさ</strong>へ引き戻します。</p>
                 </div>
                 <div class="brand-protect-card fade-up">
-                    <p class="brand-protect-heading">同じツールでも、<br>同じ文章にはならない</p>
+                    <p class="brand-protect-heading">同じツールでも、同じ文章にはならない</p>
                     <p class="brand-protect-text">
-                        10人が使えば、10通りの文体が生まれる。<br>テンプレートではなく、<strong>あなた専用のAIライター</strong>が育つ仕組みです。</p>
+                        同じツールでも10人が使えば、10通りの文体が生まれる。<br>テンプレートではなく、<strong>あなた専用のAIライター</strong>が育つ仕組みです。</p>
                 </div>
             </div>
             <p class="brand-protect-bottom fade-up">便利さと引き換えに、個性を手放す必要はありません。<br
@@ -232,8 +232,8 @@
                 <div class="slide-in-left">
                     <h2>スマート投稿 ＆ 予約投稿</h2>
                 </div>
-                <p class="slide-in-left">画像20枚添付、スレッド投稿、トピック設定まで対応。生成パターンを利用することで、投稿作業そのものの手間を、限界まで削ります。</p>
-                <p class="slide-in-left">最適なタイミングに、自動で投稿。Bot判定を防ぐ「ゆらぎ設定」で、自然な投稿リズムを維持します。</p>
+                <p class="slide-in-left">ツールから即時投稿、画像20枚添付、トピック設定まで対応。生成パターンを利用することで、投稿作業そのものの手間を、限界まで削ります。</p>
+                <p class="slide-in-left">予め自分で設定した日時に自動で投稿。Bot判定を防ぐ「ゆらぎ設定」で、自然な投稿リズムを維持します。</p>
             </div>
         </div>
         <div class="service-bg-left"></div>
@@ -245,7 +245,7 @@
                 <div class="slide-in-right">
                     <h2>インサイト分析 <br class="sp">＆ リパーパス</h2>
                 </div>
-                <p class="slide-in-right">「伸びた投稿」「よく見られている時間」を自動で検出。何が刺さったかを把握して、ワンタッチで過去の優秀な投稿を再利用できます。</p>
+                <p class="slide-in-right">「伸びた投稿」「反応が多かった時間」を自動で検出。何が刺さったかを把握して、ワンタッチで過去の優秀な投稿を再利用できます。</p>
                 <p class="slide-in-right">WordPressやnoteに書いたブログ記事を、Threads用に自動変換。<br class="sp">すでに書いたコンテンツを、眠らせたままにしない。
                 </p>
             </div>
@@ -260,7 +260,7 @@
         <div class="liberation-wrap">
             <h2 class="section-h2 fade-up">今月分、もう終わった。</h2>
             <p class="liberation-lead fade-up">「1投稿を○分短縮」なんて話じゃない。<br>
-                <strong>30分あれば、20投稿分の予約が完了する。</strong><br>
+                <strong>30分あれば、20投稿分いや、<br class="sp">もっと多くの予約が完了する。</strong><br>
                 今週の発信も、来週の発信も——<br class="sp">もう、終わっている。
             </p>
             <div class="liberation-visual fade-up">
@@ -293,14 +293,14 @@
                     <div class="growth-step-number">1</div>
                     <div class="growth-step-content">
                         <p class="growth-step-title">解放感</p>
-                        <p class="growth-step-quote">「今週、Threadsのことを一度も考えなかった。<br class="pc">でも毎日投稿できていた。」</p>
+                        <p class="growth-step-quote">「今週、Threadsのことを一度も考えなかった。でも毎日投稿できていた。」</p>
                     </div>
                 </div>
                 <div class="growth-step fade-up">
                     <div class="growth-step-number">2</div>
                     <div class="growth-step-content">
                         <p class="growth-step-title">生活との両立</p>
-                        <p class="growth-step-quote">「本業の締め切り前でも、子どもと過ごす時間も、<br class="pc">発信が止まらなかった。」</p>
+                        <p class="growth-step-quote">「本業の締め切り前でも、子どもと過ごす時間も、発信が止まらなかった。」</p>
                     </div>
                 </div>
                 <div class="growth-step fade-up">
@@ -331,16 +331,17 @@
         <div class="professional-wrap">
             <h2 class="fade-up">このツールは、効率化の道具じゃない。</h2>
             <div class="professional-content">
-                <p class="fade-up">Web系フリーランス13年、職業訓練の講師として10期にわたって受講生にグラフィック/Web制作を教えてきました。</p>
+                <p class="fade-up">Web系フリーランス13年、職業訓練の講師として10期にわたって受講生にグラフィック / Web制作を教えてきました。</p>
                 <p class="fade-up">
                     教える仕事を続けてきてわかったのは、「速く伝える」より「ちゃんと伝える」ほうがずっと難しいということです。どんなに便利なツールも、使う人が本質を理解していなければ、ただの「操作の暗記」で終わってしまう。
                 </p>
                 <p class="fade-up">その経験の中でずっと感じていたのは、「ツールに使われる人」と「ツールを使いこなす人」の差です。</p>
                 <p class="fade-up">AIが当たり前になった今、その差はさらに広がっています。</p>
                 <p class="fade-up">Threads_Styleを作ったのは、あなたに「ツールを使いこなす側」でいてほしいのと同時に「あなたの言葉で伝えられる人」であってほしいからです。</p>
-                <p class="fade-up">投稿の主導権は「あなた」にあり、AIはあくまで、あなたの発信を支える頼れる右腕。</p>
+                <p class="fade-up">投稿の主導権は「あなた」にあり、AIはあくまで、あなたの発信を支える頼れる右腕です。</p>
             </div>
             <p class="pro-message fade-up">『このツールは、あなたの<br class="sp">「発信者としてのスタイル」<br class="sp">を守るための盾です。』</p>
+            <p class="proffessional-name">ブログサポーターGamitaka<br>石上 貴哉</p>
             <div class="pro-cta fade-up">
                 <p class="pro-cta-lead">あなたの言葉を、<br class="sp">もっとラクに届けよう。</p>
                 <a href="checkout.php" class="btn-primary btn-buy" id="cta-professional">今すぐThreads_Styleを導入する</a>
