@@ -13,6 +13,7 @@
     <title>ご購入ありがとうございます | Threads Style</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="img/favicon.png" type="image/png">
 </head>
 <body class="success-body">
     <div class="success-container">

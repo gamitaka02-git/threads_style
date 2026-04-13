@@ -23,6 +23,7 @@
         rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
+    <link rel="icon" href="img/favicon.png" type="image/png">
     <meta name="robots" content="noindex">
 </head>
 
