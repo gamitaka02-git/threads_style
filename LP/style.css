@@ -851,6 +851,10 @@ p.page-text {
     margin: 0 auto;
 }
 
+.brand-protect-wrap>div {
+    text-align: center;
+}
+
 .brand-protect-lead {
     text-align: center;
     font-size: 1rem;
@@ -1564,10 +1568,6 @@ footer {
     }
 
     /* ブランド保護 */
-    .brand-protect-wrap h2 {
-        display: block;
-    }
-
     .brand-protect-grid {
         flex-direction: column;
         align-items: center;

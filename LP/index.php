@@ -200,7 +200,7 @@
     <!-- ======================================== -->
     <section id="brand-protect" class="brand-protect-section">
         <div class="brand-protect-wrap">
-            <h2 class="section-h2 fade-up">あなたのスタイルは、<br class="sp">誰とも混ざらない。</h2>
+            <div><h2 class="section-h2 fade-up">あなたのスタイルは、<br class="sp">誰とも混ざらない。</h2></div>
             <p class="brand-protect-lead fade-up">「AIで書いたら、<br class="sp">みんな同じ文章になるんじゃ？」<br><br>
                 ——その不安は、もっともです。</p>
             <div class="brand-protect-grid">
