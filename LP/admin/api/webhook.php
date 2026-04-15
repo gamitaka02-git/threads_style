@@ -109,10 +109,10 @@ if ($event->type === 'checkout.session.completed') {
         $body .= "こちらからツールをダウンロードしてください。\n";
         $body .= "https://www.gamitaka.com/short_url/download_threadsstyle \n";
         $body .= "以下のマニュアルにて、サーバーへの設置から初期設定までの手順を詳しく解説しております。\n";
-        $body .= "まずは、こちらの手順に沿って作業を進めていただけますでしょうか。\n\n";
+        $body .= "まずは、こちらの手順に沿って作業を進めてください。\n\n";
 
         $body .= "【設置・設定マニュアル】\n";
-        $body .= "[ここにマニュアルURLを入力]\n\n";
+        $body .= "https://www.gamitaka.com/threads_style-howto\n\n";
 
         $body .= "■ API連携の設定について\n";
         $body .= "ツールをご利用になるには、以下の2つのAPIキーとサーバー側での設定（Cron設定）が必要です。\n";
