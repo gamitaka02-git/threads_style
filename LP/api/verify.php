@@ -42,6 +42,12 @@ if (empty($license_key)) {
     exit;
 }
 
+if (!empty($user_email) && !filter_var($user_email, FILTER_VALIDATE_EMAIL)) {
+    http_response_code(400);
+    echo json_encode(['status' => 'error', 'message' => 'Invalid email format.']);
+    exit;
+}
+
 // --- 3. データベース接続 ---
 $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4";
 try {
