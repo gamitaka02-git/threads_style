@@ -147,8 +147,8 @@
                 <div class="slide-in-left">
                     <h2>自己解析機能</h2>
                 </div>
-                <p class="slide-in-left">過去の投稿から自己解析する際、AI生成テキストを学習対象から除外。<br>AIが書いたものをまたAIに学ばせても、あなたらしさは出てこない。</p>
-                <p class="slide-in-left">Threads_Styleが分析するのは、<br class="sp">あなた自身が書いた投稿だけです。</p>
+                <p class="slide-in-left">過去のThreads投稿から自己解析する際、AI生成テキストを学習対象から除外。<br>AIが書いたものをまたAIに学ばせても、あなたらしさは出てこない。</p>
+                <p class="slide-in-left">Threads_Styleが分析するのは、<br class="sp">あなた自身が書いた文章だけです。</p>
             </div>
         </div>
         <div class="service-bg-left"></div>
