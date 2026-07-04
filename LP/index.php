@@ -58,9 +58,10 @@
         <div class="header-content">
             <p class="hero-label slide-in-left">Threads運用支援ツール<br class="sp"> ー<span> Threads_Style </span>ー</p>
             <h1 class="slide-in-left">AIに頼って、<br>でも自分の言葉は<br class="sp">渡さない。</h1>
-            <p class="hero-sub slide-in-left">Threadsの投稿、8割はAIに任せていい。<br>
-                残りの2割——<br class="sp">そこだけに、あなたらしさを込める。<br>
-                全部書かなくても、<br class="sp">ちゃんと「あなたの投稿」になる。</p>
+            <p class="hero-sub slide-in-left"><strong>「自動モード」搭載。Threads運用は、AIとあなたの“自動運転”へ。</strong><br>
+                あなたが眠っている間に、AIがテーマを選び、下書きを作り、予約投稿まで自動セット。<br>
+                朝起きたら、スマホで確認して微調整するだけ。<br>
+                あなたの個性を守りながら、毎日2〜3件の発信が、驚くほどラクに回り始めます。</p>
             <div class="hero-cta slide-in-left">
                 <a href="checkout.php" class="btn-primary btn-buy" id="cta-hero">今すぐThreads_Styleを導入する</a>
                 <p class="hero-cta-note">¥5,980（税込・買い切り）</p>
@@ -128,6 +129,43 @@
             8割の土台は<br class="sp">Threads_Styleが引き受けます。</p>
         <p class="concept-detail-accent">あなたは、<br class="sp"><span>あなたにしか書けない言葉</span><br class="sp">だけに集中してください。</p>
     </div>
+
+    <!-- ======================================== -->
+    <!-- 3.5 Selected Modes Section（選べる2つのモード） -->
+    <!-- ======================================== -->
+    <section id="modes" class="modes-section">
+        <div class="modes-wrap">
+            <h2 class="section-h2 fade-up">あなたのペースで選べる、<br class="sp">2つの運用スタイル</h2>
+            <p class="section-sub fade-up">Threads_Styleは、AIに完全に任せる「自動モード」と、<br class="pc">こだわりを表現する「こだわりモード」を自由に行き来できます。</p>
+            
+            <div class="modes-grid">
+                <!-- 自動モード -->
+                <div class="mode-card auto-mode fade-up">
+                    <div class="mode-badge">新機能</div>
+                    <h3 class="mode-title">🤖 自動モード <span class="mode-title-sub">（おまかせ運用）</span></h3>
+                    <p class="mode-lead">朝の5分で、1日の投稿が完了</p>
+                    <p class="mode-desc">「今日、何を書こう？」と白紙の画面で悩む必要はもうありません。</p>
+                    <ul class="mode-features">
+                        <li><strong>夜間自動起動</strong>：あなたが寝ている間に、AIが過去の投稿から「最適なテーマ」を自動で選定。</li>
+                        <li><strong>4件の下書き自動生成</strong>：選んだテーマに沿って、あなたらしい文体の下書きを4つ作成。</li>
+                        <li><strong>ランダム予約投稿</strong>：朝8時〜夜24時の最適な時間帯に、自動で配信スケジュールをセット。</li>
+                        <li><strong>朝起きて確認＆微調整するだけ</strong>：明らかにズレているものは削除し、あとは数秒の微調整で自動投稿がスタート！</li>
+                    </ul>
+                </div>
+                
+                <!-- こだわりモード -->
+                <div class="mode-card custom-mode fade-up">
+                    <h3 class="mode-title">✍️ こだわりモード <span class="mode-title-sub">（8:2運用）</span></h3>
+                    <p class="mode-lead">勝負投稿や、想いを届けたい時に</p>
+                    <p class="mode-desc">「これだけは、自分の言葉でじっくり伝えたい」という時に最適です。</p>
+                    <ul class="mode-features">
+                        <li><strong>8:2の黄金比</strong>：AIがあなたのスタイルで作成した3パターンの下書き（教育・独り言・交流）をベースに、最後の2割であなただけの「熱量」や「体験」を込めて発信します。</li>
+                        <li><strong>100%自身での執筆も可能</strong>：もちろん、100％あなた自身の言葉でツール上で直接書いてそのまま投稿（予約投稿）することもできます。</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- CTA Section（中間） -->
     <div class="mid-cta-section">
@@ -224,6 +262,39 @@
     </section>
 
     <!-- ======================================== -->
+    <!-- 4.6 Real Benefits Section（自動モードのリアルな変化） -->
+    <!-- ======================================== -->
+    <section id="benefits" class="benefits-section">
+        <div class="benefits-wrap">
+            <h2 class="section-h2 fade-up">実際に「自動モード」を動かして分かった、<br class="sp">3つのリアルな変化</h2>
+            <p class="section-sub fade-up">ただの自動化ツールとは違う、Threads_Styleだからこそ実感できるベネフィットです。</p>
+            
+            <div class="benefits-grid">
+                <!-- ベネフィット1 -->
+                <div class="benefit-card fade-up">
+                    <div class="benefit-icon-wrap"><span class="benefit-icon">💡</span></div>
+                    <h3 class="benefit-card-title">1. 「テーマ選び」のしんどさから、完全に解放された</h3>
+                    <p class="benefit-text">毎日投稿で最もエネルギーを使うのは、実は「何を書くか（テーマ決め）」です。Threads_Styleは、AIがテーマ選びから下書き作成までワンストップで引き受けるため、発信の心理的ハードルがほぼゼロになります。</p>
+                </div>
+                
+                <!-- ベネフィット2 -->
+                <div class="benefit-card fade-up">
+                    <div class="benefit-icon-wrap"><span class="benefit-icon">❤️</span></div>
+                    <h3 class="benefit-card-title">2. フォロワーが少なくても、<br>「温かい反応」が届く</h3>
+                    <p class="benefit-text">世の中の自動ツールのような「いかにもAIが書いたコピペ文」は、Threadsではすぐに見破られてスルーされます。Threads_Styleはあなたの文体（スタイルガイド）を学習しているため、完全自動でも「あなたの体温」が宿り、いいねやコメントなどの「生きた反応」がしっかり届くようになります。</p>
+                </div>
+                
+                <!-- ベネフィット3 -->
+                <div class="benefit-card fade-up">
+                    <div class="benefit-icon-wrap"><span class="benefit-icon">📈</span></div>
+                    <h3 class="benefit-card-title">3. 削除基準はゆるく。「圧倒的な打席数」でチャンスを逃さない</h3>
+                    <p class="benefit-text">「100点満点の投稿」を毎日手動で作る必要はありません。自動生成された4件のうち、明らかにズレているものを削除しても、1日に2〜3件は自然な投稿が無理なく発信され続けます。発信数（打席数）が増えることで、フォロワーとの接点が劇的に増加します。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================================== -->
     <!-- 5. Feature Section（運用と分析） -->
     <!-- ======================================== -->
     <section id="features" class="service feature-post">
@@ -258,22 +329,22 @@
     <!-- ======================================== -->
     <section id="liberation" class="liberation-section">
         <div class="liberation-wrap">
-            <h2 class="section-h2 fade-up">今月分、もう終わった。</h2>
+            <h2 class="section-h2 fade-up">毎日の発信、もう終わってた。</h2>
             <p class="liberation-lead fade-up">「1投稿を○分短縮」なんて話じゃない。<br>
-                <strong>30分あれば、20投稿分いや、<br class="sp">もっと多くの予約が完了する。</strong><br>
-                今週の発信も、来週の発信も——<br class="sp">もう、終わっている。
+                <strong>朝の5分、スマホでポチッと確認するだけ。</strong><br>
+                今日の発信も、明日の発信も——<br class="sp">眠っている間に、もう終わっている。
             </p>
             <div class="liberation-visual fade-up">
                 <div class="liberation-before">
                     <p class="liberation-label">Before</p>
                     <p class="liberation-time">毎日30分 × 30日</p>
-                    <p class="liberation-desc">ネタ探し、下書き、推敲、投稿…<br>毎日「書かなきゃ」に追われる日々</p>
+                    <p class="liberation-desc">ネタ探し、下書き、推敲、投稿…<br>毎日「何を書こう」と追われる日々</p>
                 </div>
                 <div class="liberation-arrow">→</div>
                 <div class="liberation-after">
                     <p class="liberation-label">After</p>
-                    <p class="liberation-time">月2回 × 30分</p>
-                    <p class="liberation-desc">月の前半に予約完了。<br>あとは自動で投稿されるのを見届けるだけ</p>
+                    <p class="liberation-time">毎朝 5分 × スマホ確認だけ</p>
+                    <p class="liberation-desc">夜間にテーマ選定〜予約投稿までAIが完了。<br>布団の中でポチポチ微調整するだけ</p>
                 </div>
             </div>
             <p class="liberation-message fade-up">これは時短ではなく、<strong>解放</strong>です。</p>

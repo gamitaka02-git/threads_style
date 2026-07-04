@@ -843,6 +843,134 @@ p.page-text {
 
 
 /* ============================================================
+   選べる2つのモードセクション【新機能】
+   ============================================================ */
+.modes-section {
+    padding: 80px 4%;
+    background: #f8f8f8;
+}
+
+.modes-wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.section-sub {
+    font-size: 1rem;
+    color: #666;
+    line-height: 2;
+    margin-top: -30px;
+    margin-bottom: 50px;
+}
+
+.modes-grid {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.mode-card {
+    position: relative;
+    flex: 1;
+    max-width: 48%;
+    padding: 40px 30px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s, box-shadow 0.3s;
+    text-align: left;
+}
+
+.mode-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 2px 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.mode-card.auto-mode {
+    border-color: #0e228e;
+    background: linear-gradient(180deg, #ffffff 0%, #f4f6ff 100%);
+}
+
+.mode-badge {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: #0e228e;
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 3px 12px;
+    border-radius: 50px;
+    letter-spacing: 1px;
+}
+
+.mode-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #333;
+    padding: 0;
+    margin-bottom: 6px;
+    border: none;
+}
+
+.mode-title-sub {
+    font-size: 0.9rem;
+    color: #666;
+    font-weight: 400;
+}
+
+.mode-card.auto-mode .mode-title {
+    color: #0e228e;
+}
+
+.mode-lead {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #444;
+    margin-bottom: 16px;
+    line-height: 1.4;
+}
+
+.mode-desc {
+    font-size: 0.9rem;
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 24px;
+}
+
+.mode-features {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.mode-features li {
+    font-size: 0.88rem;
+    color: #444;
+    line-height: 1.7;
+    margin-bottom: 12px;
+    padding-left: 20px;
+    position: relative;
+}
+
+.mode-features li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: #0e228e;
+    font-weight: bold;
+}
+
+.mode-card.auto-mode .mode-features li::before {
+    color: #0e228e;
+}
+
+
+/* ============================================================
    ブランド保護セクション【追加①】
    ============================================================ */
 .brand-protect-section {
@@ -919,6 +1047,75 @@ p.page-text {
 
 
 /* ============================================================
+   自動モードのリアルな変化セクション【新機能】
+   ============================================================ */
+.benefits-section {
+    max-width: 1100px;
+    padding: 80px 4%;
+    margin: 0 auto;
+}
+
+.benefits-wrap {
+    text-align: center;
+}
+
+.benefits-grid {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.benefit-card {
+    flex: 1;
+    max-width: 340px;
+    padding: 40px 24px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.06);
+    transition: transform 0.3s, box-shadow 0.3s;
+    text-align: center;
+}
+
+.benefit-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 2px 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.benefit-icon-wrap {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #f4f6ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+}
+
+.benefit-icon {
+    font-size: 1.8rem;
+}
+
+.benefit-card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.5;
+    color: #222;
+    margin-bottom: 16px;
+    padding: 0;
+}
+
+.benefit-text {
+    font-size: 0.88rem;
+    color: #666;
+    line-height: 1.8;
+    text-align: left;
+}
+
+
+/* ============================================================
    解放訴求セクション【更新②】
    ============================================================ */
 .liberation-section {
@@ -955,8 +1152,8 @@ p.page-text {
 .liberation-before,
 .liberation-after {
     flex: 1;
-    max-width: 340px;
-    padding: 30px 20px;
+    max-width: 350px;
+    padding: 30px 10px;
     border-radius: 12px;
     text-align: center;
 }
@@ -1508,6 +1705,32 @@ footer {
     .empathy-card {
         width: 100%;
         max-width: 400px;
+    }
+
+    /* 選べる2つのモード */
+    .modes-grid {
+        flex-direction: column;
+        align-items: center;
+        gap: 24px;
+    }
+
+    .mode-card {
+        max-width: 100%;
+        width: 100%;
+        padding: 30px 20px;
+    }
+
+    /* 自動モードのリアルな変化 */
+    .benefits-grid {
+        flex-direction: column;
+        align-items: center;
+        gap: 24px;
+    }
+
+    .benefit-card {
+        max-width: 100%;
+        width: 100%;
+        padding: 30px 20px;
     }
 
     /* Examples */
