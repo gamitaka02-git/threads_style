@@ -7,6 +7,12 @@
  * 構成: Hero / Empathy / Concept / CTA① / Evidence / BrandProtect / Features / Liberation / Growth / Professional / Spec / EasyStart / Closing
  * ============================================================
  */
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || ($_SERVER['SERVER_PORT'] ?? '') == 443) ? "https://" : "http://";
+$host = $_SERVER['HTTP_HOST'] ?? '';
+$requestUri = $_SERVER['REQUEST_URI'] ?? '';
+$baseUrl = $host ? ($protocol . $host . rtrim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/\\')) : '';
+$ogpImageUrl = $baseUrl ? ($baseUrl . '/img/ogp.png') : 'img/ogp.png';
+$currentUrl = $host ? ($protocol . $host . $requestUri) : '';
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -16,6 +22,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Threads_Style | AIに頼って、でも自分の言葉は渡さない。</title>
     <meta name="description" content="Threadsの投稿、8割はAIに任せていい。残りの2割にあなたらしさを込める。Threads運用・分析支援ツール Threads_Style。">
+
+    <!-- Open Graph / OGP (Facebook, Threads, LINEなど) -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Threads_Style | AIに頼って、でも自分の言葉は渡さない。">
+    <meta property="og:description" content="Threadsの投稿、8割はAIに任せていい。残りの2割にあなたらしさを込める。Threads運用・分析支援ツール Threads_Style。">
+    <meta property="og:image" content="<?= htmlspecialchars($ogpImageUrl) ?>">
+    <?php if ($currentUrl): ?>
+    <meta property="og:url" content="<?= htmlspecialchars($currentUrl) ?>">
+    <?php endif; ?>
+    <meta property="og:site_name" content="Threads_Style">
+
+    <!-- Twitter / X Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Threads_Style | AIに頼って、でも自分の言葉は渡さない。">
+    <meta name="twitter:description" content="Threadsの投稿、8割はAIに任せていい。残りの2割にあなたらしさを込める。Threads運用・分析支援ツール Threads_Style。">
+    <meta name="twitter:image" content="<?= htmlspecialchars($ogpImageUrl) ?>">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
