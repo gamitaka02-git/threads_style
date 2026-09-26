@@ -40,3 +40,8 @@ LP/api/webhook.php
 # --- システム/ドキュメント（GitHubに公開しないフォルダ） ---
 docs/
 threads_style/
+mcp_server/
+scripts/
+scratch/
+*.zip
+.agent/
