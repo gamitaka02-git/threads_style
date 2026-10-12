@@ -84,7 +84,7 @@ $currentUrl = $host ? ($protocol . $host . $requestUri) : '';
             <p class="hero-sub slide-in-left"><strong>自動投稿・定期投稿・AIエージェント連携。Threads運用は、まかせる時代へ。</strong><br>
                 テーマ選びから下書き作成、予約投稿まで、AIがあなたの文体で毎日自動に回します。<br>
                 伸びた投稿は定期投稿に入れて、休みの日も届け続けます。<br>
-                分析や投稿の追加は、ClaudeやCursorなどのAIエージェントに話しかけるだけ。<br>
+                分析や投稿の追加は、Claude CodeやCodexなどのAIエージェントに話しかけるだけ。<br>
                 <strong class="hero-sub-accent">浮いた時間は、コメントへの返信や、気になるあの人への交流に。</strong><br>
                 発信をツールが支える分、あなたは「人との会話」に集中できます。</p>
             <ul class="hero-badges slide-in-left">
@@ -254,7 +254,7 @@ $currentUrl = $host ? ($protocol . $host . $requestUri) : '';
                 <div class="slide-in-right">
                     <h2>AIエージェントの接続<br class="sp">（MCP）</h2>
                 </div>
-                <p class="slide-in-right">ClaudeやCursor、AntigravityなどのAIエージェントと接続。「一番伸びた投稿はどれ？」と話しかけるだけで、インサイトを分析してくれます。</p>
+                <p class="slide-in-right">Claude CodeやCodex、AntigravityなどのAIエージェントと接続。「一番伸びた投稿はどれ？」と話しかけるだけで、インサイトを分析してくれます。</p>
                 <p class="slide-in-right">反応の良かった投稿を定期投稿へセットしたり、予約投稿をまとめて登録したり。分析も投稿の追加も、チャットで完結します。</p>
             </div>
         </div>
@@ -336,7 +336,7 @@ $currentUrl = $host ? ($protocol . $host . $requestUri) : '';
                     <div class="cycle-step-number">2</div>
                     <div class="cycle-step-body">
                         <h3 class="cycle-step-title">「MCP」接続のAIエージェントで分析し、反響投稿を「定期投稿」へ</h3>
-                        <p class="cycle-step-text">ClaudeやCursorなどに「一番伸びた投稿は？」と聞くだけ。閲覧数やエンゲージメントの良かった投稿を見つけ、定期投稿にセットします。</p>
+                        <p class="cycle-step-text">Claude CodeやCodexなどに「一番伸びた投稿は？」と聞くだけ。閲覧数やエンゲージメントの良かった投稿を見つけ、定期投稿にセットします。</p>
                     </div>
                 </div>
                 <div class="cycle-step fade-up">
@@ -440,7 +440,7 @@ $currentUrl = $host ? ($protocol . $host . $requestUri) : '';
                 </div>
                 <div class="new-feature-card fade-up">
                     <h3 class="new-feature-title">MCP対応<br><span class="new-feature-title-sub">AIエージェントから操作できる</span></h3>
-                    <p class="new-feature-text">ClaudeやCursor、AntigravityなどのAIエージェントと接続。「一番伸びた投稿はどれ？」と聞くだけでインサイトを分析できます。</p>
+                    <p class="new-feature-text">Claude CodeやCodex、AntigravityなどのAIエージェントと接続。「一番伸びた投稿はどれ？」と聞くだけでインサイトを分析できます。</p>
                     <p class="new-feature-text">反応の良かった投稿を定期投稿へセットしたり、予約投稿をまとめて登録したり。操作もチャットで完結します。</p>
                 </div>
                 <div class="new-feature-card fade-up">
