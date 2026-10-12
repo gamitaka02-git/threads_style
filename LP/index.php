@@ -25,8 +25,8 @@ $currentUrl = $host ? ($protocol . $host . $requestUri) : '';
 
     <!-- Open Graph / OGP (Facebook, Threads, LINEなど) -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="Threads_Style | AIに頼って、でも自分の言葉は渡さない。">
-    <meta property="og:description" content="Threadsの投稿、8割はAIに任せていい。残りの2割にあなたらしさを込める。Threads運用・分析支援ツール Threads_Style。">
+    <meta property="og:title" content="Threads_Style | 発信はツールに預けて、言葉と時間は、自分で使う。">
+    <meta property="og:description" content="自動投稿・定期投稿・AIエージェント連携。Threads運用は、まかせる時代へ。Threads運用・分析支援ツール Threads_Style。">
     <meta property="og:image" content="<?= htmlspecialchars($ogpImageUrl) ?>">
     <?php if ($currentUrl): ?>
     <meta property="og:url" content="<?= htmlspecialchars($currentUrl) ?>">
@@ -35,8 +35,8 @@ $currentUrl = $host ? ($protocol . $host . $requestUri) : '';
 
     <!-- Twitter / X Card -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Threads_Style | AIに頼って、でも自分の言葉は渡さない。">
-    <meta name="twitter:description" content="Threadsの投稿、8割はAIに任せていい。残りの2割にあなたらしさを込める。Threads運用・分析支援ツール Threads_Style。">
+    <meta name="twitter:title" content="Threads_Style | 発信はツールに預けて、言葉と時間は、自分で使う。">
+    <meta name="twitter:description" content="自動投稿・定期投稿・AIエージェント連携。Threads運用は、まかせる時代へ。Threads運用・分析支援ツール Threads_Style。">
     <meta name="twitter:image" content="<?= htmlspecialchars($ogpImageUrl) ?>">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -79,15 +79,21 @@ $currentUrl = $host ? ($protocol . $host . $requestUri) : '';
     <!-- ======================================== -->
     <header class="header lp-top">
         <div class="header-content">
-            <p class="hero-label slide-in-left">Threads運用支援ツール<br class="sp"> ー<span> Threads_Style </span>ー</p>
-            <h1 class="slide-in-left">AIに頼って、<br>でも自分の言葉は<br class="sp">渡さない。</h1>
-            <p class="hero-sub slide-in-left"><strong>「自動モード」搭載。Threads運用は、AIとあなたの“自動運転”へ。</strong><br>
-                あなたが眠っている間に、AIがテーマを選び、下書きを作り、予約投稿まで自動セット。<br>
-                朝起きたら、スマホで確認して微調整するだけ。<br>
-                あなたの個性を守りながら、毎日2〜3件の発信が、驚くほどラクに回り始めます。</p>
+            <p class="hero-label slide-in-left">進化し続けるThreads運用支援ツール<br class="sp"> ー<span> Threads_Style </span>ー</p>
+            <h1 class="slide-in-left">発信はツールに預けて、<br>言葉と時間は、<br class="sp">自分で使う。</h1>
+            <p class="hero-sub slide-in-left"><strong>自動投稿・定期投稿・AIエージェント連携。Threads運用は、まかせる時代へ。</strong><br>
+                テーマ選びから下書き作成、予約投稿まで、AIがあなたの文体で毎日自動に回します。<br>
+                伸びた投稿は定期投稿に入れて、休みの日も届け続けます。<br>
+                分析や投稿の追加は、ClaudeやCursorなどのAIエージェントに話しかけるだけ。<br>
+                <strong class="hero-sub-accent">浮いた時間は、コメントへの返信や、気になるあの人への交流に。</strong><br>
+                発信をツールが支える分、あなたは「人との会話」に集中できます。</p>
+            <ul class="hero-badges slide-in-left">
+                <li><span class="hero-badge-new">NEW</span>MCP対応（AIエージェント操作）</li>
+                <li><span class="hero-badge-new">NEW</span>定期投稿 最大1,000件ストック</li>
+            </ul>
             <div class="hero-cta slide-in-left">
                 <a href="checkout.php" class="btn-primary btn-buy" id="cta-hero">今すぐThreads_Styleを導入する</a>
-                <p class="hero-cta-note">¥5,980（税込・買い切り）</p>
+                <p class="hero-cta-note">¥7,980（税込・買い切り）</p>
             </div>
         </div>
         <!-- <div class="hero-image slide-in-right">
@@ -115,7 +121,7 @@ $currentUrl = $host ? ($protocol . $host . $requestUri) : '';
                 <p class="empathy-text">インサイトを見るたびに疲弊して、「分析のための分析」になっていませんか？</p>
             </div>
         </div>
-        <p class="section-message fade-up">発信をやめたいわけじゃない。<br>ただ、もう少しだけ——<br class="sp">楽にやっていきたいだけ。</p>
+        <p class="section-message fade-up">発信をやめたいわけじゃない。<br>ただ、投稿づくりに追われて、<br class="sp"><strong>コメントに返信する余裕がなくなっているだけ。</strong></p>
     </section>
 
     <!-- ======================================== -->
@@ -195,21 +201,21 @@ $currentUrl = $host ? ($protocol . $host . $requestUri) : '';
         <div class="mid-cta-wrap fade-up">
             <p class="mid-cta-lead">全部書かなくていい。<br>あなたらしさは、<br class="sp">2割で十分伝わる。</p>
             <a href="checkout.php" class="btn-primary btn-buy" id="cta-mid">今すぐThreads_Styleを導入する</a>
-            <p class="mid-cta-note">¥5,980（税込・買い切り）<br class="sp">/ Stripeによる安全な決済</p>
+            <p class="mid-cta-note">¥7,980（税込・買い切り）<br class="sp">/ Stripeによる安全な決済</p>
         </div>
     </div>
 
     <!-- ======================================== -->
-    <!-- 4. Evidence Section（自己解析と生成） -->
+    <!-- 4. Feature Section（スタイルガイド／インサイト分析／自動投稿・定期投稿／MCP） -->
     <!-- ======================================== -->
     <section id="evidence" class="service evidence-analysis">
         <div class="text-wrap">
             <div class="text-left slide-in-left">
                 <div class="slide-in-left">
-                    <h2>自己解析機能</h2>
+                    <h2>スタイルガイド</h2>
                 </div>
-                <p class="slide-in-left">過去のThreads投稿から自己解析する際、AI生成テキストを学習対象から除外。<br>AIが書いたものをまたAIに学ばせても、あなたらしさは出てこない。</p>
-                <p class="slide-in-left">Threads_Styleが分析するのは、<br class="sp">あなた自身が書いた文章だけです。</p>
+                <p class="slide-in-left">過去のThreads投稿を自己解析し、「あなたらしさ」を言語化。分析結果はスタイルガイドとして出力され、AIと共有できます。</p>
+                <p class="slide-in-left">AIが書いた文章は学習対象から除外されるため、分析するのは、あなた自身が書いた文章だけです。<br>性格、口癖、視点、温度感をAIに渡すことで、下書きの精度が上がり続けます。</p>
             </div>
         </div>
         <div class="service-bg-left"></div>
@@ -219,11 +225,37 @@ $currentUrl = $host ? ($protocol . $host . $requestUri) : '';
         <div class="text-wrap">
             <div class="text-right slide-in-right">
                 <div class="slide-in-right">
-                    <h2>スタイルガイド</h2>
+                    <h2>投稿生成 ＆ <br class="sp">インサイト分析</h2>
                 </div>
-                <p class="slide-in-right">「あなたらしさ」を言語化し、AIと共有。分析結果はスタイルガイドとして<br class="sp">出力。</p>
-                <p class="slide-in-right">あなたの性格、口癖、視点、温度感 ——それらをAIに渡すことで、<br class="sp">下書きの精度が<br class="pc">上がり続けます。
-                </p>
+                <p class="slide-in-right">「伸びた投稿」「反応が多かった時間」を自動で検出。いいね数や閲覧数などの条件で絞り込んで、何が刺さったかを把握できます。</p>
+                <p class="slide-in-right">思いついたテーマを入力するだけで、AIがあなたらしい切り口の投稿を自動生成。さらに、WordPressやnoteに書いたブログ記事のURL・テキストからThreads用に変換する「リパーパス」にも対応し、過去の資産を何度でも活かせます。</p>
+            </div>
+        </div>
+        <div class="service-bg-right"></div>
+    </section>
+
+    <section id="features" class="service feature-post">
+        <div class="text-wrap">
+            <div class="text-left slide-in-left">
+                <div class="slide-in-left">
+                    <h2>自動投稿・定期投稿</h2>
+                </div>
+                <p class="slide-in-left">スタイルガイドを使ったAIが、テーマ選びから下書き、予約投稿のセットまで自動で実行。朝は確認と微調整だけ。Bot判定を防ぐ「ゆらぎ設定」で、自然な投稿リズムを保ちます。</p>
+                <p class="slide-in-left">反応の良かった投稿は「定期投稿」に最大1,000件までストック。決めた時間に自動で届け続けるので、忙しい日も休みの日も、発信が止まりません。</p>
+                <p class="slide-in-left">画像20枚の添付やスレッド（連投）にも対応しています。</p>
+            </div>
+        </div>
+        <div class="service-bg-left"></div>
+    </section>
+
+    <section class="service feature-insight">
+        <div class="text-wrap">
+            <div class="text-right slide-in-right">
+                <div class="slide-in-right">
+                    <h2>AIエージェントの接続<br class="sp">（MCP）</h2>
+                </div>
+                <p class="slide-in-right">ClaudeやCursor、AntigravityなどのAIエージェントと接続。「一番伸びた投稿はどれ？」と話しかけるだけで、インサイトを分析してくれます。</p>
+                <p class="slide-in-right">反応の良かった投稿を定期投稿へセットしたり、予約投稿をまとめて登録したり。分析も投稿の追加も、チャットで完結します。</p>
             </div>
         </div>
         <div class="service-bg-right"></div>
@@ -285,12 +317,80 @@ $currentUrl = $host ? ($protocol . $host . $requestUri) : '';
     </section>
 
     <!-- ======================================== -->
+    <!-- 4.55 Growth Cycle Section（4ステップ成長サイクル） -->
+    <!-- ======================================== -->
+    <section id="cycle" class="cycle-section">
+        <div class="cycle-wrap">
+            <p class="cycle-eyebrow fade-up">Threads_Styleの活用事例</p>
+            <h2 class="section-h2 fade-up">ツールを回すほど、<br class="sp">アカウントが育っていく。</h2>
+            <p class="section-sub fade-up">ただ自動で投稿するだけではありません。データを集め、AIと磨き、資産に変える。<br class="pc">開発者自身が実際に回している、4ステップの成長サイクルです。</p>
+            <div class="cycle-steps">
+                <div class="cycle-step fade-up">
+                    <div class="cycle-step-number">1</div>
+                    <div class="cycle-step-body">
+                        <h3 class="cycle-step-title">「スタイルガイド」×「自動投稿」で、打席とデータを集める</h3>
+                        <p class="cycle-step-text">あなたの文体を学んだAIが、毎日の投稿を自動で発信。白紙の画面で悩まずに、まずは打席に立ち続け、読者のリアルな反応データを貯めていきます。</p>
+                    </div>
+                </div>
+                <div class="cycle-step fade-up">
+                    <div class="cycle-step-number">2</div>
+                    <div class="cycle-step-body">
+                        <h3 class="cycle-step-title">「MCP」接続のAIエージェントで分析し、反響投稿を「定期投稿」へ</h3>
+                        <p class="cycle-step-text">ClaudeやCursorなどに「一番伸びた投稿は？」と聞くだけ。閲覧数やエンゲージメントの良かった投稿を見つけ、定期投稿にセットします。</p>
+                    </div>
+                </div>
+                <div class="cycle-step fade-up">
+                    <div class="cycle-step-number">3</div>
+                    <div class="cycle-step-body">
+                        <h3 class="cycle-step-title">データから「伸びる要素」を足して、定期投稿に再セット</h3>
+                        <p class="cycle-step-text">なぜ伸びたのかを踏まえて少しリライトし、もう一度ストックへ。回すたびに、届く投稿の精度が上がっていきます。</p>
+                    </div>
+                </div>
+                <div class="cycle-step fade-up">
+                    <div class="cycle-step-number">4</div>
+                    <div class="cycle-step-body">
+                        <h3 class="cycle-step-title">反応が集まる循環の完成。あなたは「交流」に時間を使う</h3>
+                        <p class="cycle-step-text">発信はツールが回し続けます。浮いた時間は、コメントへの返信や他の人への交流へ。Threadsで評価されやすいと言われる「会話」に集中できます。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================================== -->
     <!-- 4.6 Real Benefits Section（自動モードのリアルな変化） -->
     <!-- ======================================== -->
     <section id="benefits" class="benefits-section">
         <div class="benefits-wrap">
-            <h2 class="section-h2 fade-up">実際に「自動モード」を動かして分かった、<br class="sp">3つのリアルな変化</h2>
-            <p class="section-sub fade-up">ただの自動化ツールとは違う、Threads_Styleだからこそ実感できるベネフィットです。</p>
+            <h2 class="section-h2 fade-up">実際にこのサイクルを動かして分かった、<br class="sp">リアルな変化</h2>
+            <p class="section-sub fade-up">「投稿を増やすと、質が下がって反応が薄まるのでは？」<br class="pc">開発者自身のアカウントで、運用10日間を比較しました。</p>
+
+            <div class="benefits-data fade-up">
+                <p class="benefits-data-caption">9/1〜9/10 → 10/1〜10/10（各10日間）</p>
+                <div class="benefits-data-grid">
+                    <div class="benefits-data-item">
+                        <p class="benefits-data-label">投稿数</p>
+                        <p class="benefits-data-value">33件 → <strong>88件</strong></p>
+                        <p class="benefits-data-sub">約2.7倍</p>
+                    </div>
+                    <div class="benefits-data-item">
+                        <p class="benefits-data-label">総閲覧数</p>
+                        <p class="benefits-data-value">1,548 → <strong>5,437</strong></p>
+                        <p class="benefits-data-sub">約3.5倍</p>
+                    </div>
+                    <div class="benefits-data-item">
+                        <p class="benefits-data-label">総いいね数</p>
+                        <p class="benefits-data-value">18 → <strong>91</strong></p>
+                        <p class="benefits-data-sub">約5倍</p>
+                    </div>
+                    <div class="benefits-data-item">
+                        <p class="benefits-data-label">1投稿あたり平均閲覧数</p>
+                        <p class="benefits-data-value">46.9 → <strong>61.8</strong></p>
+                        <p class="benefits-data-sub">約1.3倍</p>
+                    </div>
+                </div>
+                <p class="benefits-data-lead">投稿数を約2.7倍に増やしても、1投稿あたりの閲覧数もいいね率（1.16% → 1.67%）も、薄まるどころか上がりました。</p>
+            </div>
             
             <div class="benefits-grid">
                 <!-- ベネフィット1 -->
@@ -303,48 +403,57 @@ $currentUrl = $host ? ($protocol . $host . $requestUri) : '';
                 <!-- ベネフィット2 -->
                 <div class="benefit-card fade-up">
                     <div class="benefit-icon-wrap"><span class="benefit-icon">❤️</span></div>
-                    <h3 class="benefit-card-title">2. フォロワーが少なくても、<br>「温かい反応」が届く</h3>
+                    <h3 class="benefit-card-title">2. フォロワーが少なくても、「温かい反応」が届く</h3>
                     <p class="benefit-text">世の中の自動ツールのような「いかにもAIが書いたコピペ文」は、Threadsではすぐに見破られてスルーされます。Threads_Styleはあなたの文体（スタイルガイド）を学習しているため、完全自動でも「あなたの体温」が宿り、いいねやコメントなどの「生きた反応」がしっかり届くようになります。</p>
                 </div>
                 
                 <!-- ベネフィット3 -->
                 <div class="benefit-card fade-up">
                     <div class="benefit-icon-wrap"><span class="benefit-icon">📈</span></div>
-                    <h3 class="benefit-card-title">3. 削除基準はゆるく。「圧倒的な打席数」でチャンスを逃さない</h3>
-                    <p class="benefit-text">「100点満点の投稿」を毎日手動で作る必要はありません。自動生成された4件のうち、明らかにズレているものを削除しても、1日に2〜3件は自然な投稿が無理なく発信され続けます。発信数（打席数）が増えることで、フォロワーとの接点が劇的に増加します。</p>
+                    <h3 class="benefit-card-title">3. 「共感あるある」がホームランを生み、資産として残る</h3>
+                    <p class="benefit-text">手数を増やした中から、「WordPress導入相談のリアルな本音（636閲覧・18いいね）」や「初心者がやりがちなファイル名のミス（307閲覧）」といった反応の大きい投稿が次々と生まれました。それらを「定期投稿」にストックすることで、一度の努力が使い捨てにならない運用になります。</p>
+                </div>
+
+                <!-- ベネフィット4 -->
+                <div class="benefit-card fade-up">
+                    <div class="benefit-icon-wrap"><span class="benefit-icon">💬</span></div>
+                    <h3 class="benefit-card-title">4. 投稿づくりの時間が、「人との交流」の時間になった</h3>
+                    <p class="benefit-text">発信をツールが回してくれる分、コメントへの返信や、他のアカウントの投稿への反応に時間を使えるようになります。Threadsでは、投稿するだけでなく「会話」が評価されやすいと言われています。反応する側に回ることで、自分の投稿にも反応が返ってきやすくなります。</p>
                 </div>
             </div>
+            <p class="benefits-note fade-up">※数値は開発者自身のアカウントでの運用結果であり、成果を保証するものではありません。</p>
         </div>
     </section>
 
     <!-- ======================================== -->
-    <!-- 5. Feature Section（運用と分析） -->
+    <!-- 5.2 Reminder Section（進化し続ける機能のおさらい） -->
     <!-- ======================================== -->
-    <section id="features" class="service feature-post">
-        <div class="text-wrap">
-            <div class="text-left slide-in-left">
-                <div class="slide-in-left">
-                    <h2>スマート投稿 ＆ 予約投稿</h2>
+    <section id="new-features" class="new-features-section">
+        <div class="new-features-wrap">
+            <h2 class="section-h2 fade-up">進化し続ける、<br class="sp">Threads_Style</h2>
+            <p class="section-sub fade-up">自動で投稿するだけで終わらない。「届け続ける」「AIに任せる」「反応を見える化する」まで、<br class="pc">ひとつのツールで回せます。</p>
+            <div class="new-features-grid">
+                <div class="new-feature-card fade-up">
+                    <h3 class="new-feature-title">定期投稿ストック<br><span class="new-feature-title-sub">最大1,000件・CSV一括登録対応</span></h3>
+                    <p class="new-feature-text">反応の良かった投稿や、定番のノウハウ、告知を最大1,000件までストック。決めた時間に自動で届け続けます。</p>
+                    <p class="new-feature-text">一度書いた投稿が使い捨てにならず、忙しい日も休みの日も、発信が止まりません。</p>
                 </div>
-                <p class="slide-in-left">ツールから即時投稿、画像20枚添付、トピック設定まで対応。生成パターンを利用することで、投稿作業そのものの手間を、限界まで削ります。</p>
-                <p class="slide-in-left">予め自分で設定した日時に自動で投稿。Bot判定を防ぐ「ゆらぎ設定」で、自然な投稿リズムを維持します。</p>
+                <div class="new-feature-card fade-up">
+                    <h3 class="new-feature-title">MCP対応<br><span class="new-feature-title-sub">AIエージェントから操作できる</span></h3>
+                    <p class="new-feature-text">ClaudeやCursor、AntigravityなどのAIエージェントと接続。「一番伸びた投稿はどれ？」と聞くだけでインサイトを分析できます。</p>
+                    <p class="new-feature-text">反応の良かった投稿を定期投稿へセットしたり、予約投稿をまとめて登録したり。操作もチャットで完結します。</p>
+                </div>
+                <div class="new-feature-card fade-up">
+                    <h3 class="new-feature-title">スレッド（連投）投稿<br><span class="new-feature-title-sub">ツリーで届ける</span></h3>
+                    <p class="new-feature-text">長めのノウハウや、1投稿目の共感から2投稿目の案内へつなぐ導線も、ツリー形式で即時・予約どちらでも投稿できます。</p>
+                </div>
+                <div class="new-feature-card fade-up">
+                    <h3 class="new-feature-title">クリック計測 ＆ CTAテンプレート<br><span class="new-feature-title-sub">反応を見える化して、導線を一瞬で</span></h3>
+                    <p class="new-feature-text">どの投稿から何回リンクがクリックされたかを、ツール内で確認できます。どの投稿が行動につながったのかが分かります。</p>
+                    <p class="new-feature-text">note・LP・LINEへの案内文などの定型文は「CTAテンプレート」に登録しておけば、投稿作成中にワンクリックで挿入できます。</p>
+                </div>
             </div>
         </div>
-        <div class="service-bg-left"></div>
-    </section>
-
-    <section class="service feature-insight">
-        <div class="text-wrap">
-            <div class="text-right slide-in-right">
-                <div class="slide-in-right">
-                    <h2>インサイト分析 <br class="sp">＆ リパーパス</h2>
-                </div>
-                <p class="slide-in-right">「伸びた投稿」「反応が多かった時間」を自動で検出。何が刺さったかを把握して、ワンタッチで過去の優秀な投稿を再利用できます。</p>
-                <p class="slide-in-right">WordPressやnoteに書いたブログ記事を、Threads用に自動変換。<br class="sp">すでに書いたコンテンツを、眠らせたままにしない。
-                </p>
-            </div>
-        </div>
-        <div class="service-bg-right"></div>
     </section>
 
     <!-- ======================================== -->
@@ -439,7 +548,7 @@ $currentUrl = $host ? ($protocol . $host . $requestUri) : '';
             <div class="pro-cta fade-up">
                 <p class="pro-cta-lead">あなたの言葉を、<br class="sp">もっとラクに届けよう。</p>
                 <a href="checkout.php" class="btn-primary btn-buy" id="cta-professional">今すぐThreads_Styleを導入する</a>
-                <p class="pro-cta-note">¥5,980（税込・買い切り）</p>
+                <p class="pro-cta-note">¥7,980（税込・買い切り）</p>
             </div>
         </div>
         <div class="bg-filter"></div>
@@ -512,7 +621,7 @@ $currentUrl = $host ? ($protocol . $host . $requestUri) : '';
                 あなたの発信を「あなたのもの」にする。</p>
             <p class="closing-accent fade-up">「自分の言葉」を、<br class="sp">最後の一筆に。</p>
             <div class="cta-card fade-up">
-                <div class="price-tag">¥5,980 <span>(税込・買い切り)</span></div>
+                <div class="price-tag">¥7,980 <span>(税込・買い切り)</span></div>
                 <a href="checkout.php" class="btn-primary btn-buy" id="cta-closing">今すぐThreads_Styleを導入する</a>
                 <p class="cta-note">Stripeによる安全な決済が<br class="sp">ご利用いただけます</p>
             </div>

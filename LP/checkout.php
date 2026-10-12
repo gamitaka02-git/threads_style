@@ -35,6 +35,7 @@ try {
             'quantity' => 1,
         ]],
         'mode' => 'payment',
+        'allow_promotion_codes' => true,
         // 成功時、キャンセル時の戻り先URL
         'success_url' => $base_url . '/success.php?session_id={CHECKOUT_SESSION_ID}',
         'cancel_url' => $base_url . '/index.php',
